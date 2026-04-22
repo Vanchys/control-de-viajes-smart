@@ -133,10 +133,6 @@ function openSettingsModal() {
     modalBody.innerHTML = tabsHtml + `
       <div id="myaccount-tab" class="tab-content active">
         <div style="padding:10px 0 6px;">
-          <p style="font-size:0.85rem; color:var(--text-secondary); margin-bottom:18px;">
-            Sesión activa como <strong>${currentUser.username}</strong>
-            <span class="badge badge-admin" style="margin-left:8px;">${currentUser.role}</span>
-          </p>
           <label style="display:block; font-size:0.72rem; font-weight:700; text-transform:uppercase; letter-spacing:0.08em; color:var(--text-muted); margin-bottom:8px;">Nueva contraseña</label>
           <div class="password-wrapper" style="margin-bottom:10px;">
             <button type="button" class="password-toggle" onclick="togglePasswordVisibility('my-new-pass', event)">Mostrar</button>
@@ -167,10 +163,6 @@ function openSettingsModal() {
   } else {
     // Subuser — solo puede cambiar su propia contraseña
     modalBody.innerHTML = `
-      <p style="font-size:0.85rem; color:var(--text-secondary); margin-bottom:18px;">
-        Sesión activa como <strong>${currentUser.username}</strong>
-        <span class="badge badge-user" style="margin-left:8px;">Sub-Usuario</span>
-      </p>
       <label style="display:block; font-size:0.72rem; font-weight:700; text-transform:uppercase; letter-spacing:0.08em; color:var(--text-muted); margin-bottom:8px;">Nueva contraseña</label>
       <div class="password-wrapper" style="margin-bottom:10px;">
         <button type="button" class="password-toggle" onclick="togglePasswordVisibility('my-new-pass', event)">Mostrar</button>

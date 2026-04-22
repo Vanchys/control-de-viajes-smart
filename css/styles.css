@@ -214,15 +214,7 @@ body::before {
 .van-animation {
   font-size: 2.4rem;
   margin-bottom: 14px;
-  display: inline-flex;
-  align-items: center;
-  justify-content: center;
-  width: 64px;
-  height: 64px;
-  border-radius: 18px;
-  background: rgba(255,255,255,0.7);
-  border: 1px solid rgba(213, 221, 229, 0.9);
-  box-shadow: var(--shadow-md);
+  display: inline-block;
 }
 
 .progress-bar-container {
@@ -1163,19 +1155,19 @@ td strong { font-weight: 700; color: var(--brand-blue-deep); }
 /* =================  MOBILE FILTERS — bottom sheet (≤767px)  ================= */
 @media (max-width: 767px) {
   #filters-panel {
-    top: auto;
+    top: var(--header-height);
     left: 0;
     right: 0;
     bottom: 0;
     width: 100%;
-    height: auto;
-    max-height: 78vh;
+    height: calc(100vh - var(--header-height));
+    max-height: none;
     transform: translateY(105%);
     transition: transform 320ms var(--ease);
     border-right: none;
     border-top: 1px solid var(--sidebar-border);
     border-radius: 18px 18px 0 0;
-    padding: 18px 16px 88px;
+    padding: 18px 16px 18px;
   }
   #filters-panel.open {
     transform: translateY(0);
@@ -1212,6 +1204,24 @@ td strong { font-weight: 700; color: var(--brand-blue-deep); }
     padding: 6px 10px;
     font-size: 0.72rem;
   }
+
+  /* Botones header con contorno más visible */
+  #filters-panel .filter-header-actions .btn-small {
+    border-color: rgba(255,255,255,0.38);
+    color: rgba(255,255,255,0.92);
+    background: rgba(255,255,255,0.06);
+  }
+  #filters-panel .filter-header-actions .btn-small:hover {
+    background: rgba(255,255,255,0.10);
+    border-color: rgba(255,255,255,0.55);
+  }
+}
+
+/* Cuando filtros están abiertos, bloquear scroll del dashboard */
+body.filters-open {
+  overflow: hidden;
+  height: 100vh;
+  overscroll-behavior: none;
 }
 @media (min-width: 1100px) {
   #kpis-section { grid-template-columns: repeat(3, 1fr); }

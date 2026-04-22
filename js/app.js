@@ -232,6 +232,7 @@ function setupEvents() {
   function toggleSidebar() {
     filtersPanel.classList.toggle("open");
     filtersOverlay.classList.toggle("hidden");
+    document.body.classList.toggle("filters-open");
   }
 
   document.getElementById("btn-toggle-filters").addEventListener("click", toggleSidebar);
