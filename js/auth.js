@@ -144,9 +144,12 @@ function openSettingsModal() {
         </div>
         <div style="margin-top:15px; border-top:1px solid var(--border-soft); padding-top:15px;">
           <h4 style="font-size:0.95rem; margin-bottom:10px; color:var(--text-primary);">Agregar / Editar Usuario</h4>
-          <input type="text" id="new-user-name" placeholder="Nombre" class="filter-input" style="margin-bottom:5px;">
-          <input type="text" id="new-user-pass" placeholder="Contraseña" class="filter-input" style="margin-bottom:5px;">
-          <select id="new-user-role" class="filter-input" style="margin-bottom:5px;">
+          <input type="text" id="new-user-name" placeholder="Nombre" class="filter-input" style="margin-bottom:10px;">
+          <div class="password-wrapper" style="margin-bottom:10px;">
+            <input type="password" id="new-user-pass" placeholder="Contraseña" class="filter-input" style="background:#fff; width:100%;">
+            <button type="button" class="password-toggle" onclick="togglePasswordVisibility('new-user-pass', event)" title="Mostrar contraseña">👁️</button>
+          </div>
+          <select id="new-user-role" class="filter-input" style="margin-bottom:10px;">
             ${roleOptions}
           </select>
           <button class="btn-primary" onclick="addOrUpdateUser()">Guardar Usuario</button>
@@ -160,7 +163,10 @@ function openSettingsModal() {
             <span class="badge badge-admin" style="margin-left:8px;">${currentUser.role}</span>
           </p>
           <label style="display:block; font-size:0.72rem; font-weight:700; text-transform:uppercase; letter-spacing:0.08em; color:var(--text-muted); margin-bottom:8px;">Nueva contraseña</label>
-          <input type="password" id="my-new-pass" placeholder="Escribe tu nueva contraseña" class="filter-input" style="margin-bottom:10px; background:#fff;">
+          <div class="password-wrapper" style="margin-bottom:10px;">
+            <input type="password" id="my-new-pass" placeholder="Escribe tu nueva contraseña" class="filter-input" style="background:#fff; width:100%;">
+            <button type="button" class="password-toggle" onclick="togglePasswordVisibility('my-new-pass', event)" title="Mostrar contraseña">👁️</button>
+          </div>
           <button class="btn-primary" onclick="changeMyPassword()">Actualizar Contraseña</button>
           <div style="margin-top:20px; border-top:1px solid var(--border-soft); padding-top:16px;">
             <button class="btn-small" style="color:var(--accent-red); border-color:var(--accent-red); width:100%; padding:10px;" onclick="document.getElementById('settings-modal').classList.add('hidden'); logout();">Cerrar Sesión</button>
@@ -176,7 +182,10 @@ function openSettingsModal() {
         <span class="badge badge-user" style="margin-left:8px;">Sub-Usuario</span>
       </p>
       <label style="display:block; font-size:0.72rem; font-weight:700; text-transform:uppercase; letter-spacing:0.08em; color:var(--text-muted); margin-bottom:8px;">Nueva contraseña</label>
-      <input type="password" id="my-new-pass" placeholder="Escribe tu nueva contraseña" class="filter-input" style="margin-bottom:10px; background:#fff;">
+      <div class="password-wrapper" style="margin-bottom:10px;">
+        <input type="password" id="my-new-pass" placeholder="Escribe tu nueva contraseña" class="filter-input" style="background:#fff; width:100%;">
+        <button type="button" class="password-toggle" onclick="togglePasswordVisibility('my-new-pass', event)" title="Mostrar contraseña">👁️</button>
+      </div>
       <button class="btn-primary" onclick="changeMyPassword()">Actualizar Contraseña</button>
       <div style="margin-top:20px; border-top:1px solid var(--border-soft); padding-top:16px;">
         <button class="btn-small" style="color:var(--accent-red); border-color:var(--accent-red); width:100%; padding:10px;" onclick="document.getElementById('settings-modal').classList.add('hidden'); logout();">Cerrar Sesión</button>
@@ -275,6 +284,23 @@ window.clearAudit = function() {
     saveAuditLog();
     openSettingsModal();
   }
+}
+
+window.togglePasswordVisibility = function(inputId, evt) {
+  const input = document.getElementById(inputId);
+  const btn = evt?.target?.closest?.('.password-toggle') || document.querySelector(`[data-toggle-for="${inputId}"]`);
+  if (!input || !btn) return;
+
+  if (input.type === 'password') {
+    input.type = 'text';
+    btn.textContent = '👁️';
+    btn.title = 'Ocultar contraseña';
+  } else {
+    input.type = 'password';
+    btn.textContent = '👁️';
+    btn.title = 'Mostrar contraseña';
+  }
+  input.focus();
 }
 
 document.addEventListener("DOMContentLoaded", () => {

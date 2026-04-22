@@ -32,7 +32,10 @@
         </div>
         <div class="input-group">
           <label for="password">Contraseña</label>
-          <input type="password" id="password" placeholder="Ingresa tu contraseña">
+          <div class="password-wrapper">
+            <input type="password" id="password" placeholder="Ingresa tu contraseña">
+            <button type="button" class="password-toggle" onclick="togglePasswordVisibility('password', event)" title="Mostrar contraseña">👁️</button>
+          </div>
         </div>
         <button type="submit" class="btn-primary">Entrar</button>
       </form>
