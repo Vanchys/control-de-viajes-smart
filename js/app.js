@@ -8,8 +8,40 @@ const APP = {
   pageSize: 50,
   sortCol: "fecha",
   sortAsc: false,
-  searchTerm: ""
+  searchTerm: "",
+  auditCtx: {
+    routeAction: "custom",   // custom | all | none
+    unitAction: "custom",    // custom | all | none
+    driverAction: "custom",  // custom | all | none
+    lastMonthPick: null      // { year, monthIndex, monthName }
+  }
 };
+
+function buildAuditFiltersDetails() {
+  const df = document.getElementById("filter-date-from")?.value || "";
+  const dt = document.getElementById("filter-date-to")?.value || "";
+  const dateInfo = (df && dt) ? `Fechas: ${df} → ${dt}` : "Fechas: (vacías)";
+
+  const checkedRoutes = [...document.querySelectorAll("#filter-route-container input:checked")].map(cb => cb.value);
+  const checkedUnits = [...document.querySelectorAll(".unit-cb:checked")].map(cb => cb.value);
+
+  const driverAllChecked = document.getElementById("driver-all")?.checked;
+  const checkedDrivers = [...document.querySelectorAll(".driver-cb:checked")].map(cb => cb.value);
+
+  const monthInfo = APP.auditCtx.lastMonthPick
+    ? `Mes: ${APP.auditCtx.lastMonthPick.monthName} ${APP.auditCtx.lastMonthPick.year}`
+    : "Mes: (no seleccionado)";
+
+  const routesInfo = `Rutas (${APP.auditCtx.routeAction}): [${checkedRoutes.join(", ") || "—"}]`;
+  const unitsInfo = `Unidades (${APP.auditCtx.unitAction}): [${checkedUnits.join(", ") || "—"}]`;
+
+  let driversList = "—";
+  if (driverAllChecked) driversList = "Todos";
+  else if (checkedDrivers.length) driversList = checkedDrivers.join(", ");
+  const driversInfo = `Conductores (${APP.auditCtx.driverAction}): [${driversList}]`;
+
+  return `${dateInfo} | ${monthInfo} | ${routesInfo} | ${unitsInfo} | ${driversInfo}`;
+}
 
 // Función de Alerta Personalizada
 let alertTimeout;
@@ -140,15 +172,18 @@ function initFilters() {
 
   // Desmarcar rutas por defecto
   document.querySelectorAll("#filter-route-container input").forEach(cb => cb.checked = false);
+  APP.auditCtx.routeAction = "none";
 
   const container = document.getElementById("filter-units-container");
   container.innerHTML = units.map((u) => `<label class="checkbox-item"><input type="checkbox" class="unit-cb" value="${u}"> ${u}</label>`).join("");
+  APP.auditCtx.unitAction = "none";
 
   const driverContainer = document.getElementById("filter-driver-container");
   if(driverContainer) {
     let drvHtml = `<label class="checkbox-item"><input type="checkbox" id="driver-all" value="all" checked> Todos</label>`;
     drvHtml += drivers.map((d) => `<label class="checkbox-item"><input type="checkbox" class="driver-cb" value="${d}"> ${d}</label>`).join("");
     driverContainer.innerHTML = drvHtml;
+    APP.auditCtx.driverAction = "all";
 
     const driverAll = document.getElementById("driver-all");
     const driverCbs = document.querySelectorAll(".driver-cb");
@@ -196,6 +231,11 @@ function setupEvents() {
   document.getElementById("btn-toggle-filters").addEventListener("click", toggleSidebar);
   filtersOverlay.addEventListener("click", toggleSidebar);
 
+  // Si el usuario marca/desmarca manualmente, lo consideramos "custom"
+  document.querySelectorAll("#filter-route-container input").forEach((cb) => {
+    cb.addEventListener("change", () => { APP.auditCtx.routeAction = "custom"; });
+  });
+
   // Settings Modal (Engranaje)
   const settingsModal = document.getElementById("settings-modal");
   document.getElementById("btn-settings").addEventListener("click", () => {
@@ -212,9 +252,7 @@ function setupEvents() {
     renderAll();
     
     // Registro de auditoría
-    const routes = [...document.querySelectorAll("#filter-route-container input:checked")].map(cb=>cb.value).join(", ");
-    const driver = [...document.querySelectorAll("#filter-driver-container input:checked")].map(cb=>cb.value).join(", ");
-    logAction("Filtros Aplicados", `Rutas: [${routes}] | Conductores: [${driver}]`);
+    logAction("Filtros Aplicados", buildAuditFiltersDetails());
 
     if (window.innerWidth < 768) toggleSidebar(); // Cerrar sidebar en móvil al aplicar
   });
@@ -234,23 +272,52 @@ function setupEvents() {
     APP.filteredData = [];
     APP.currentPage = 1;
     renderAll();
+    logAction("Filtros Limpiados", buildAuditFiltersDetails());
   });
 
-  document.getElementById("btn-select-all-routes").addEventListener("click", () => { document.querySelectorAll("#filter-route-container input").forEach((cb) => { cb.checked = true; }); });
-  document.getElementById("btn-deselect-all-routes").addEventListener("click", () => { document.querySelectorAll("#filter-route-container input").forEach((cb) => { cb.checked = false; }); });
+  // Unidades manual = custom
+  document.addEventListener("change", (e) => {
+    const t = e.target;
+    if (t && t.classList && t.classList.contains("unit-cb")) APP.auditCtx.unitAction = "custom";
+    if (t && t.id === "driver-all") APP.auditCtx.driverAction = t.checked ? "all" : "custom";
+    if (t && t.classList && t.classList.contains("driver-cb")) APP.auditCtx.driverAction = "custom";
+  });
+
+  document.getElementById("btn-select-all-routes").addEventListener("click", () => {
+    document.querySelectorAll("#filter-route-container input").forEach((cb) => { cb.checked = true; });
+    APP.auditCtx.routeAction = "all";
+    logAction("Rutas: Todas", buildAuditFiltersDetails());
+  });
+  document.getElementById("btn-deselect-all-routes").addEventListener("click", () => {
+    document.querySelectorAll("#filter-route-container input").forEach((cb) => { cb.checked = false; });
+    APP.auditCtx.routeAction = "none";
+    logAction("Rutas: Ninguna", buildAuditFiltersDetails());
+  });
   
-  document.getElementById("btn-select-all-units").addEventListener("click", () => { document.querySelectorAll(".unit-cb").forEach((cb) => { cb.checked = true; }); });
-  document.getElementById("btn-deselect-all-units").addEventListener("click", () => { document.querySelectorAll(".unit-cb").forEach((cb) => { cb.checked = false; }); });
+  document.getElementById("btn-select-all-units").addEventListener("click", () => {
+    document.querySelectorAll(".unit-cb").forEach((cb) => { cb.checked = true; });
+    APP.auditCtx.unitAction = "all";
+    logAction("Unidades: Todas", buildAuditFiltersDetails());
+  });
+  document.getElementById("btn-deselect-all-units").addEventListener("click", () => {
+    document.querySelectorAll(".unit-cb").forEach((cb) => { cb.checked = false; });
+    APP.auditCtx.unitAction = "none";
+    logAction("Unidades: Ninguna", buildAuditFiltersDetails());
+  });
   
   document.getElementById("btn-select-all-drivers").addEventListener("click", () => { 
     document.querySelectorAll(".driver-cb").forEach((cb) => { cb.checked = true; }); 
     const driverAll = document.getElementById("driver-all");
     if(driverAll) driverAll.checked = false;
+    APP.auditCtx.driverAction = "custom";
+    logAction("Conductores: Selección", buildAuditFiltersDetails());
   });
   document.getElementById("btn-deselect-all-drivers").addEventListener("click", () => { 
     document.querySelectorAll(".driver-cb").forEach((cb) => { cb.checked = false; }); 
     const driverAll = document.getElementById("driver-all");
     if(driverAll) driverAll.checked = true; // Si no hay nada, asumo que prefiere "Todos"
+    APP.auditCtx.driverAction = "all";
+    logAction("Conductores: Todos", buildAuditFiltersDetails());
   });
 
   const btnExport = document.getElementById("btn-export-pdf");
@@ -258,9 +325,11 @@ function setupEvents() {
     btnExport.addEventListener("click", () => {
       if (APP.filteredData.length === 0) {
         showAlert("⚠️ Aplica filtros para descargar datos.");
+        logAction("PDF: Intento sin filtros", buildAuditFiltersDetails());
         return;
       }
       document.getElementById("pdf-confirm-modal").classList.remove("hidden");
+      logAction("PDF: Modal abierto", `Registros: ${APP.filteredData.length} | ${buildAuditFiltersDetails()}`);
     });
   }
 
@@ -486,6 +555,9 @@ function setupMonthPicker() {
           
           document.getElementById("filter-date-from").value = fmt(firstDay);
           document.getElementById("filter-date-to").value = fmt(lastDay);
+
+          APP.auditCtx.lastMonthPick = { year: latestYear, monthIndex: m, monthName: monthNames[m] };
+          logAction("Mes seleccionado", buildAuditFiltersDetails());
           
           modal.classList.add("hidden");
         } else {
@@ -499,8 +571,9 @@ function setupMonthPicker() {
 }
 
 function exportToPDF() {
-  const { jsPDF } = window.jspdf;
-  const doc = new jsPDF('l', 'pt');
+  try {
+    const { jsPDF } = window.jspdf;
+    const doc = new jsPDF('l', 'pt');
 
   doc.setFontSize(18);
   doc.setTextColor(45, 116, 180);
@@ -532,9 +605,13 @@ function exportToPDF() {
     alternateRowStyles: { fillColor: [245, 245, 245] }
   });
 
-  doc.save(`Reporte_Viajes_${new Date().getTime()}.pdf`);
-  logAction("Descarga PDF", `Reporte generado con ${APP.filteredData.length} registros filtrados.`);
-  showAlert("✅ PDF descargado exitosamente.");
+    doc.save(`Reporte_Viajes_${new Date().getTime()}.pdf`);
+    logAction("PDF: Descargado", `Registros: ${APP.filteredData.length} | ${buildAuditFiltersDetails()}`);
+    showAlert("✅ PDF descargado exitosamente.");
+  } catch (e) {
+    logAction("PDF: Error", `${String(e?.message || e)} | ${buildAuditFiltersDetails()}`);
+    showAlert("❌ Error al generar el PDF. Revisa tu conexión o intenta de nuevo.");
+  }
 }
 
 window.confirmedExportToPDF = function() {
