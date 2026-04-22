@@ -267,10 +267,17 @@ function renderTable() {
   tbody.innerHTML = pageData.map((r) => {
     const netoClass = r.totalNeto >= 0 ? "cell-positive" : "cell-negative";
     return `<tr>
-      <td>${formatDateStr(r.fecha)}</td>
       <td>${ROUTE_LABELS[r.ruta] || r.ruta}</td>
-      <td><strong>${r.unidad}</strong></td>
+      <td>${formatDateStr(r.fecha)}</td>
       <td>${r.conductor}</td>
+      <td><strong>${r.unidad}</strong></td>
+      <td>${r.hora}</td>
+      <td>${r.adultos}</td>
+      <td>${r.menores}</td>
+      <td>${r.cuacnopalan}</td>
+      <td>${r.ventaEnLinea || "-"}</td>
+      <td>${r.paquetes}</td>
+      <td>${formatMoney(r.totalBruto)}</td>
       <td class="${netoClass}">${formatMoney(r.totalNeto)}</td>
       <td style="color:var(--accent-orange)">${r.voucher > 0 ? formatMoney(r.voucher) : "-"}</td>
     </tr>`;
