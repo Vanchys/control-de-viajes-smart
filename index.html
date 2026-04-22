@@ -2,22 +2,18 @@
 <html lang="es">
 <head>
   <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
   <title>Smart Dashboard - Control de Viajes</title>
   <meta name="description" content="Dashboard de control operativo para rutas de transporte Smart">
-  <!-- Fuente premium -->
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
-  <!-- Chart.js para gráficas -->
-  <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.7/dist/chart.umd.min.js"></script>
-  <!-- Estilos -->
   <link rel="stylesheet" href="css/styles.css">
 </head>
 <body>
   <!-- Pantalla de Login -->
   <div id="login-screen">
     <div class="login-card">
-      <img src="img/logo.png" alt="Smart Transports" class="login-logo">
+      <img src="img/logo.png" alt="Smart Transports" class="login-logo" onerror="this.style.display='none';">
       <h2>Bienvenido</h2>
       <p>Control de Viajes Smart</p>
       <form id="login-form">
@@ -31,6 +27,7 @@
         </div>
         <button type="submit" class="btn-primary">Entrar al Dashboard</button>
       </form>
+      <div class="developer-credit">Developed by Ivan Apolinar</div>
     </div>
   </div>
 
@@ -38,31 +35,76 @@
   <div id="loading-screen" class="hidden">
     <div class="loader-container">
       <div class="loader-spinner"></div>
-      <h2>Smart Dashboard</h2>
-      <p id="loading-status">Cargando datos desde Google Sheets...</p>
+      <h2>Cargando datos...</h2>
+      <p id="loading-status">Sincronizando con Google Sheets</p>
     </div>
   </div>
 
   <!-- Header principal -->
   <header id="main-header">
     <div class="header-left">
+      <button id="btn-toggle-filters" class="btn-icon mobile-only">
+        <span>☰</span>
+      </button>
       <div class="logo">
-        <span class="logo-icon">🚍</span>
-        <h1>Smart Dashboard</h1>
+        <img src="img/logo.png" alt="Logo" class="header-logo" onerror="this.style.display='none';">
+        <h1 class="desktop-only">Smart Dashboard</h1>
       </div>
     </div>
-    <div class="header-center">
-      <select id="filter-document" class="header-select">
-        <option value="all">Todos los periodos</option>
-      </select>
-    </div>
     <div class="header-right">
+      <button id="btn-settings" class="btn-icon" title="Ajustes de Usuarios">
+        <span>⚙️</span>
+      </button>
       <button id="btn-refresh" class="btn-icon" title="Actualizar datos">
         <span>🔄</span>
       </button>
-      <span id="last-update" class="last-update"></span>
     </div>
   </header>
+
+  <!-- Modal de Ajustes (Usuarios) -->
+  <div id="settings-modal" class="modal hidden">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h2>Ajustes de Sistema</h2>
+        <button id="btn-close-settings" class="btn-close">✖</button>
+      </div>
+      <div class="modal-body">
+        <div class="admin-warning">
+          <span class="warning-icon">🔒</span>
+          <p>Módulo de Administración de Usuarios. (Próximamente se bloqueará con permisos).</p>
+        </div>
+        
+        <h3>Usuarios Registrados</h3>
+        <div class="table-wrapper" style="margin-top: 10px;">
+          <table class="users-table">
+            <thead>
+              <tr>
+                <th>Usuario</th>
+                <th>Contraseña</th>
+                <th>Rol</th>
+                <th>Acciones</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr>
+                <td>admin</td>
+                <td>••••••••</td>
+                <td><span class="badge badge-admin">Administrador</span></td>
+                <td><button class="btn-tiny">Editar</button></td>
+              </tr>
+              <tr>
+                <td>operador1</td>
+                <td>••••••••</td>
+                <td><span class="badge badge-user">Normal</span></td>
+                <td><button class="btn-tiny">Editar</button></td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+        <button class="btn-primary" style="margin-top: 20px;">+ Nuevo Usuario</button>
+      </div>
+    </div>
+  </div>
 
   <!-- Contenido principal -->
   <div id="app-container">
@@ -73,7 +115,6 @@
         <button id="btn-clear-filters" class="btn-small">Limpiar</button>
       </div>
 
-      <!-- Filtro de fecha -->
       <div class="filter-group">
         <label for="filter-date-from">📅 Desde</label>
         <input type="date" id="filter-date-from" class="filter-input">
@@ -83,7 +124,6 @@
         <input type="date" id="filter-date-to" class="filter-input">
       </div>
 
-      <!-- Filtro de ruta -->
       <div class="filter-group">
         <label>🗺️ Ruta</label>
         <select id="filter-route" class="filter-input">
@@ -97,19 +137,15 @@
         </select>
       </div>
 
-      <!-- Filtro de unidades (multi-select) -->
       <div class="filter-group">
         <label>🚌 Unidades</label>
-        <div id="filter-units-container" class="checkbox-list">
-          <!-- Se llena dinámicamente -->
-        </div>
+        <div id="filter-units-container" class="checkbox-list"></div>
         <div class="unit-actions">
           <button id="btn-select-all-units" class="btn-tiny">Todas</button>
           <button id="btn-deselect-all-units" class="btn-tiny">Ninguna</button>
         </div>
       </div>
 
-      <!-- Filtro de conductor -->
       <div class="filter-group">
         <label for="filter-driver">👤 Conductor</label>
         <select id="filter-driver" class="filter-input">
@@ -117,22 +153,19 @@
         </select>
       </div>
 
-      <!-- Vista temporal -->
-      <div class="filter-group">
-        <label>📊 Agrupar por</label>
-        <div class="view-toggle">
-          <button class="view-btn active" data-view="daily">Día</button>
-          <button class="view-btn" data-view="weekly">Semana</button>
-          <button class="view-btn" data-view="monthly">Mes</button>
-        </div>
-      </div>
-
       <button id="btn-apply-filters" class="btn-primary">Aplicar Filtros</button>
     </aside>
 
+    <!-- Overlay para menú en móvil -->
+    <div id="filters-overlay" class="hidden"></div>
+
     <!-- Dashboard principal -->
     <main id="dashboard">
-      <!-- KPI Cards -->
+      <div class="mobile-stats-header">
+        <span id="last-update" class="last-update"></span>
+      </div>
+
+      <!-- KPI Cards (Simplificadas para móvil) -->
       <section id="kpis-section">
         <div class="kpi-card" id="kpi-bruto">
           <div class="kpi-icon">💰</div>
@@ -152,69 +185,27 @@
           <div class="kpi-icon">👥</div>
           <div class="kpi-content">
             <span class="kpi-value" id="kpi-passengers-value">0</span>
-            <span class="kpi-label">Total Pasajeros</span>
-          </div>
-        </div>
-        <div class="kpi-card" id="kpi-trips">
-          <div class="kpi-icon">🚍</div>
-          <div class="kpi-content">
-            <span class="kpi-value" id="kpi-trips-value">0</span>
-            <span class="kpi-label">Total Viajes</span>
+            <span class="kpi-label">Pasajeros</span>
           </div>
         </div>
         <div class="kpi-card" id="kpi-voucher">
           <div class="kpi-icon">🎫</div>
           <div class="kpi-content">
             <span class="kpi-value" id="kpi-voucher-value">$0</span>
-            <span class="kpi-label">Total Voucher</span>
+            <span class="kpi-label">Voucher</span>
           </div>
-        </div>
-        <div class="kpi-card" id="kpi-avg">
-          <div class="kpi-icon">📊</div>
-          <div class="kpi-content">
-            <span class="kpi-value" id="kpi-avg-value">$0</span>
-            <span class="kpi-label">Promedio NETO/Viaje</span>
-          </div>
-        </div>
-      </section>
-
-      <!-- Gráficas fila 1 -->
-      <section class="charts-row">
-        <div class="chart-card">
-          <h3>📈 Ingresos por Periodo</h3>
-          <canvas id="chart-income"></canvas>
-        </div>
-        <div class="chart-card">
-          <h3>🗺️ Comparativa por Ruta</h3>
-          <canvas id="chart-routes"></canvas>
-        </div>
-      </section>
-
-      <!-- Gráficas fila 2 -->
-      <section class="charts-row">
-        <div class="chart-card">
-          <h3>🚌 Rendimiento por Unidad</h3>
-          <canvas id="chart-units"></canvas>
-        </div>
-        <div class="chart-card">
-          <h3>👤 Top Conductores (NETO)</h3>
-          <canvas id="chart-drivers"></canvas>
         </div>
       </section>
 
       <!-- Sección de análisis por unidad -->
       <section id="unit-analysis" class="analysis-section">
-        <h3>🔍 Análisis Detallado por Unidad</h3>
+        <h3>🔍 Resumen por Unidad</h3>
         <div id="unit-summary-cards">
           <!-- Se genera dinámicamente -->
         </div>
-        <div class="chart-card full-width">
-          <h3>📊 Desglose Semanal de Unidades Seleccionadas</h3>
-          <canvas id="chart-unit-weekly"></canvas>
-        </div>
       </section>
 
-      <!-- Tabla de datos -->
+      <!-- Tabla de datos (Simplificada para móvil) -->
       <section id="data-table-section" class="table-section">
         <div class="table-header">
           <h3>📋 Detalle de Viajes</h3>
@@ -224,17 +215,12 @@
           <table id="data-table">
             <thead>
               <tr>
-                <th data-sort="fecha">Fecha ↕</th>
-                <th data-sort="hora">Hora</th>
+                <th data-sort="fecha">Fecha</th>
                 <th data-sort="ruta">Ruta</th>
-                <th data-sort="unidad">Unidad ↕</th>
+                <th data-sort="unidad">Unidad</th>
                 <th data-sort="conductor">Conductor</th>
-                <th data-sort="adultos">Adultos</th>
-                <th data-sort="totalPasajeros">Total Pax</th>
-                <th data-sort="voucher">Voucher ↕</th>
-                <th data-sort="totalBruto">BRUTO ↕</th>
-                <th data-sort="totalGastos">Gastos</th>
-                <th data-sort="totalNeto">NETO ↕</th>
+                <th data-sort="totalNeto">NETO</th>
+                <th data-sort="voucher">Voucher</th>
               </tr>
             </thead>
             <tbody id="data-table-body">
@@ -243,14 +229,19 @@
           </table>
         </div>
         <div class="table-footer">
-          <span id="table-info">Mostrando 0 de 0 registros</span>
+          <span id="table-info">0 registros</span>
           <div class="pagination">
-            <button id="btn-prev-page" class="btn-small">← Anterior</button>
-            <span id="page-indicator">Página 1</span>
-            <button id="btn-next-page" class="btn-small">Siguiente →</button>
+            <button id="btn-prev-page" class="btn-small">←</button>
+            <span id="page-indicator">1</span>
+            <button id="btn-next-page" class="btn-small">→</button>
           </div>
         </div>
       </section>
+
+      <!-- Pie de página -->
+      <footer class="app-footer">
+        <p>Developed by Ivan Apolinar</p>
+      </footer>
     </main>
   </div>
 
