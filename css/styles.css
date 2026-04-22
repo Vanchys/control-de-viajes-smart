@@ -1089,33 +1089,33 @@ td strong { font-weight: 700; color: var(--brand-blue-deep); }
 .password-wrapper {
   display: flex;
   flex-direction: column;
-  gap: 6px;
-}
-.password-wrapper input[type="password"],
-.password-wrapper input[type="text"] {
-  width: 100%;
+  gap: 4px;
 }
 .password-toggle {
+  align-self: flex-start;
   background: transparent;
-  border: 1px solid var(--border-glass);
-  color: var(--text-secondary);
-  padding: 7px 12px;
-  border-radius: 8px;
-  font-size: 0.75rem;
-  font-weight: 600;
+  border: none;
+  color: var(--brand-blue);
+  padding: 3px 8px;
+  border-radius: 6px;
+  font-size: 0.7rem;
+  font-weight: 700;
   cursor: pointer;
   font-family: var(--font-sans);
-  letter-spacing: 0.04em;
+  letter-spacing: 0.05em;
   text-transform: uppercase;
   transition: var(--transition);
 }
 .password-toggle:hover {
-  border-color: var(--brand-blue);
-  color: var(--brand-blue);
-  background: rgba(45, 116, 180, 0.05);
+  background: rgba(45, 116, 180, 0.08);
+}
+.password-toggle.active {
+  background: rgba(45, 116, 180, 0.15);
+  color: #1E5080;
+  font-weight: 700;
 }
 .password-toggle:active {
-  transform: translateY(1px);
+  transform: scale(0.98);
 }
 
 /* Accesibilidad focus visible */

@@ -129,8 +129,8 @@ function openSettingsModal() {
           </p>
           <label style="display:block; font-size:0.72rem; font-weight:700; text-transform:uppercase; letter-spacing:0.08em; color:var(--text-muted); margin-bottom:8px;">Nueva contraseña</label>
           <div class="password-wrapper" style="margin-bottom:10px;">
+            <button type="button" class="password-toggle" onclick="togglePasswordVisibility('my-new-pass', event)">Mostrar</button>
             <input type="password" id="my-new-pass" placeholder="Escribe tu nueva contraseña" class="filter-input" style="background:#fff; width:100%;">
-            <button type="button" class="password-toggle" onclick="togglePasswordVisibility('my-new-pass', event)">Mostrar Contraseña</button>
           </div>
           <button class="btn-primary" onclick="changeMyPassword()">Actualizar Contraseña</button>
           <div style="margin-top:20px; border-top:1px solid var(--border-soft); padding-top:16px;">
@@ -143,8 +143,8 @@ function openSettingsModal() {
           <h4 style="font-size:0.95rem; margin-bottom:15px; color:var(--text-primary);">Agregar / Editar Usuario</h4>
           <input type="text" id="new-user-name" placeholder="Nombre" class="filter-input" style="margin-bottom:10px;">
           <div class="password-wrapper" style="margin-bottom:10px;">
+            <button type="button" class="password-toggle" onclick="togglePasswordVisibility('new-user-pass', event)">Mostrar</button>
             <input type="password" id="new-user-pass" placeholder="Contraseña" class="filter-input" style="background:#fff; width:100%;">
-            <button type="button" class="password-toggle" onclick="togglePasswordVisibility('new-user-pass', event)">Mostrar Contraseña</button>
           </div>
           <select id="new-user-role" class="filter-input" style="margin-bottom:10px;">
             ${roleOptions}
@@ -163,8 +163,8 @@ function openSettingsModal() {
       </p>
       <label style="display:block; font-size:0.72rem; font-weight:700; text-transform:uppercase; letter-spacing:0.08em; color:var(--text-muted); margin-bottom:8px;">Nueva contraseña</label>
       <div class="password-wrapper" style="margin-bottom:10px;">
+        <button type="button" class="password-toggle" onclick="togglePasswordVisibility('my-new-pass', event)">Mostrar</button>
         <input type="password" id="my-new-pass" placeholder="Escribe tu nueva contraseña" class="filter-input" style="background:#fff; width:100%;">
-        <button type="button" class="password-toggle" onclick="togglePasswordVisibility('my-new-pass', event)" title="Mostrar contraseña">👁️</button>
       </div>
       <button class="btn-primary" onclick="changeMyPassword()">Actualizar Contraseña</button>
       <div style="margin-top:20px; border-top:1px solid var(--border-soft); padding-top:16px;">
@@ -268,14 +268,17 @@ window.clearAudit = function() {
 
 window.togglePasswordVisibility = function(inputId, evt) {
   const input = document.getElementById(inputId);
+  const btn = evt.target;
   if (!input) return;
 
   if (input.type === 'password') {
     input.type = 'text';
-    evt.target.textContent = 'Ocultar Contraseña';
+    btn.classList.add('active');
+    btn.textContent = 'Ocultar';
   } else {
     input.type = 'password';
-    evt.target.textContent = 'Mostrar Contraseña';
+    btn.classList.remove('active');
+    btn.textContent = 'Mostrar';
   }
   input.focus();
 }
