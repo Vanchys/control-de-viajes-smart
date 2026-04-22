@@ -9,7 +9,7 @@
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap"
     rel="stylesheet">
-  <link rel="stylesheet" href="css/styles.css?v=6">
+  <link rel="stylesheet" href="css/styles.css?v=7">
 </head>
 
 <body>
@@ -30,18 +30,19 @@
           <label for="password">Contraseña</label>
           <input type="password" id="password" placeholder="Ingresa tu contraseña">
         </div>
-        <button type="submit" class="btn-primary">Entrar al Dashboard</button>
+        <button type="submit" class="btn-primary">Entrar</button>
       </form>
       <div class="developer-credit">Developed by Ivan Apolinar</div>
     </div>
   </div>
 
-  <!-- Pantalla de carga -->
+  <!-- Pantalla de carga / Splash -->
   <div id="loading-screen" class="hidden">
-    <div class="loader-container">
-      <div class="loader-spinner"></div>
-      <h2>Cargando datos...</h2>
-      <p id="loading-status">Sincronizando con Google Sheets</p>
+    <div class="splash-container">
+      <img src="img/logo.png" alt="Logo" class="splash-logo" onerror="this.style.display='none';">
+      <div class="van-animation">🚐</div>
+      <div class="progress-bar-container"><div class="progress-bar-fill"></div></div>
+      <h2>Viajando...</h2>
     </div>
   </div>
 
@@ -56,6 +57,12 @@
         <h1 class="desktop-only">Smart Dashboard</h1>
       </div>
     </div>
+    
+    <!-- Sync Status Oculto arriba -->
+    <div id="header-sync-status" class="header-sync-status hidden">
+      <span class="sync-spinner">↻</span> <span id="sync-text">Cargando...</span>
+    </div>
+
     <div class="header-right">
       <button id="btn-settings" class="btn-icon" title="Ajustes de Usuarios">
         <span>⚙️</span>
@@ -89,11 +96,11 @@
       </div>
 
       <div class="filter-group">
-        <label for="filter-date-from">📅 Desde</label>
-        <input type="date" id="filter-date-from" class="filter-input">
-      </div>
-      <div class="filter-group">
-        <label for="filter-date-to">📅 Hasta</label>
+        <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:5px;">
+          <label for="filter-date-from" style="margin-bottom:0;">📅 Fechas</label>
+          <button id="btn-open-months" class="btn-tiny" style="color:var(--accent-blue); border-color:var(--accent-blue);">Meses</button>
+        </div>
+        <input type="date" id="filter-date-from" class="filter-input" style="margin-bottom:8px;">
         <input type="date" id="filter-date-to" class="filter-input">
       </div>
 
@@ -105,26 +112,28 @@
           <label class="checkbox-item"><input type="checkbox" value="Teh-Mex" checked> Teh → CDMX</label>
           <label class="checkbox-item"><input type="checkbox" value="Mex-Teh" checked> CDMX → Teh</label>
         </div>
-        <div class="unit-actions">
-          <button id="btn-select-all-routes" class="btn-tiny">Todas</button>
-          <button id="btn-deselect-all-routes" class="btn-tiny">Ninguna</button>
+        <div class="unit-actions action-buttons">
+          <button id="btn-select-all-routes" class="btn-actions">Todas</button>
+          <button id="btn-deselect-all-routes" class="btn-actions">Ninguna</button>
         </div>
       </div>
 
       <div class="filter-group">
         <label>🚌 Unidades</label>
         <div id="filter-units-container" class="checkbox-list"></div>
-        <div class="unit-actions">
-          <button id="btn-select-all-units" class="btn-tiny">Todas</button>
-          <button id="btn-deselect-all-units" class="btn-tiny">Ninguna</button>
+        <div class="unit-actions action-buttons">
+          <button id="btn-select-all-units" class="btn-actions">Todas</button>
+          <button id="btn-deselect-all-units" class="btn-actions">Ninguna</button>
         </div>
       </div>
 
       <div class="filter-group">
-        <label for="filter-driver">👤 Conductor</label>
-        <select id="filter-driver" class="filter-input">
-          <option value="all">Todos</option>
-        </select>
+        <label>👤 Conductores</label>
+        <div id="filter-driver-container" class="checkbox-list" style="max-height:150px; column-width:120px;"></div>
+        <div class="unit-actions action-buttons">
+          <button id="btn-select-all-drivers" class="btn-actions">Todas</button>
+          <button id="btn-deselect-all-drivers" class="btn-actions">Ninguna</button>
+        </div>
       </div>
 
       <button id="btn-apply-filters" class="btn-primary">Aplicar Filtros</button>
@@ -173,7 +182,7 @@
       <section id="data-table-section" class="table-section">
         <div class="table-header">
           <h3>📋 Detalle de Viajes</h3>
-          <input type="text" id="table-search" placeholder="🔍 Buscar..." class="search-input">
+          <input type="text" id="table-search" placeholder="🔍 Filtrar por palabra o numero" class="search-input">
         </div>
         <div class="table-wrapper">
           <table id="data-table">
@@ -216,10 +225,25 @@
     </main>
   </div>
 
+  <!-- Modal de Meses -->
+  <div id="month-picker-modal" class="modal hidden">
+    <div class="modal-content" style="max-width:320px;">
+      <div class="modal-header">
+        <h2>Seleccionar Mes</h2>
+        <button id="btn-close-months" class="btn-close">✖</button>
+      </div>
+      <div class="modal-body">
+        <div class="months-grid" id="months-grid">
+           <!-- Renderizado por JS -->
+        </div>
+      </div>
+    </div>
+  </div>
+
   <!-- JavaScript -->
-  <script src="js/auth.js?v=6"></script>
-  <script src="js/data.js?v=6"></script>
-  <script src="js/app.js?v=6"></script>
+  <script src="js/auth.js?v=7"></script>
+  <script src="js/data.js?v=7"></script>
+  <script src="js/app.js?v=7"></script>
 </body>
 
 </html>

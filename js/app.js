@@ -19,16 +19,16 @@ document.addEventListener("DOMContentLoaded", () => {
 
   // Sistema de Login con Autenticación (auth.js)
   loginForm.addEventListener("submit", async (e) => {
-    e.preventDefault(); // Evitar recarga de página
+    e.preventDefault();
     
     const userSel = document.getElementById("username").value;
     const passVal = document.getElementById("password").value;
     
-    if (!userSel) { alert("Selecciona un usuario."); return; }
+    if (!userSel) { alert("Control de viajes\n\nSelecciona un usuario"); return; }
     
     const user = users.find(u => u.username === userSel);
     if (!user || user.password !== passVal) {
-      alert("Contraseña incorrecta.");
+      alert("Control de viajes\n\nContraseña incorrecta");
       return;
     }
     
@@ -38,26 +38,37 @@ document.addEventListener("DOMContentLoaded", () => {
     resetSessionTimer();
 
     loginScreen.classList.add("hidden");
-    document.getElementById("main-header").style.display = "flex";
-    document.getElementById("app-container").style.display = "flex";
-    loadingScreen.classList.remove("hidden");
+    loadingScreen.classList.remove("hidden"); // Muestra splash animation
 
-    try {
-      const statusEl = document.getElementById("loading-status");
-      APP.allData = await loadAllData((msg) => {
-        statusEl.textContent = msg;
-      });
-      statusEl.textContent = `Preparando dashboard...`;
-      initFilters();
-      APP.filteredData = [...APP.allData];
-      renderAll();
+    // Animación de 1 segundo
+    setTimeout(async () => {
       loadingScreen.classList.add("hidden");
-      document.getElementById("last-update").textContent =
-        `Act: ${new Date().toLocaleTimeString("es-MX", {hour: '2-digit', minute:'2-digit'})}`;
-    } catch (err) {
-      document.getElementById("loading-status").textContent = `Error: ${err.message}`;
-    }
-    setupEvents();
+      document.getElementById("main-header").style.display = "flex";
+      document.getElementById("app-container").style.display = "flex";
+      
+      // Sincronización silenciosa
+      const syncStatus = document.getElementById("header-sync-status");
+      const syncText = document.getElementById("sync-text");
+      syncStatus.classList.remove("hidden");
+      
+      try {
+        APP.allData = await loadAllData((msg) => {
+          syncText.textContent = "Sincronizando...";
+        });
+        syncText.textContent = "¡Listo!";
+        setTimeout(() => syncStatus.classList.add("hidden"), 3000);
+        
+        initFilters();
+        APP.filteredData = []; // Vacio por default
+        renderAll();
+        document.getElementById("last-update").textContent =
+          `Act: ${new Date().toLocaleTimeString("es-MX", {hour: '2-digit', minute:'2-digit'})}`;
+      } catch (err) {
+        syncText.textContent = "Error de conexión";
+      }
+      setupEvents();
+      setupMonthPicker();
+    }, 1000);
   });
 });
 
@@ -71,39 +82,46 @@ function initFilters() {
       return a.localeCompare(b);
     });
   const drivers = [...new Set(APP.allData.map((r) => r.conductor))].sort();
-  const dates = APP.allData.map((r) => r.fecha).filter(Boolean);
-  const minDate = new Date(Math.min(...dates));
-  const maxDate = new Date(Math.max(...dates));
 
-  const fmt = (d) => d.toISOString().split("T")[0];
-  document.getElementById("filter-date-from").value = fmt(minDate);
-  document.getElementById("filter-date-to").value = fmt(maxDate);
+  // Fechas vacías
+  document.getElementById("filter-date-from").value = "";
+  document.getElementById("filter-date-to").value = "";
+
+  // Desmarcar rutas por defecto
+  document.querySelectorAll("#filter-route-container input").forEach(cb => cb.checked = false);
 
   const container = document.getElementById("filter-units-container");
   container.innerHTML = units.map((u) =>
-    `<label class="checkbox-item"><input type="checkbox" value="${u}" checked> ${u}</label>`
+    `<label class="checkbox-item"><input type="checkbox" value="${u}"> ${u}</label>`
   ).join("");
 
-  const driverSel = document.getElementById("filter-driver");
-  drivers.forEach((d) => {
-    const opt = document.createElement("option");
-    opt.value = d; opt.textContent = d;
-    driverSel.appendChild(opt);
-  });
+  const driverContainer = document.getElementById("filter-driver-container");
+  if(driverContainer) {
+    driverContainer.innerHTML = drivers.map((d) =>
+      `<label class="checkbox-item"><input type="checkbox" value="${d}"> ${d}</label>`
+    ).join("");
+  }
 }
 
 function getFilteredData() {
-  const dateFrom = new Date(document.getElementById("filter-date-from").value + "T00:00:00");
-  const dateTo = new Date(document.getElementById("filter-date-to").value + "T23:59:59");
+  const df = document.getElementById("filter-date-from").value;
+  const dt = document.getElementById("filter-date-to").value;
+  
   const checkedRoutes = [...document.querySelectorAll("#filter-route-container input:checked")].map((cb) => cb.value);
-  const driver = document.getElementById("filter-driver").value;
   const checkedUnits = [...document.querySelectorAll("#filter-units-container input:checked")].map((cb) => cb.value);
+  const checkedDrivers = [...document.querySelectorAll("#filter-driver-container input:checked")].map((cb) => cb.value);
+
+  // Todo vacío = nada
+  if (!df || !dt || checkedRoutes.length === 0 || checkedUnits.length === 0 || checkedDrivers.length === 0) return [];
+
+  const dateFrom = new Date(df + "T00:00:00");
+  const dateTo = new Date(dt + "T23:59:59");
 
   return APP.allData.filter((r) => {
     if (r.fecha < dateFrom || r.fecha > dateTo) return false;
     if (!checkedRoutes.includes(r.ruta)) return false;
-    if (driver !== "all" && r.conductor !== driver) return false;
     if (!checkedUnits.includes(r.unidad)) return false;
+    if (!checkedDrivers.includes(r.conductor)) return false;
     return true;
   });
 }
@@ -138,34 +156,29 @@ function setupEvents() {
     
     // Registro de auditoría
     const routes = [...document.querySelectorAll("#filter-route-container input:checked")].map(cb=>cb.value).join(", ");
-    const driver = document.getElementById("filter-driver").value;
-    logAction("Filtros Aplicados", `Rutas: [${routes}] | Conductor: ${driver}`);
+    const driver = [...document.querySelectorAll("#filter-driver-container input:checked")].map(cb=>cb.value).join(", ");
+    logAction("Filtros Aplicados", `Rutas: [${routes}] | Conductores: [${driver}]`);
 
     if (window.innerWidth < 768) toggleSidebar(); // Cerrar sidebar en móvil al aplicar
   });
 
   document.getElementById("btn-clear-filters").addEventListener("click", () => {
-    document.querySelectorAll("#filter-route-container input").forEach((cb) => { cb.checked = true; });
-    document.getElementById("filter-driver").value = "all";
-    document.querySelectorAll("#filter-units-container input").forEach((cb) => { cb.checked = true; });
-    APP.filteredData = [...APP.allData];
+    document.getElementById("filter-date-from").value = "";
+    document.getElementById("filter-date-to").value = "";
+    document.querySelectorAll("#filter-route-container input").forEach((cb) => { cb.checked = false; });
+    document.querySelectorAll("#filter-units-container input").forEach((cb) => { cb.checked = false; });
+    document.querySelectorAll("#filter-driver-container input").forEach((cb) => { cb.checked = false; });
+    APP.filteredData = [];
     APP.currentPage = 1;
     renderAll();
   });
 
-  document.getElementById("btn-select-all-routes").addEventListener("click", () => {
-    document.querySelectorAll("#filter-route-container input").forEach((cb) => { cb.checked = true; });
-  });
-  document.getElementById("btn-deselect-all-routes").addEventListener("click", () => {
-    document.querySelectorAll("#filter-route-container input").forEach((cb) => { cb.checked = false; });
-  });
-
-  document.getElementById("btn-select-all-units").addEventListener("click", () => {
-    document.querySelectorAll("#filter-units-container input").forEach((cb) => { cb.checked = true; });
-  });
-  document.getElementById("btn-deselect-all-units").addEventListener("click", () => {
-    document.querySelectorAll("#filter-units-container input").forEach((cb) => { cb.checked = false; });
-  });
+  document.getElementById("btn-select-all-routes").addEventListener("click", () => { document.querySelectorAll("#filter-route-container input").forEach((cb) => { cb.checked = true; }); });
+  document.getElementById("btn-deselect-all-routes").addEventListener("click", () => { document.querySelectorAll("#filter-route-container input").forEach((cb) => { cb.checked = false; }); });
+  document.getElementById("btn-select-all-units").addEventListener("click", () => { document.querySelectorAll("#filter-units-container input").forEach((cb) => { cb.checked = true; }); });
+  document.getElementById("btn-deselect-all-units").addEventListener("click", () => { document.querySelectorAll("#filter-units-container input").forEach((cb) => { cb.checked = false; }); });
+  document.getElementById("btn-select-all-drivers").addEventListener("click", () => { document.querySelectorAll("#filter-driver-container input").forEach((cb) => { cb.checked = true; }); });
+  document.getElementById("btn-deselect-all-drivers").addEventListener("click", () => { document.querySelectorAll("#filter-driver-container input").forEach((cb) => { cb.checked = false; }); });
 
   document.getElementById("btn-refresh").addEventListener("click", async () => {
     document.getElementById("loading-screen").classList.remove("hidden");
@@ -267,9 +280,13 @@ function renderUnitAnalysis() {
 function getTableData() {
   let data = [...APP.filteredData];
   if (APP.searchTerm) {
-    data = data.filter((r) =>
-      r.conductor.toLowerCase().includes(APP.searchTerm) || r.unidad.toLowerCase().includes(APP.searchTerm) || r.ruta.toLowerCase().includes(APP.searchTerm)
-    );
+    const t = APP.searchTerm.trim().toLowerCase();
+    data = data.filter((r) => {
+      if (/^\d+$/.test(t)) {
+        return (parseInt(r.unidad) === parseInt(t)) || r.conductor.toLowerCase().includes(t);
+      }
+      return r.conductor.toLowerCase().includes(t) || r.unidad.toLowerCase().includes(t) || r.ruta.toLowerCase().includes(t);
+    });
   }
   data.sort((a, b) => {
     let va = a[APP.sortCol], vb = b[APP.sortCol];
@@ -309,4 +326,43 @@ function renderTable() {
 
   document.getElementById("table-info").textContent = `${data.length} viajes`;
   document.getElementById("page-indicator").textContent = `${APP.currentPage}/${totalPages}`;
+}
+
+// --- CONFIGURADOR MESES ---
+function setupMonthPicker() {
+  const modal = document.getElementById("month-picker-modal");
+  const grid = document.getElementById("months-grid");
+  if(!modal || !grid) return;
+  
+  const monthNames = ["Enero", "Febrero", "Marzo", "Abril", "Mayo", "Junio", "Julio", "Agosto", "Septiembre", "Octubre", "Noviembre", "Diciembre"];
+  
+  document.getElementById("btn-open-months").addEventListener("click", () => modal.classList.remove("hidden"));
+  document.getElementById("btn-close-months").addEventListener("click", () => modal.classList.add("hidden"));
+  
+  const currentMonth = new Date().getMonth(); 
+  
+  grid.innerHTML = monthNames.map((m, i) => {
+    const isCurrent = (i === currentMonth) ? "active-month" : "";
+    return `<button class="month-btn ${isCurrent}" data-month="${i}">${m}</button>`;
+  }).join("");
+  
+  grid.addEventListener("click", (e) => {
+    if (e.target.classList.contains("month-btn")) {
+      const m = parseInt(e.target.dataset.month);
+      const y = new Date().getFullYear();
+      const firstDay = new Date(y, m, 1);
+      const lastDay = new Date(y, m + 1, 0);
+      
+      const fmt = (d) => {
+        const mm = String(d.getMonth()+1).padStart(2,'0');
+        const dd = String(d.getDate()).padStart(2,'0');
+        return `${d.getFullYear()}-${mm}-${dd}`;
+      };
+      
+      document.getElementById("filter-date-from").value = fmt(firstDay);
+      document.getElementById("filter-date-to").value = fmt(lastDay);
+      
+      modal.classList.add("hidden");
+    }
+  });
 }
