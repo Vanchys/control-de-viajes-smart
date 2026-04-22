@@ -17,6 +17,8 @@ const APP = {
   }
 };
 
+const SPLASH_MS = 1500;
+
 function buildAuditFiltersDetails() {
   const df = document.getElementById("filter-date-from")?.value || "";
   const dt = document.getElementById("filter-date-to")?.value || "";
@@ -123,11 +125,11 @@ document.addEventListener("DOMContentLoaded", () => {
       van.style.animation = 'none';
       bar.style.animation = 'none';
       void van.offsetWidth; // Forzar reinicio del navegador
-      van.style.animation = 'drive 2s linear forwards';
-      bar.style.animation = 'progress 2s ease-in-out forwards';
+      van.style.animation = `drive ${SPLASH_MS}ms linear forwards`;
+      bar.style.animation = `progress ${SPLASH_MS}ms ease-in-out forwards`;
     }
 
-    // Animación de 2 segundos
+    // Animación de 1.5 segundos
     setTimeout(async () => {
       loadingScreen.classList.add("hidden");
       document.getElementById("main-header").style.display = "flex";
@@ -155,7 +157,7 @@ document.addEventListener("DOMContentLoaded", () => {
       }
       setupEvents();
       setupMonthPicker();
-    }, 2000);
+    }, SPLASH_MS);
   });
 });
 
@@ -234,6 +236,31 @@ function setupEvents() {
 
   document.getElementById("btn-toggle-filters").addEventListener("click", toggleSidebar);
   filtersOverlay.addEventListener("click", toggleSidebar);
+  const btnCloseFilters = document.getElementById("btn-close-filters");
+  if (btnCloseFilters) btnCloseFilters.addEventListener("click", toggleSidebar);
+
+  // Swipe down to close (bottom sheet)
+  let touchStartY = null;
+  let touchStartX = null;
+  filtersPanel.addEventListener("touchstart", (e) => {
+    const t = e.touches && e.touches[0];
+    if (!t) return;
+    touchStartY = t.clientY;
+    touchStartX = t.clientX;
+  }, { passive: true });
+  filtersPanel.addEventListener("touchend", (e) => {
+    const t = e.changedTouches && e.changedTouches[0];
+    if (!t || touchStartY == null || touchStartX == null) return;
+    const dy = t.clientY - touchStartY;
+    const dx = t.clientX - touchStartX;
+    touchStartY = null;
+    touchStartX = null;
+
+    // solo si es un swipe hacia abajo claro
+    if (Math.abs(dx) < 60 && dy > 80 && filtersPanel.classList.contains("open")) {
+      toggleSidebar();
+    }
+  }, { passive: true });
 
   // Si el usuario marca/desmarca manualmente, lo consideramos "custom"
   document.querySelectorAll("#filter-route-container input").forEach((cb) => {

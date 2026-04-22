@@ -13,7 +13,7 @@
   <script>
     // Versión centralizada (actualiza aquí y se “cache-bustea” todo al recargar)
     // type: major | minor | patch | hotfix
-    window.SMART_DASHBOARD_RELEASE = { version: "19.2.0", type: "minor" };
+    window.SMART_DASHBOARD_RELEASE = { version: "19.3.0", type: "minor" };
     window.SMART_DASHBOARD_ASSET_V = `${window.SMART_DASHBOARD_RELEASE.version}-${window.SMART_DASHBOARD_RELEASE.type}`;
   </script>
   <script>
@@ -109,8 +109,11 @@
     <!-- Panel de filtros lateral -->
     <aside id="filters-panel">
       <div class="filter-header">
-        <h3>⚙️ Filtros</h3>
-        <button id="btn-clear-filters" class="btn-small">Limpiar</button>
+        <h3><span class="filter-gear">⚙️</span> Filtros</h3>
+        <div class="filter-header-actions">
+          <button id="btn-clear-filters" class="btn-small">Limpiar</button>
+          <button id="btn-close-filters" class="btn-small" title="Cerrar filtros">Cerrar</button>
+        </div>
       </div>
 
       <div class="filter-group">

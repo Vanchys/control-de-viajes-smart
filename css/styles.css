@@ -193,7 +193,10 @@ body::before {
 /* =================  SPLASH  ================= */
 #loading-screen {
   position: fixed; inset: 0;
-  background: linear-gradient(160deg, #FBF8F2, #F5F1EA);
+  background:
+    radial-gradient(900px 520px at 15% 20%, rgba(45, 116, 180, 0.10), transparent 60%),
+    radial-gradient(700px 460px at 85% 80%, rgba(108, 166, 54, 0.07), transparent 62%),
+    linear-gradient(180deg, #FFFFFF 0%, #F8FAFB 100%);
   display: flex; align-items: center; justify-content: center;
   z-index: 9999;
   transition: opacity 400ms var(--ease), visibility 400ms;
@@ -208,7 +211,19 @@ body::before {
   background: transparent;
 }
 .splash-logo { max-width: 200px; margin-bottom: 36px; filter: drop-shadow(0 6px 20px rgba(14,34,53,0.08)); }
-.van-animation { font-size: 3.5rem; margin-bottom: 18px; display: inline-block; }
+.van-animation {
+  font-size: 2.4rem;
+  margin-bottom: 14px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 64px;
+  height: 64px;
+  border-radius: 18px;
+  background: rgba(255,255,255,0.7);
+  border: 1px solid rgba(213, 221, 229, 0.9);
+  box-shadow: var(--shadow-md);
+}
 
 .progress-bar-container {
   width: 240px; height: 4px;
@@ -233,10 +248,10 @@ body::before {
 }
 
 @keyframes drive {
-  0%   { transform: translateX(-60px) scaleX(-1); opacity: 0; }
-  20%  { opacity: 1; transform: translateX(-35px) scaleX(-1); }
-  80%  { opacity: 1; transform: translateX(35px) scaleX(-1); }
-  100% { transform: translateX(60px) scaleX(-1); opacity: 0; }
+  0%   { transform: translateX(-42px) scaleX(-1); opacity: 0; }
+  20%  { opacity: 1; transform: translateX(-24px) scaleX(-1); }
+  80%  { opacity: 1; transform: translateX(24px) scaleX(-1); }
+  100% { transform: translateX(42px) scaleX(-1); opacity: 0; }
 }
 @keyframes progress { 0% { width: 0%; } 100% { width: 100%; } }
 @keyframes spin { to { transform: rotate(360deg); } }
@@ -343,6 +358,15 @@ body::before {
   padding-bottom: 16px;
   border-bottom: 1px solid var(--sidebar-border);
 }
+.filter-header-actions {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+}
+.filter-gear {
+  opacity: 0.9;
+  margin-right: 6px;
+}
 .filter-header h3 {
   font-family: var(--font-display);
   font-weight: 500;
@@ -393,7 +417,18 @@ body::before {
   background: rgba(255,255,255,0.025);
   overflow-y: auto;
 }
-#filter-route-container { max-height: 140px; display: flex; flex-direction: column; gap: 2px; }
+#filter-route-container {
+  /* Rutas: compacto como conductores (2 filas, 4 destinos visibles) */
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 8px;
+}
+#filter-route-container .checkbox-item {
+  width: 100%;
+  justify-content: flex-start;
+  border-radius: 12px;
+  padding: 10px 12px;
+}
 
 /* chips dentro del sidebar oscuro */
 .checkbox-item {
@@ -1156,10 +1191,26 @@ td strong { font-weight: 700; color: var(--brand-blue-deep); }
     margin: -6px auto 14px;
   }
 
-  /* Botón aplicar fijo al fondo del sheet (más intuitivo) */
+  /* Botón aplicar NO fijo: queda al final, sin superponerse */
   #filters-panel #btn-apply-filters {
-    position: sticky;
-    bottom: 10px;
+    position: static;
+    margin-top: 14px;
+  }
+
+  /* Header de filtros más compacto en móvil */
+  #filters-panel .filter-header {
+    gap: 10px;
+  }
+  #filters-panel .filter-header h3 {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    font-size: 1.05rem;
+    white-space: nowrap;
+  }
+  #filters-panel .filter-header-actions .btn-small {
+    padding: 6px 10px;
+    font-size: 0.72rem;
   }
 }
 @media (min-width: 1100px) {
