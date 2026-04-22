@@ -53,6 +53,10 @@
   --shadow-lg: 0 24px 48px -16px rgba(14, 34, 53, 0.18), 0 4px 12px rgba(14, 34, 53, 0.06);
   --shadow-card: var(--shadow-sm);
 
+  /* Contornos / ring premium */
+  --ring-blue: rgba(45, 116, 180, 0.22);
+  --ring-blue-strong: rgba(45, 116, 180, 0.34);
+
   --radius-sm: 8px;
   --radius-md: 14px;
   --radius-lg: 20px;
@@ -100,6 +104,17 @@ body::before {
   opacity: 0.1;
   mix-blend-mode: overlay;
   background-image: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='160' height='160'><filter id='n'><feTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='2' stitchTiles='stitch'/><feColorMatrix values='0 0 0 0 0.02 0 0 0 0 0.03 0 0 0 0 0.05 0 0 0 0.04 0'/></filter><rect width='100%' height='100%' filter='url(%23n)'/></svg>");
+}
+
+/* Motion global (sutil y consistente) */
+@keyframes floatIn {
+  from { opacity: 0; transform: translateY(10px); filter: blur(2px); }
+  to   { opacity: 1; transform: translateY(0); filter: blur(0); }
+}
+@keyframes sheen {
+  from { transform: translateX(-120%); opacity: 0; }
+  30%  { opacity: 1; }
+  to   { transform: translateX(120%); opacity: 0; }
 }
 
 /* =================  LOGIN  ================= */
@@ -486,9 +501,24 @@ body::before {
   box-shadow: 0 6px 18px -6px rgba(45, 116, 180, 0.55), inset 0 1px 0 rgba(255,255,255,0.18);
   transition: var(--transition);
   margin-top: 4px;
+  position: relative;
+  overflow: hidden;
+  transform: translateZ(0);
 }
 .btn-primary:hover { transform: translateY(-1px); box-shadow: 0 10px 28px -8px rgba(45, 116, 180, 0.7), inset 0 1px 0 rgba(255,255,255,0.2); }
 .btn-primary:active { transform: translateY(0); }
+.btn-primary::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(90deg, transparent, rgba(255,255,255,0.22), transparent);
+  transform: translateX(-120%);
+  opacity: 0;
+  pointer-events: none;
+}
+.btn-primary:hover::after {
+  animation: sheen 900ms var(--ease) 1;
+}
 
 .btn-tiny, .btn-small {
   background: transparent;
@@ -501,11 +531,14 @@ body::before {
   color: var(--text-secondary);
   cursor: pointer;
   transition: var(--transition);
+  box-shadow: 0 1px 0 rgba(255,255,255,0.7) inset, var(--shadow-xs);
+  transform: translateZ(0);
 }
 .btn-tiny:hover, .btn-small:hover {
   border-color: var(--brand-blue);
   color: var(--brand-blue);
   background: rgba(45, 116, 180, 0.05);
+  box-shadow: 0 0 0 3px rgba(45,116,180,0.10), var(--shadow-xs);
 }
 
 /* Sidebar-scoped variants for btn-small + btn-tiny */
@@ -597,7 +630,8 @@ body::before {
   overflow: hidden;
   box-shadow: var(--shadow-sm);
   transition: var(--transition);
-  animation: fadeUp 500ms var(--ease) both;
+  animation: floatIn 520ms var(--ease) both;
+  transform: translateZ(0);
 }
 .kpi-card:nth-of-type(1) { animation-delay: 40ms; }
 .kpi-card:nth-of-type(2) { animation-delay: 120ms; }
@@ -605,7 +639,7 @@ body::before {
 
 .kpi-card:hover {
   transform: translateY(-3px);
-  box-shadow: var(--shadow-md);
+  box-shadow: 0 0 0 4px rgba(45,116,180,0.06), var(--shadow-md);
   border-color: transparent;
 }
 
@@ -1155,19 +1189,20 @@ td strong { font-weight: 700; color: var(--brand-blue-deep); }
 /* =================  MOBILE FILTERS — bottom sheet (≤767px)  ================= */
 @media (max-width: 767px) {
   #filters-panel {
-    top: var(--header-height);
+    top: 0;
     left: 0;
     right: 0;
     bottom: 0;
     width: 100%;
-    height: calc(100vh - var(--header-height));
+    height: 100vh;
     max-height: none;
     transform: translateY(105%);
     transition: transform 320ms var(--ease);
     border-right: none;
     border-top: 1px solid var(--sidebar-border);
-    border-radius: 18px 18px 0 0;
+    border-radius: 0;
     padding: 18px 16px 18px;
+    z-index: 1001; /* sobre el header */
   }
   #filters-panel.open {
     transform: translateY(0);
@@ -1222,6 +1257,23 @@ body.filters-open {
   overflow: hidden;
   height: 100vh;
   overscroll-behavior: none;
+}
+
+/* Cuando filtros están abiertos en móvil: ocultar header para que no “asome” */
+@media (max-width: 767px) {
+  body.filters-open #main-header {
+    visibility: hidden;
+    pointer-events: none;
+  }
+  body.filters-open #filters-overlay {
+    z-index: 1000;
+  }
+}
+
+/* Ocultar “Act: HH:MM” (no importante visualmente) */
+.mobile-stats-header,
+#last-update {
+  display: none !important;
 }
 @media (min-width: 1100px) {
   #kpis-section { grid-template-columns: repeat(3, 1fr); }

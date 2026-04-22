@@ -150,8 +150,6 @@ document.addEventListener("DOMContentLoaded", () => {
         initFilters();
         APP.filteredData = []; // Vacio por default
         renderAll();
-        document.getElementById("last-update").textContent =
-          `Act: ${new Date().toLocaleTimeString("es-MX", {hour: '2-digit', minute:'2-digit'})}`;
       } catch (err) {
         syncText.textContent = "Error de conexión";
       }
@@ -378,7 +376,6 @@ function setupEvents() {
       
       APP.filteredData = getFilteredData();
       renderAll();
-      document.getElementById("last-update").textContent = `Act: ${new Date().toLocaleTimeString("es-MX", {hour: '2-digit', minute:'2-digit'})}`;
       
       // Reinicializar el month picker para activar/desactivar meses
       setupMonthPicker();
