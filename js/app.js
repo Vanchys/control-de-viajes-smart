@@ -12,12 +12,19 @@ const APP = {
 };
 
 // Función de Alerta Personalizada
+let alertTimeout;
 window.showAlert = function(message) {
   const modal = document.getElementById("custom-alert-modal");
   const msgEl = document.getElementById("alert-message");
   if (modal && msgEl) {
     msgEl.innerHTML = message.replace(/\n/g, "<br>");
     modal.classList.remove("hidden");
+    
+    // Auto-ocultar a los 3 segundos
+    if (alertTimeout) clearTimeout(alertTimeout);
+    alertTimeout = setTimeout(() => {
+      modal.classList.add("hidden");
+    }, 3000);
   }
 };
 
@@ -26,11 +33,6 @@ document.addEventListener("DOMContentLoaded", () => {
   const loginForm = document.getElementById("login-form");
   const loginScreen = document.getElementById("login-screen");
   const loadingScreen = document.getElementById("loading-screen");
-
-  // Botón OK de la alerta (Debe estar activo SIEMPRE desde el inicio)
-  document.getElementById("btn-alert-ok").addEventListener("click", () => {
-    document.getElementById("custom-alert-modal").classList.add("hidden");
-  });
 
   // Sistema de Login con Autenticación (auth.js)
   loginForm.addEventListener("submit", async (e) => {
