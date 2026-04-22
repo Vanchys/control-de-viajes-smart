@@ -1201,8 +1201,10 @@ td strong { font-weight: 700; color: var(--brand-blue-deep); }
     border-right: none;
     border-top: 1px solid var(--sidebar-border);
     border-radius: 0;
-    padding: 18px 16px 18px;
+    padding: 16px 14px 16px;
     z-index: 1001; /* sobre el header */
+    display: flex;
+    flex-direction: column;
   }
   #filters-panel.open {
     transform: translateY(0);
@@ -1218,15 +1220,19 @@ td strong { font-weight: 700; color: var(--brand-blue-deep); }
     margin: -6px auto 14px;
   }
 
-  /* Botón aplicar NO fijo: queda al final, sin superponerse */
+  /* Botón aplicar: siempre visible al final */
   #filters-panel #btn-apply-filters {
-    position: static;
-    margin-top: 14px;
+    margin-top: auto;
+    position: sticky;
+    bottom: 12px;
+    z-index: 2;
   }
+  #filters-panel { padding-bottom: 78px; }
 
-  /* Header de filtros más compacto en móvil */
+  /* Header: título izquierda, acciones derecha */
   #filters-panel .filter-header {
     gap: 10px;
+    justify-content: flex-start;
   }
   #filters-panel .filter-header h3 {
     display: inline-flex;
@@ -1234,7 +1240,10 @@ td strong { font-weight: 700; color: var(--brand-blue-deep); }
     gap: 6px;
     font-size: 1.05rem;
     white-space: nowrap;
+    margin-right: auto;
+    text-align: left;
   }
+  #filters-panel .filter-header-actions { margin-left: auto; }
   #filters-panel .filter-header-actions .btn-small {
     padding: 6px 10px;
     font-size: 0.72rem;
@@ -1245,11 +1254,27 @@ td strong { font-weight: 700; color: var(--brand-blue-deep); }
     border-color: rgba(255,255,255,0.38);
     color: rgba(255,255,255,0.92);
     background: rgba(255,255,255,0.06);
+    border-radius: 12px;
+    box-shadow: 0 1px 0 rgba(255,255,255,0.10) inset;
   }
   #filters-panel .filter-header-actions .btn-small:hover {
     background: rgba(255,255,255,0.10);
     border-color: rgba(255,255,255,0.55);
   }
+
+  /* Compactar secciones y controles */
+  #filters-panel .filter-header { margin-bottom: 12px; padding-bottom: 12px; }
+  #filters-panel .filter-group { margin-bottom: 12px; }
+  #filters-panel .filter-group label { margin-bottom: 6px; font-size: 0.64rem; letter-spacing: 0.09em; }
+  #filters-panel .filter-input { padding: 9px 10px; font-size: 0.84rem; }
+  #filters-panel .checkbox-list,
+  #filters-panel .scroll-x-grid-2,
+  #filters-panel .scroll-x-grid-3,
+  #filters-panel .scroll-x-grid-4,
+  #filters-panel .scroll-x-grid-5 { padding: 8px; }
+  #filters-panel .checkbox-item { padding: 8px 10px; font-size: 0.78rem; }
+  #filters-panel .action-buttons { margin-top: 6px; }
+  #filters-panel .btn-actions { padding: 6px 8px; font-size: 0.68rem; }
 }
 
 /* Cuando filtros están abiertos, bloquear scroll del dashboard */

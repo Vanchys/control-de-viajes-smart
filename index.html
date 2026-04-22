@@ -13,7 +13,7 @@
   <script>
     // Versión centralizada (actualiza aquí y se “cache-bustea” todo al recargar)
     // type: major | minor | patch | hotfix
-    window.SMART_DASHBOARD_RELEASE = { version: "20.0.1", type: "hotfix" };
+    window.SMART_DASHBOARD_RELEASE = { version: "20.0.2", type: "hotfix" };
     window.SMART_DASHBOARD_ASSET_V = `${window.SMART_DASHBOARD_RELEASE.version}-${window.SMART_DASHBOARD_RELEASE.type}`;
   </script>
   <script>
@@ -68,7 +68,7 @@
   <header id="main-header">
     <div class="header-left">
       <button id="btn-toggle-filters" class="btn-icon mobile-only">
-        <span>☰</span>
+        <span aria-hidden="true">🚐</span>
       </button>
       <div class="logo">
         <img src="img/logo.png" alt="Logo" class="header-logo" onerror="this.style.display='none';">
