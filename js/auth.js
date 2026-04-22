@@ -78,8 +78,8 @@ function openSettingsModal() {
   if (currentUser.role === "admin") {
     modalBody.innerHTML = `
       <div class="tabs">
-        <button class="tab-btn active" onclick="switchTab('users-tab')">Gestión de Usuarios</button>
-        <button class="tab-btn" onclick="switchTab('audit-tab')">Registro de Actividad</button>
+        <button class="tab-btn active" onclick="switchTab('users-tab', this)">Gestión de Usuarios</button>
+        <button class="tab-btn" onclick="switchTab('audit-tab', this)">Registro de Actividad</button>
       </div>
       
       <div id="users-tab" class="tab-content active">
@@ -147,11 +147,11 @@ function openSettingsModal() {
   modal.classList.remove("hidden");
 }
 
-window.switchTab = function(tabId) {
+window.switchTab = function(tabId, btnElement) {
   document.querySelectorAll('.tab-content').forEach(el => el.classList.add('hidden'));
   document.querySelectorAll('.tab-btn').forEach(el => el.classList.remove('active'));
   document.getElementById(tabId).classList.remove('hidden');
-  event.target.classList.add('active');
+  if (btnElement) btnElement.classList.add('active');
 }
 
 window.deleteUser = function(index) {
