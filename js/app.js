@@ -55,7 +55,7 @@ document.addEventListener("DOMContentLoaded", () => {
     loginScreen.classList.add("hidden");
     loadingScreen.classList.remove("hidden"); // Muestra splash animation
 
-    // Animación de 1 segundo
+    // Animación de 2 segundos
     setTimeout(async () => {
       loadingScreen.classList.add("hidden");
       document.getElementById("main-header").style.display = "flex";
@@ -83,7 +83,7 @@ document.addEventListener("DOMContentLoaded", () => {
       }
       setupEvents();
       setupMonthPicker();
-    }, 1000);
+    }, 2000);
   });
 });
 
@@ -196,12 +196,24 @@ function setupEvents() {
   document.getElementById("btn-deselect-all-drivers").addEventListener("click", () => { document.querySelectorAll("#filter-driver-container input").forEach((cb) => { cb.checked = false; }); });
 
   document.getElementById("btn-refresh").addEventListener("click", async () => {
-    document.getElementById("loading-screen").classList.remove("hidden");
-    APP.allData = await loadAllData((msg) => { document.getElementById("loading-status").textContent = msg; });
-    APP.filteredData = getFilteredData();
-    renderAll();
-    document.getElementById("loading-screen").classList.add("hidden");
-    document.getElementById("last-update").textContent = `Act: ${new Date().toLocaleTimeString("es-MX", {hour: '2-digit', minute:'2-digit'})}`;
+    const syncStatus = document.getElementById("header-sync-status");
+    const syncText = document.getElementById("sync-text");
+    syncStatus.classList.remove("hidden");
+    
+    try {
+      APP.allData = await loadAllData((msg) => { syncText.textContent = "Sincronizando..."; });
+      syncText.textContent = "¡Listo!";
+      setTimeout(() => syncStatus.classList.add("hidden"), 3000);
+      
+      APP.filteredData = getFilteredData();
+      renderAll();
+      document.getElementById("last-update").textContent = `Act: ${new Date().toLocaleTimeString("es-MX", {hour: '2-digit', minute:'2-digit'})}`;
+      
+      // Reinicializar el month picker para activar/desactivar meses
+      setupMonthPicker();
+    } catch(e) {
+      syncText.textContent = "Error";
+    }
   });
 
   // Tabla ordenamiento y búsqueda
@@ -351,33 +363,72 @@ function setupMonthPicker() {
   
   const monthNames = ["Enero", "Febrero", "Marzo", "Abril", "Mayo", "Junio", "Julio", "Agosto", "Septiembre", "Octubre", "Noviembre", "Diciembre"];
   
+  const availableMonths = new Set();
+  let latestYear = new Date().getFullYear();
+  
+  APP.allData.forEach(r => {
+    if (r.fecha) {
+      availableMonths.add(r.fecha.getMonth());
+      latestYear = r.fecha.getFullYear();
+    }
+  });
+  
+  const yearText = document.getElementById("month-picker-year");
+  if(yearText) yearText.textContent = `Año: ${latestYear}`;
+  
   document.getElementById("btn-open-months").addEventListener("click", () => modal.classList.remove("hidden"));
   document.getElementById("btn-close-months").addEventListener("click", () => modal.classList.add("hidden"));
   
   const currentMonth = new Date().getMonth(); 
   
   grid.innerHTML = monthNames.map((m, i) => {
-    const isCurrent = (i === currentMonth) ? "active-month" : "";
-    return `<button class="month-btn ${isCurrent}" data-month="${i}">${m}</button>`;
+    const isAvail = availableMonths.has(i);
+    const disabledClass = isAvail ? "" : "disabled-month";
+    const isCurrent = (i === currentMonth && isAvail) ? "active-month" : "";
+    return `<button class="month-btn ${disabledClass} ${isCurrent}" data-month="${i}" ${isAvail ? '' : 'title="No hay datos"'}>${m}</button>`;
   }).join("");
   
-  grid.addEventListener("click", (e) => {
-    if (e.target.classList.contains("month-btn")) {
-      const m = parseInt(e.target.dataset.month);
-      const y = new Date().getFullYear();
-      const firstDay = new Date(y, m, 1);
-      const lastDay = new Date(y, m + 1, 0);
-      
-      const fmt = (d) => {
-        const mm = String(d.getMonth()+1).padStart(2,'0');
-        const dd = String(d.getDate()).padStart(2,'0');
-        return `${d.getFullYear()}-${mm}-${dd}`;
-      };
-      
-      document.getElementById("filter-date-from").value = fmt(firstDay);
-      document.getElementById("filter-date-to").value = fmt(lastDay);
-      
-      modal.classList.add("hidden");
-    }
-  });
+  if(!grid.dataset.listener) {
+    grid.dataset.listener = "true";
+    let lastTap = 0;
+    
+    grid.addEventListener("click", (e) => {
+      if (e.target.classList.contains("month-btn")) {
+        const btn = e.target;
+        if (btn.classList.contains("disabled-month")) {
+          showAlert("❌ No hay información cargada para este mes.");
+          btn.innerHTML = "❌";
+          setTimeout(() => btn.innerHTML = monthNames[btn.dataset.month], 1500);
+          return;
+        }
+        
+        const currentTime = new Date().getTime();
+        const tapLength = currentTime - lastTap;
+        
+        if (tapLength < 500 && tapLength > 0) {
+          const m = parseInt(btn.dataset.month);
+          const firstDay = new Date(latestYear, m, 1);
+          const lastDay = new Date(latestYear, m + 1, 0);
+          
+          const fmt = (d) => {
+            const mm = String(d.getMonth()+1).padStart(2,'0');
+            const dd = String(d.getDate()).padStart(2,'0');
+            return `${d.getFullYear()}-${mm}-${dd}`;
+          };
+          
+          document.getElementById("filter-date-from").value = fmt(firstDay);
+          document.getElementById("filter-date-to").value = fmt(lastDay);
+          
+          document.querySelectorAll('.month-btn').forEach(b => b.classList.remove("active-month"));
+          btn.classList.add("active-month");
+          modal.classList.add("hidden");
+          lastTap = 0;
+        } else {
+          lastTap = currentTime;
+          document.querySelectorAll('.month-btn').forEach(b => b.style.borderColor = "");
+          btn.style.borderColor = "var(--accent-blue)";
+        }
+      }
+    });
+  }
 }

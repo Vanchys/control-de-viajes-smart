@@ -205,12 +205,17 @@ td { padding: 10px; border-bottom: 1px solid var(--border-glass); white-space: n
 /* --- Splash Screen & Sync Status --- */
 .splash-container { text-align: center; display: flex; flex-direction: column; align-items: center; justify-content: center; width: 100%; height: 100%; background: var(--bg-primary); }
 .splash-logo { max-width: 180px; margin-bottom: 30px; }
-.van-animation { font-size: 3.5rem; animation: drive 1.2s infinite linear; margin-bottom: 15px; }
+.van-animation { font-size: 3.5rem; animation: drive 2s infinite linear; margin-bottom: 15px; display: inline-block; }
 .progress-bar-container { width: 200px; height: 6px; background: var(--border-glass); border-radius: 3px; overflow: hidden; margin-bottom: 10px; }
-.progress-bar-fill { width: 0%; height: 100%; background: var(--gradient-primary); animation: progress 1s forwards ease-in-out; }
+.progress-bar-fill { width: 0%; height: 100%; background: var(--gradient-primary); animation: progress 2s forwards ease-in-out; }
 .splash-container h2 { color: var(--accent-blue); font-size: 1.2rem; font-weight: 600; letter-spacing: 1px; }
 
-@keyframes drive { 0% { transform: translateX(-50px); opacity: 0; } 20% { opacity: 1; } 80% { opacity: 1; } 100% { transform: translateX(50px); opacity: 0; } }
+@keyframes drive { 
+  0% { transform: translateX(-50px) scaleX(-1); opacity: 0; } 
+  20% { opacity: 1; transform: translateX(-30px) scaleX(-1); } 
+  80% { opacity: 1; transform: translateX(30px) scaleX(-1); } 
+  100% { transform: translateX(50px) scaleX(-1); opacity: 0; } 
+}
 @keyframes progress { 0% { width: 0%; } 100% { width: 100%; } }
 
 .header-sync-status { display: flex; align-items: center; gap: 8px; font-size: 0.75rem; color: var(--text-muted); background: var(--bg-secondary); padding: 4px 10px; border-radius: 20px; border: 1px solid var(--border-glass); }
@@ -228,3 +233,4 @@ td { padding: 10px; border-bottom: 1px solid var(--border-glass); white-space: n
 .month-btn { background: var(--bg-primary); border: 1px solid var(--border-glass); padding: 12px; border-radius: 8px; font-weight: 600; color: var(--text-primary); cursor: pointer; transition: var(--transition); }
 .month-btn:hover { border-color: var(--accent-blue); color: var(--accent-blue); }
 .month-btn.active-month { background: var(--accent-blue); color: white; border-color: var(--accent-blue); }
+.disabled-month { opacity: 0.4; cursor: not-allowed; background: var(--bg-secondary); border-color: transparent !important; color: var(--text-muted); }
