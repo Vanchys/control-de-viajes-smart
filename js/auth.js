@@ -193,7 +193,8 @@ window.changeMyPassword = function() {
   if (user) {
     user.password = pass;
     saveUsers();
-    showAlert("Contraseña actualizada exitosamente.");
+    document.getElementById("settings-modal").classList.add("hidden");
+    showAlert("✅ Contraseña actualizada exitosamente.");
     logAction("Cambio de contraseña", "El usuario cambió su propia contraseña.");
     document.getElementById("my-new-pass").value = "";
   }

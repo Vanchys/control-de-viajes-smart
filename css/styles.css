@@ -234,3 +234,26 @@ td { padding: 10px; border-bottom: 1px solid var(--border-glass); white-space: n
 .month-btn:hover { border-color: var(--accent-blue); color: var(--accent-blue); }
 .month-btn.active-month { background: var(--accent-blue); color: white; border-color: var(--accent-blue); }
 .disabled-month { opacity: 0.4; cursor: not-allowed; background: var(--bg-secondary); border-color: transparent !important; color: var(--text-muted); }
+
+/* --- Listas Horizontales Deslizables --- */
+.scroll-x-list {
+  display: flex;
+  overflow-x: auto;
+  gap: 10px;
+  padding: 5px;
+  -webkit-overflow-scrolling: touch;
+  border: 1px solid var(--border-glass);
+  border-radius: var(--radius-sm);
+  background: var(--bg-primary);
+  scrollbar-width: none;
+}
+.scroll-x-list::-webkit-scrollbar { display: none; }
+.scroll-x-list .checkbox-item {
+  white-space: nowrap;
+  background: var(--bg-secondary);
+  padding: 6px 12px;
+  border-radius: 20px;
+  border: 1px solid var(--border-glass);
+  display: flex;
+  align-items: center;
+}

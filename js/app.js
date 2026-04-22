@@ -108,15 +108,25 @@ function initFilters() {
   document.querySelectorAll("#filter-route-container input").forEach(cb => cb.checked = false);
 
   const container = document.getElementById("filter-units-container");
-  container.innerHTML = units.map((u) =>
-    `<label class="checkbox-item"><input type="checkbox" value="${u}"> ${u}</label>`
-  ).join("");
+  let unitHtml = `<label class="checkbox-item"><input type="checkbox" id="unit-all" value="all" checked> Todas</label>`;
+  unitHtml += units.map((u) => `<label class="checkbox-item"><input type="checkbox" class="unit-cb" value="${u}"> ${u}</label>`).join("");
+  container.innerHTML = unitHtml;
+
+  const unitAll = document.getElementById("unit-all");
+  const unitCbs = document.querySelectorAll(".unit-cb");
+  unitAll.addEventListener("change", (e) => { if(e.target.checked) unitCbs.forEach(cb => cb.checked = false); });
+  unitCbs.forEach(cb => { cb.addEventListener("change", () => { if(cb.checked) unitAll.checked = false; }); });
 
   const driverContainer = document.getElementById("filter-driver-container");
   if(driverContainer) {
-    driverContainer.innerHTML = drivers.map((d) =>
-      `<label class="checkbox-item"><input type="checkbox" value="${d}"> ${d}</label>`
-    ).join("");
+    let drvHtml = `<label class="checkbox-item"><input type="checkbox" id="driver-all" value="all" checked> Todos</label>`;
+    drvHtml += drivers.map((d) => `<label class="checkbox-item"><input type="checkbox" class="driver-cb" value="${d}"> ${d}</label>`).join("");
+    driverContainer.innerHTML = drvHtml;
+
+    const driverAll = document.getElementById("driver-all");
+    const driverCbs = document.querySelectorAll(".driver-cb");
+    driverAll.addEventListener("change", (e) => { if(e.target.checked) driverCbs.forEach(cb => cb.checked = false); });
+    driverCbs.forEach(cb => { cb.addEventListener("change", () => { if(cb.checked) driverAll.checked = false; }); });
   }
 }
 
@@ -125,11 +135,17 @@ function getFilteredData() {
   const dt = document.getElementById("filter-date-to").value;
   
   const checkedRoutes = [...document.querySelectorAll("#filter-route-container input:checked")].map((cb) => cb.value);
-  const checkedUnits = [...document.querySelectorAll("#filter-units-container input:checked")].map((cb) => cb.value);
-  const checkedDrivers = [...document.querySelectorAll("#filter-driver-container input:checked")].map((cb) => cb.value);
+  
+  const unitAllChecked = document.getElementById("unit-all")?.checked;
+  const checkedUnits = [...document.querySelectorAll(".unit-cb:checked")].map((cb) => cb.value);
+  
+  const driverAllChecked = document.getElementById("driver-all")?.checked;
+  const checkedDrivers = [...document.querySelectorAll(".driver-cb:checked")].map((cb) => cb.value);
 
-  // Todo vacío = nada
-  if (!df || !dt || checkedRoutes.length === 0 || checkedUnits.length === 0 || checkedDrivers.length === 0) return [];
+  // Todo vacío = nada (excepto si están en "Todos")
+  if (!df || !dt || checkedRoutes.length === 0) return [];
+  if (!unitAllChecked && checkedUnits.length === 0) return [];
+  if (!driverAllChecked && checkedDrivers.length === 0) return [];
 
   const dateFrom = new Date(df + "T00:00:00");
   const dateTo = new Date(dt + "T23:59:59");
@@ -137,8 +153,8 @@ function getFilteredData() {
   return APP.allData.filter((r) => {
     if (r.fecha < dateFrom || r.fecha > dateTo) return false;
     if (!checkedRoutes.includes(r.ruta)) return false;
-    if (!checkedUnits.includes(r.unidad)) return false;
-    if (!checkedDrivers.includes(r.conductor)) return false;
+    if (!unitAllChecked && !checkedUnits.includes(r.unidad)) return false;
+    if (!driverAllChecked && !checkedDrivers.includes(r.conductor)) return false;
     return true;
   });
 }
@@ -192,10 +208,6 @@ function setupEvents() {
 
   document.getElementById("btn-select-all-routes").addEventListener("click", () => { document.querySelectorAll("#filter-route-container input").forEach((cb) => { cb.checked = true; }); });
   document.getElementById("btn-deselect-all-routes").addEventListener("click", () => { document.querySelectorAll("#filter-route-container input").forEach((cb) => { cb.checked = false; }); });
-  document.getElementById("btn-select-all-units").addEventListener("click", () => { document.querySelectorAll("#filter-units-container input").forEach((cb) => { cb.checked = true; }); });
-  document.getElementById("btn-deselect-all-units").addEventListener("click", () => { document.querySelectorAll("#filter-units-container input").forEach((cb) => { cb.checked = false; }); });
-  document.getElementById("btn-select-all-drivers").addEventListener("click", () => { document.querySelectorAll("#filter-driver-container input").forEach((cb) => { cb.checked = true; }); });
-  document.getElementById("btn-deselect-all-drivers").addEventListener("click", () => { document.querySelectorAll("#filter-driver-container input").forEach((cb) => { cb.checked = false; }); });
 
   document.getElementById("btn-refresh").addEventListener("click", async () => {
     const syncStatus = document.getElementById("header-sync-status");
