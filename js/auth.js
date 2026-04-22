@@ -82,6 +82,7 @@ function openSettingsModal() {
     if (currentUser.role === "superadmin") {
       tabsHtml += `<button class="tab-btn" onclick="switchTab('audit-tab', this)">Registro de Actividad</button>`;
     }
+    tabsHtml += `<button class="tab-btn" onclick="switchTab('myaccount-tab', this)">Mi Cuenta</button>`;
     tabsHtml += `</div>`;
     
     let visibleUsers = [];
@@ -141,8 +142,8 @@ function openSettingsModal() {
             <tbody>${usersHtml}</tbody>
           </table>
         </div>
-        <div style="margin-top:15px; border-top:1px solid #ddd; padding-top:15px;">
-          <h4>Agregar / Editar Usuario</h4>
+        <div style="margin-top:15px; border-top:1px solid var(--border-soft); padding-top:15px;">
+          <h4 style="font-size:0.95rem; margin-bottom:10px; color:var(--text-primary);">Agregar / Editar Usuario</h4>
           <input type="text" id="new-user-name" placeholder="Nombre" class="filter-input" style="margin-bottom:5px;">
           <input type="text" id="new-user-pass" placeholder="Contraseña" class="filter-input" style="margin-bottom:5px;">
           <select id="new-user-role" class="filter-input" style="margin-bottom:5px;">
@@ -152,15 +153,33 @@ function openSettingsModal() {
         </div>
       </div>
       ${auditHtml}
+      <div id="myaccount-tab" class="tab-content">
+        <div style="padding:10px 0 6px;">
+          <p style="font-size:0.85rem; color:var(--text-secondary); margin-bottom:18px;">
+            Sesión activa como <strong>${currentUser.username}</strong>
+            <span class="badge badge-admin" style="margin-left:8px;">${currentUser.role}</span>
+          </p>
+          <label style="display:block; font-size:0.72rem; font-weight:700; text-transform:uppercase; letter-spacing:0.08em; color:var(--text-muted); margin-bottom:8px;">Nueva contraseña</label>
+          <input type="password" id="my-new-pass" placeholder="Escribe tu nueva contraseña" class="filter-input" style="margin-bottom:10px; background:#fff;">
+          <button class="btn-primary" onclick="changeMyPassword()">Actualizar Contraseña</button>
+          <div style="margin-top:20px; border-top:1px solid var(--border-soft); padding-top:16px;">
+            <button class="btn-small" style="color:var(--accent-red); border-color:var(--accent-red); width:100%; padding:10px;" onclick="document.getElementById('settings-modal').classList.add('hidden'); logout();">Cerrar Sesión</button>
+          </div>
+        </div>
+      </div>
     `;
   } else {
-    // Subuser Settings
+    // Subuser — solo puede cambiar su propia contraseña
     modalBody.innerHTML = `
-      <h3>Mis Ajustes</h3>
-      <p>Hola <strong>${currentUser.username}</strong>, aquí puedes cambiar tu contraseña.</p>
-      <div style="margin-top:15px;">
-        <input type="text" id="my-new-pass" placeholder="Nueva Contraseña" class="filter-input" style="margin-bottom:10px;">
-        <button class="btn-primary" onclick="changeMyPassword()">Actualizar Contraseña</button>
+      <p style="font-size:0.85rem; color:var(--text-secondary); margin-bottom:18px;">
+        Sesión activa como <strong>${currentUser.username}</strong>
+        <span class="badge badge-user" style="margin-left:8px;">Sub-Usuario</span>
+      </p>
+      <label style="display:block; font-size:0.72rem; font-weight:700; text-transform:uppercase; letter-spacing:0.08em; color:var(--text-muted); margin-bottom:8px;">Nueva contraseña</label>
+      <input type="password" id="my-new-pass" placeholder="Escribe tu nueva contraseña" class="filter-input" style="margin-bottom:10px; background:#fff;">
+      <button class="btn-primary" onclick="changeMyPassword()">Actualizar Contraseña</button>
+      <div style="margin-top:20px; border-top:1px solid var(--border-soft); padding-top:16px;">
+        <button class="btn-small" style="color:var(--accent-red); border-color:var(--accent-red); width:100%; padding:10px;" onclick="document.getElementById('settings-modal').classList.add('hidden'); logout();">Cerrar Sesión</button>
       </div>
     `;
   }
@@ -169,9 +188,9 @@ function openSettingsModal() {
 }
 
 window.switchTab = function(tabId, btnElement) {
-  document.querySelectorAll('.tab-content').forEach(el => el.classList.add('hidden'));
+  document.querySelectorAll('.tab-content').forEach(el => el.classList.remove('active'));
   document.querySelectorAll('.tab-btn').forEach(el => el.classList.remove('active'));
-  document.getElementById(tabId).classList.remove('hidden');
+  document.getElementById(tabId).classList.add('active');
   if (btnElement) btnElement.classList.add('active');
 }
 
