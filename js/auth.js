@@ -55,7 +55,7 @@ function logout(reason = "") {
   document.getElementById("app-container").style.display = "none";
   document.getElementById("password").value = "";
   
-  if (reason) alert(reason);
+  if (reason) showAlert(reason);
 }
 
 // Escuchar actividad para resetear el tiempo de sesión
@@ -156,7 +156,7 @@ window.switchTab = function(tabId) {
 
 window.deleteUser = function(index) {
   if (users[index].username === currentUser.username) {
-    alert("No puedes eliminarte a ti mismo.");
+    showAlert("No puedes eliminarte a ti mismo.");
     return;
   }
   if (confirm("¿Eliminar a " + users[index].username + "?")) {
@@ -171,16 +171,16 @@ window.addOrUpdateUser = function() {
   const pass = document.getElementById("new-user-pass").value.trim();
   const role = document.getElementById("new-user-role").value;
   
-  if (!name || !pass) { alert("Llena nombre y contraseña"); return; }
+  if (!name || !pass) { showAlert("Llena nombre y contraseña"); return; }
   
   const existing = users.find(u => u.username.toLowerCase() === name.toLowerCase());
   if (existing) {
     existing.password = pass;
     existing.role = role;
-    alert("Usuario actualizado.");
+    showAlert("Usuario actualizado.");
   } else {
     users.push({ username: name, password: pass, role: role });
-    alert("Usuario creado.");
+    showAlert("Usuario creado.");
   }
   saveUsers();
   openSettingsModal();
@@ -188,12 +188,12 @@ window.addOrUpdateUser = function() {
 
 window.changeMyPassword = function() {
   const pass = document.getElementById("my-new-pass").value.trim();
-  if (!pass) { alert("Ingresa una contraseña"); return; }
+  if (!pass) { showAlert("Ingresa una contraseña"); return; }
   const user = users.find(u => u.username === currentUser.username);
   if (user) {
     user.password = pass;
     saveUsers();
-    alert("Contraseña actualizada exitosamente.");
+    showAlert("Contraseña actualizada exitosamente.");
     logAction("Cambio de contraseña", "El usuario cambió su propia contraseña.");
     document.getElementById("my-new-pass").value = "";
   }

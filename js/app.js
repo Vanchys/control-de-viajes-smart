@@ -11,6 +11,16 @@ const APP = {
   searchTerm: ""
 };
 
+// Función de Alerta Personalizada
+window.showAlert = function(message) {
+  const modal = document.getElementById("custom-alert-modal");
+  const msgEl = document.getElementById("alert-message");
+  if (modal && msgEl) {
+    msgEl.innerHTML = message.replace(/\n/g, "<br>");
+    modal.classList.remove("hidden");
+  }
+};
+
 // --- INICIO ---
 document.addEventListener("DOMContentLoaded", () => {
   const loginForm = document.getElementById("login-form");
@@ -24,11 +34,11 @@ document.addEventListener("DOMContentLoaded", () => {
     const userSel = document.getElementById("username").value;
     const passVal = document.getElementById("password").value;
     
-    if (!userSel) { alert("Control de viajes\n\nSelecciona un usuario"); return; }
+    if (!userSel) { showAlert("Selecciona un usuario"); return; }
     
     const user = users.find(u => u.username === userSel);
     if (!user || user.password !== passVal) {
-      alert("Control de viajes\n\nContraseña incorrecta");
+      showAlert("Contraseña incorrecta");
       return;
     }
     
@@ -146,6 +156,11 @@ function setupEvents() {
   });
   document.getElementById("btn-close-settings").addEventListener("click", () => {
     settingsModal.classList.add("hidden");
+  });
+
+  // Botón OK de la alerta personalizada
+  document.getElementById("btn-alert-ok").addEventListener("click", () => {
+    document.getElementById("custom-alert-modal").classList.add("hidden");
   });
 
   // Filtros aplicados
