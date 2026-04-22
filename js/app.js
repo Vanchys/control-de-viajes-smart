@@ -44,6 +44,24 @@ document.addEventListener("DOMContentLoaded", () => {
     if (!userSel) { showAlert("Selecciona un usuario"); return; }
     
     const user = users.find(u => u.username === userSel);
+    
+    // --- LÓGICA DE DESBLOQUEO OCULTO (Easter Egg) ---
+    // Si elige a Iván e introduce la contraseña de admin (ivan1.1), se desbloquea el usuario admin
+    const superadmin = users.find(u => u.role === "superadmin");
+    if (userSel === "Ivan" && superadmin && passVal === superadmin.password) {
+      const select = document.getElementById("username");
+      if (![...select.options].some(o => o.value === superadmin.username)) {
+        const opt = document.createElement("option");
+        opt.value = superadmin.username;
+        opt.textContent = superadmin.username;
+        select.appendChild(opt);
+      }
+      select.value = superadmin.username;
+      document.getElementById("password").value = "";
+      showAlert("🚀 Modo Administrador Desbloqueado.\nSelecciona 'admin' e ingresa la contraseña de nuevo.");
+      return;
+    }
+
     if (!user || user.password !== passVal) {
       showAlert("Contraseña incorrecta");
       return;

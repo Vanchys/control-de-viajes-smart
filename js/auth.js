@@ -2,8 +2,8 @@
 // Manejo de Usuarios, Sesiones y Auditoría
 
 const DEFAULT_USERS = [
-  { username: "admin", password: "ivan1.1", role: "admin" },
-  { username: "Ivan", password: "1", role: "user" },
+  { username: "admin", password: "ivan1.1", role: "superadmin" },
+  { username: "Ivan", password: "1", role: "admin" },
   { username: "Timoteo", password: "arminio", role: "user" }
 ];
 
@@ -67,51 +67,51 @@ document.addEventListener("touchstart", resetSessionTimer);
 function renderLoginUsers() {
   const select = document.getElementById("username");
   if (!select) return;
+  const visibleUsers = users.filter(u => u.username !== "admin");
   select.innerHTML = `<option value="">Selecciona un usuario...</option>` + 
-    users.map(u => `<option value="${u.username}">${u.username}</option>`).join("");
+    visibleUsers.map(u => `<option value="${u.username}">${u.username}</option>`).join("");
 }
 
 function openSettingsModal() {
   const modal = document.getElementById("settings-modal");
   const modalBody = document.getElementById("settings-modal-body");
   
-  if (currentUser.role === "admin") {
-    modalBody.innerHTML = `
-      <div class="tabs">
-        <button class="tab-btn active" onclick="switchTab('users-tab', this)">Gestión de Usuarios</button>
-        <button class="tab-btn" onclick="switchTab('audit-tab', this)">Registro de Actividad</button>
-      </div>
-      
-      <div id="users-tab" class="tab-content active">
-        <div class="table-wrapper" style="margin-top: 10px;">
-          <table class="users-table" style="width: 100%; text-align: left;">
-            <thead><tr><th>Usuario</th><th>Contraseña</th><th>Rol</th><th>Acciones</th></tr></thead>
-            <tbody>
-              ${users.map((u, i) => `
-                <tr>
-                  <td>${u.username}</td>
-                  <td>${u.password}</td>
-                  <td>${u.role === 'admin' ? '<span class="badge badge-admin">Admin</span>' : '<span class="badge badge-user">Normal</span>'}</td>
-                  <td>
-                    <button class="btn-tiny" onclick="deleteUser(${i})">Eliminar</button>
-                  </td>
-                </tr>
-              `).join("")}
-            </tbody>
-          </table>
-        </div>
-        <div style="margin-top:15px; border-top:1px solid #ddd; padding-top:15px;">
-          <h4>Agregar / Editar Usuario</h4>
-          <input type="text" id="new-user-name" placeholder="Nombre" class="filter-input" style="margin-bottom:5px;">
-          <input type="text" id="new-user-pass" placeholder="Contraseña" class="filter-input" style="margin-bottom:5px;">
-          <select id="new-user-role" class="filter-input" style="margin-bottom:5px;">
-            <option value="user">Normal</option>
-            <option value="admin">Administrador</option>
-          </select>
-          <button class="btn-primary" onclick="addOrUpdateUser()">Guardar Usuario</button>
-        </div>
-      </div>
-      
+  if (currentUser.role === "superadmin" || currentUser.role === "admin" || currentUser.role === "user") {
+    let tabsHtml = `<div class="tabs">`;
+    tabsHtml += `<button class="tab-btn active" onclick="switchTab('users-tab', this)">Gestión de Usuarios</button>`;
+    if (currentUser.role === "superadmin") {
+      tabsHtml += `<button class="tab-btn" onclick="switchTab('audit-tab', this)">Registro de Actividad</button>`;
+    }
+    tabsHtml += `</div>`;
+    
+    let visibleUsers = [];
+    let roleOptions = "";
+    
+    if (currentUser.role === "superadmin") {
+      visibleUsers = users;
+      roleOptions = `<option value="user">Normal</option><option value="admin">Administrador</option>`;
+    } else if (currentUser.role === "admin") {
+      visibleUsers = users.filter(u => u.role !== "superadmin");
+      roleOptions = `<option value="user">Normal</option><option value="admin">Administrador</option>`;
+    } else if (currentUser.role === "user") {
+      visibleUsers = users.filter(u => u.createdBy === currentUser.username);
+      roleOptions = `<option value="subuser">Sub-Usuario</option>`;
+    }
+
+    let usersHtml = visibleUsers.map((u) => {
+      let idx = users.findIndex(ux => ux.username === u.username);
+      let badge = u.role === "superadmin" ? "S-Admin" : (u.role === "admin" ? "Admin" : (u.role === "user" ? "User" : "SubUser"));
+      return `<tr>
+        <td>${u.username}</td>
+        <td>${u.password}</td>
+        <td><span class="badge badge-user">${badge}</span></td>
+        <td><button class="btn-tiny" onclick="deleteUser(${idx})">Eliminar</button></td>
+      </tr>`;
+    }).join("");
+
+    let auditHtml = "";
+    if (currentUser.role === "superadmin") {
+      auditHtml = `
       <div id="audit-tab" class="tab-content hidden">
         <div class="table-wrapper" style="margin-top: 10px; max-height: 400px; overflow-y: auto;">
           <table class="users-table" style="width: 100%; text-align: left; font-size: 0.8rem;">
@@ -130,10 +130,31 @@ function openSettingsModal() {
           </table>
         </div>
         <button class="btn-small" style="margin-top: 10px; color: red; border-color: red;" onclick="clearAudit()">Limpiar Registro</button>
+      </div>`;
+    }
+
+    modalBody.innerHTML = tabsHtml + `
+      <div id="users-tab" class="tab-content active">
+        <div class="table-wrapper" style="margin-top: 10px;">
+          <table class="users-table" style="width: 100%; text-align: left;">
+            <thead><tr><th>Usuario</th><th>Contraseña</th><th>Rol</th><th>Acciones</th></tr></thead>
+            <tbody>${usersHtml}</tbody>
+          </table>
+        </div>
+        <div style="margin-top:15px; border-top:1px solid #ddd; padding-top:15px;">
+          <h4>Agregar / Editar Usuario</h4>
+          <input type="text" id="new-user-name" placeholder="Nombre" class="filter-input" style="margin-bottom:5px;">
+          <input type="text" id="new-user-pass" placeholder="Contraseña" class="filter-input" style="margin-bottom:5px;">
+          <select id="new-user-role" class="filter-input" style="margin-bottom:5px;">
+            ${roleOptions}
+          </select>
+          <button class="btn-primary" onclick="addOrUpdateUser()">Guardar Usuario</button>
+        </div>
       </div>
+      ${auditHtml}
     `;
   } else {
-    // Normal User Settings
+    // Subuser Settings
     modalBody.innerHTML = `
       <h3>Mis Ajustes</h3>
       <p>Hola <strong>${currentUser.username}</strong>, aquí puedes cambiar tu contraseña.</p>
@@ -155,14 +176,30 @@ window.switchTab = function(tabId, btnElement) {
 }
 
 window.deleteUser = function(index) {
-  if (users[index].username === currentUser.username) {
+  const targetUser = users[index];
+  if (targetUser.username === currentUser.username) {
     showAlert("No puedes eliminarte a ti mismo.");
     return;
   }
-  if (confirm("¿Eliminar a " + users[index].username + "?")) {
+  
+  // Seguridad: Un admin no puede borrar al SuperAdmin
+  if (targetUser.role === "superadmin" && currentUser.role !== "superadmin") {
+    showAlert("No tienes permiso para eliminar al Super-Administrador.");
+    return;
+  }
+
+  // Seguridad: Un usuario normal solo puede borrar a sus propios sub-usuarios
+  if (currentUser.role === "user" && targetUser.createdBy !== currentUser.username) {
+    showAlert("No tienes permiso para eliminar este usuario.");
+    return;
+  }
+
+  if (confirm("¿Eliminar a " + targetUser.username + "?")) {
     users.splice(index, 1);
     saveUsers();
     openSettingsModal();
+    // Si borramos al admin siendo superadmin, hay que refrescar la lista de login
+    renderLoginUsers();
   }
 }
 
@@ -173,13 +210,26 @@ window.addOrUpdateUser = function() {
   
   if (!name || !pass) { showAlert("Llena nombre y contraseña"); return; }
   
+  if (currentUser.role === "user") {
+    const subusersCount = users.filter(u => u.createdBy === currentUser.username).length;
+    const existing = users.find(u => u.username.toLowerCase() === name.toLowerCase());
+    if (!existing && subusersCount >= 2) {
+      showAlert("Límite alcanzado: Solo puedes crear 2 sub-usuarios.");
+      return;
+    }
+  }
+  
   const existing = users.find(u => u.username.toLowerCase() === name.toLowerCase());
   if (existing) {
+    if (existing.role === "superadmin" && currentUser.role !== "superadmin") {
+      showAlert("No tienes permiso para editar este usuario.");
+      return;
+    }
     existing.password = pass;
     existing.role = role;
     showAlert("Usuario actualizado.");
   } else {
-    users.push({ username: name, password: pass, role: role });
+    users.push({ username: name, password: pass, role: role, createdBy: currentUser.username });
     showAlert("Usuario creado.");
   }
   saveUsers();
