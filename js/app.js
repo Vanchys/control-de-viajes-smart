@@ -13,24 +13,37 @@ const APP = {
 };
 
 // --- INICIO ---
-document.addEventListener("DOMContentLoaded", async () => {
-  try {
-    const statusEl = document.getElementById("loading-status");
-    APP.allData = await loadAllData((msg) => {
-      statusEl.textContent = msg;
-    });
-    statusEl.textContent = `${APP.allData.length} registros cargados. Preparando dashboard...`;
-    initFilters();
-    APP.filteredData = [...APP.allData];
-    renderAll();
-    document.getElementById("loading-screen").classList.add("hidden");
-    document.getElementById("last-update").textContent =
-      `Actualizado: ${new Date().toLocaleTimeString("es-MX")}`;
-  } catch (err) {
-    document.getElementById("loading-status").textContent =
-      `Error: ${err.message}`;
-  }
-  setupEvents();
+document.addEventListener("DOMContentLoaded", () => {
+  const loginForm = document.getElementById("login-form");
+  const loginScreen = document.getElementById("login-screen");
+  const loadingScreen = document.getElementById("loading-screen");
+
+  // Sistema de Login básico (sin validación por ahora)
+  loginForm.addEventListener("submit", async (e) => {
+    e.preventDefault(); // Evitar recarga de página
+    
+    // Ocultar login y mostrar pantalla de carga
+    loginScreen.classList.add("hidden");
+    loadingScreen.classList.remove("hidden");
+
+    try {
+      const statusEl = document.getElementById("loading-status");
+      APP.allData = await loadAllData((msg) => {
+        statusEl.textContent = msg;
+      });
+      statusEl.textContent = `${APP.allData.length} registros cargados. Preparando dashboard...`;
+      initFilters();
+      APP.filteredData = [...APP.allData];
+      renderAll();
+      loadingScreen.classList.add("hidden");
+      document.getElementById("last-update").textContent =
+        `Actualizado: ${new Date().toLocaleTimeString("es-MX")}`;
+    } catch (err) {
+      document.getElementById("loading-status").textContent =
+        `Error: ${err.message}`;
+    }
+    setupEvents();
+  });
 });
 
 // --- FILTROS ---
