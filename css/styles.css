@@ -176,6 +176,14 @@ td { padding: 10px; border-bottom: 1px solid var(--border-glass); white-space: n
 .badge-admin { background: rgba(45, 116, 180, 0.1); color: var(--accent-blue); }
 .badge-user { background: rgba(100, 116, 139, 0.1); color: var(--text-muted); }
 
+/* --- Tabs Ajustes --- */
+.tabs { display: flex; border-bottom: 1px solid var(--border-glass); margin-bottom: 15px; }
+.tab-btn { flex: 1; padding: 10px; background: transparent; border: none; border-bottom: 2px solid transparent; cursor: pointer; color: var(--text-secondary); font-weight: 600; font-size: 0.85rem; transition: var(--transition); }
+.tab-btn:hover { color: var(--accent-blue); background: rgba(45,116,180,0.05); }
+.tab-btn.active { border-bottom-color: var(--accent-blue); color: var(--accent-blue); }
+.tab-content { display: none; }
+.tab-content.active { display: block; }
+
 /* --- Footer --- */
 .app-footer { text-align: center; padding: 20px 0; color: var(--text-muted); font-size: 0.8rem; font-weight: 500; }
 

@@ -22,7 +22,9 @@
       <form id="login-form">
         <div class="input-group">
           <label for="username">Usuario</label>
-          <input type="text" id="username" placeholder="Ingresa tu usuario">
+          <select id="username" class="filter-input" style="width:100%; margin-bottom:5px;">
+            <option value="">Selecciona un usuario...</option>
+          </select>
         </div>
         <div class="input-group">
           <label for="password">Contraseña</label>
@@ -64,47 +66,15 @@
     </div>
   </header>
 
-  <!-- Modal de Ajustes (Usuarios) -->
+  <!-- Modal de Ajustes (Usuarios / Auditoría) -->
   <div id="settings-modal" class="modal hidden">
     <div class="modal-content">
       <div class="modal-header">
         <h2>Ajustes de Sistema</h2>
         <button id="btn-close-settings" class="btn-close">✖</button>
       </div>
-      <div class="modal-body">
-        <div class="admin-warning">
-          <span class="warning-icon">🔒</span>
-          <p>Módulo de Administración de Usuarios. (Próximamente se bloqueará con permisos).</p>
-        </div>
-
-        <h3>Usuarios Registrados</h3>
-        <div class="table-wrapper" style="margin-top: 10px;">
-          <table class="users-table">
-            <thead>
-              <tr>
-                <th>Usuario</th>
-                <th>Contraseña</th>
-                <th>Rol</th>
-                <th>Acciones</th>
-              </tr>
-            </thead>
-            <tbody>
-              <tr>
-                <td>admin</td>
-                <td>••••••••</td>
-                <td><span class="badge badge-admin">Administrador</span></td>
-                <td><button class="btn-tiny">Editar</button></td>
-              </tr>
-              <tr>
-                <td>operador1</td>
-                <td>••••••••</td>
-                <td><span class="badge badge-user">Normal</span></td>
-                <td><button class="btn-tiny">Editar</button></td>
-              </tr>
-            </tbody>
-          </table>
-        </div>
-        <button class="btn-primary" style="margin-top: 20px;">+ Nuevo Usuario</button>
+      <div class="modal-body" id="settings-modal-body">
+        <!-- Renderizado dinámicamente por auth.js -->
       </div>
     </div>
   </div>
@@ -247,8 +217,9 @@
   </div>
 
   <!-- JavaScript -->
-  <script src="js/data.js?v=4"></script>
-  <script src="js/app.js?v=4"></script>
+  <script src="js/auth.js?v=5"></script>
+  <script src="js/data.js?v=5"></script>
+  <script src="js/app.js?v=5"></script>
 </body>
 
 </html>
