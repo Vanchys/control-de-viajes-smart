@@ -370,9 +370,37 @@ body::before {
   align-items: center;
   gap: 8px;
 }
+.filter-title { display: inline-flex; align-items: center; gap: 6px; }
+.filter-handle {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  min-width: 34px;
+  height: 28px;
+  border-radius: 999px;
+  border: 1px solid rgba(255,255,255,0.14);
+  background: rgba(255,255,255,0.04);
+  color: rgba(255,255,255,0.8);
+}
+.filter-handle-icon { font-size: 1.05rem; line-height: 1; transform: translateY(-1px); }
 .filter-gear {
   opacity: 0.9;
   margin-right: 6px;
+}
+
+/* Fechas en 1 fila */
+.date-row {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 10px;
+}
+.date-field { display: flex; flex-direction: column; gap: 6px; }
+.date-subtitle {
+  font-size: 0.62rem;
+  font-weight: 700;
+  letter-spacing: 0.10em;
+  text-transform: uppercase;
+  color: rgba(255,255,255,0.55);
 }
 .filter-header h3 {
   font-family: var(--font-display);
@@ -394,6 +422,24 @@ body::before {
   letter-spacing: 0.1em;
 }
 .filter-group label span { color: var(--sidebar-muted) !important; }
+
+/* Delimitación de secciones (Fechas/Rutas/Unidades/Conductores) */
+#filters-panel .filter-group {
+  border: 1px solid rgba(255,255,255,0.10);
+  border-radius: 14px;
+  background:
+    radial-gradient(320px 160px at 15% 10%, rgba(45,116,180,0.12), transparent 62%),
+    rgba(255,255,255,0.03);
+  padding: 12px;
+  box-shadow: 0 1px 0 rgba(255,255,255,0.06) inset;
+}
+#filters-panel .filter-group:focus-within {
+  border-color: rgba(45,116,180,0.55);
+  box-shadow: 0 0 0 3px rgba(45,116,180,0.18), 0 1px 0 rgba(255,255,255,0.06) inset;
+}
+#filters-panel .filter-group > label {
+  margin-bottom: 10px;
+}
 
 .filter-input {
   width: 100%;
@@ -1226,8 +1272,10 @@ td strong { font-weight: 700; color: var(--brand-blue-deep); }
     position: sticky;
     bottom: 12px;
     z-index: 2;
+    box-shadow: 0 10px 24px rgba(14,34,53,0.35);
   }
   #filters-panel { padding-bottom: 78px; }
+  #filters-panel { overflow-y: auto; }
 
   /* Header: título izquierda, acciones derecha */
   #filters-panel .filter-header {
@@ -1243,6 +1291,8 @@ td strong { font-weight: 700; color: var(--brand-blue-deep); }
     margin-right: auto;
     text-align: left;
   }
+  #filters-panel .filter-header h3.filter-title { margin-right: auto; }
+  #filters-panel .filter-handle { margin: 0 6px; border-color: rgba(255,255,255,0.20); }
   #filters-panel .filter-header-actions { margin-left: auto; }
   #filters-panel .filter-header-actions .btn-small {
     padding: 6px 10px;
@@ -1264,7 +1314,7 @@ td strong { font-weight: 700; color: var(--brand-blue-deep); }
 
   /* Compactar secciones y controles */
   #filters-panel .filter-header { margin-bottom: 12px; padding-bottom: 12px; }
-  #filters-panel .filter-group { margin-bottom: 12px; }
+  #filters-panel .filter-group { margin-bottom: 10px; padding: 10px; border-radius: 14px; }
   #filters-panel .filter-group label { margin-bottom: 6px; font-size: 0.64rem; letter-spacing: 0.09em; }
   #filters-panel .filter-input { padding: 9px 10px; font-size: 0.84rem; }
   #filters-panel .checkbox-list,
@@ -1275,6 +1325,28 @@ td strong { font-weight: 700; color: var(--brand-blue-deep); }
   #filters-panel .checkbox-item { padding: 8px 10px; font-size: 0.78rem; }
   #filters-panel .action-buttons { margin-top: 6px; }
   #filters-panel .btn-actions { padding: 6px 8px; font-size: 0.68rem; }
+}
+
+/* Botón 🚐 (abrir filtros) más visible en móvil */
+@media (max-width: 767px) {
+  #btn-toggle-filters.btn-icon {
+    width: 44px;
+    height: 44px;
+    border-radius: 12px;
+    border-color: rgba(45,116,180,0.30);
+    background: rgba(45,116,180,0.10);
+    color: #0E2235;
+    box-shadow: 0 6px 16px rgba(14,34,53,0.10);
+  }
+  #btn-toggle-filters.btn-icon:hover {
+    border-color: rgba(45,116,180,0.55);
+    background: rgba(45,116,180,0.14);
+  }
+  /* Forzar orientación hacia la derecha */
+  #btn-toggle-filters .truck-icon {
+    display: inline-block;
+    transform: scaleX(-1);
+  }
 }
 
 /* Cuando filtros están abiertos, bloquear scroll del dashboard */

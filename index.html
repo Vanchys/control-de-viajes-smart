@@ -13,7 +13,7 @@
   <script>
     // Versión centralizada (actualiza aquí y se “cache-bustea” todo al recargar)
     // type: major | minor | patch | hotfix
-    window.SMART_DASHBOARD_RELEASE = { version: "20.0.2", type: "hotfix" };
+    window.SMART_DASHBOARD_RELEASE = { version: "20.0.5", type: "hotfix" };
     window.SMART_DASHBOARD_ASSET_V = `${window.SMART_DASHBOARD_RELEASE.version}-${window.SMART_DASHBOARD_RELEASE.type}`;
   </script>
   <script>
@@ -68,7 +68,7 @@
   <header id="main-header">
     <div class="header-left">
       <button id="btn-toggle-filters" class="btn-icon mobile-only">
-        <span aria-hidden="true">🚐</span>
+        <span class="truck-icon" aria-hidden="true">🚐</span>
       </button>
       <div class="logo">
         <img src="img/logo.png" alt="Logo" class="header-logo" onerror="this.style.display='none';">
@@ -109,7 +109,10 @@
     <!-- Panel de filtros lateral -->
     <aside id="filters-panel">
       <div class="filter-header">
-        <h3><span class="filter-gear">⚙️</span> Filtros</h3>
+        <h3 class="filter-title"><span class="filter-gear">⚙️</span> Filtros</h3>
+        <div class="filter-handle" aria-hidden="true" title="Desliza hacia abajo para cerrar">
+          <span class="filter-handle-icon">⌄</span>
+        </div>
         <div class="filter-header-actions">
           <button id="btn-clear-filters" class="btn-small">Limpiar</button>
           <button id="btn-close-filters" class="btn-small" title="Cerrar filtros">Cerrar</button>
@@ -121,8 +124,16 @@
           <label for="filter-date-from" style="margin-bottom:0;">📅 Fechas</label>
           <button id="btn-open-months" class="btn-tiny" style="color:var(--accent-blue); border-color:var(--accent-blue);">Meses</button>
         </div>
-        <input type="date" id="filter-date-from" class="filter-input" style="margin-bottom:8px;">
-        <input type="date" id="filter-date-to" class="filter-input">
+        <div class="date-row">
+          <div class="date-field">
+            <span class="date-subtitle">Inicio</span>
+            <input type="date" id="filter-date-from" class="filter-input">
+          </div>
+          <div class="date-field">
+            <span class="date-subtitle">Fin</span>
+            <input type="date" id="filter-date-to" class="filter-input">
+          </div>
+        </div>
       </div>
 
       <div class="filter-group">
