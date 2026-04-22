@@ -13,7 +13,7 @@
   <script>
     // Versión centralizada (actualiza aquí y se “cache-bustea” todo al recargar)
     // type: major | minor | patch | hotfix
-    window.SMART_DASHBOARD_RELEASE = { version: "19.1.1", type: "hotfix" };
+    window.SMART_DASHBOARD_RELEASE = { version: "19.1.2", type: "hotfix" };
     window.SMART_DASHBOARD_ASSET_V = `${window.SMART_DASHBOARD_RELEASE.version}-${window.SMART_DASHBOARD_RELEASE.type}`;
   </script>
   <script>
@@ -47,7 +47,10 @@
         </div>
         <button type="submit" class="btn-primary">Entrar</button>
       </form>
-      <div class="developer-credit">Developed by Ivan Apolinar</div>
+      <div class="developer-credit">
+        Developed by Ivan Apolinar
+        <div id="login-version" style="margin-top:8px; letter-spacing:0.08em;"></div>
+      </div>
     </div>
   </div>
 
