@@ -112,8 +112,10 @@ body {
 .filter-group { margin-bottom: 15px; }
 .filter-group label { display: block; font-size: 0.8rem; font-weight: 600; color: var(--text-secondary); margin-bottom: 5px; }
 .filter-input { width: 100%; padding: 10px; border: 1px solid var(--border-glass); border-radius: var(--radius-sm); font-size: 0.9rem; }
-.checkbox-list { max-height: 150px; overflow-y: auto; padding: 5px; border: 1px solid var(--border-glass); border-radius: var(--radius-sm); }
-.checkbox-item { display: flex; align-items: center; gap: 8px; font-size: 0.85rem; padding: 4px 0; }
+.checkbox-list { overflow-y: auto; padding: 8px; border: 1px solid var(--border-glass); border-radius: var(--radius-sm); }
+#filter-route-container { max-height: 150px; }
+#filter-units-container { max-height: 250px; column-width: 65px; column-gap: 15px; }
+.checkbox-item { break-inside: avoid; display: flex; align-items: center; gap: 8px; font-size: 0.85rem; padding: 3px 0; }
 .btn-primary { width: 100%; background: var(--gradient-primary); color: white; border: none; padding: 12px; border-radius: var(--radius-sm); font-weight: 600; font-size: 0.95rem; cursor: pointer; }
 .btn-tiny { background: transparent; border: 1px solid var(--border-glass); padding: 4px 8px; border-radius: 4px; font-size: 0.75rem; cursor: pointer; }
 .btn-small { background: transparent; border: 1px solid var(--border-glass); padding: 6px 12px; border-radius: 4px; font-size: 0.85rem; cursor: pointer; }
@@ -124,16 +126,14 @@ body {
 .mobile-stats-header { text-align: right; margin-bottom: 15px; font-size: 0.8rem; color: var(--text-muted); }
 
 /* --- KPIs --- */
-#kpis-section { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin-bottom: 20px; }
-.kpi-card { background: var(--bg-card); padding: 15px; border-radius: var(--radius-md); border: 1px solid var(--border-glass); display: flex; align-items: center; gap: 12px; position: relative; overflow: hidden; box-shadow: var(--shadow-card); }
+#kpis-section { display: grid; grid-template-columns: repeat(3, 1fr); gap: 6px; margin-bottom: 20px; }
+.kpi-card { background: var(--bg-card); padding: 12px 5px; border-radius: var(--radius-md); border: 1px solid var(--border-glass); display: flex; flex-direction: column; align-items: center; justify-content: center; position: relative; overflow: hidden; box-shadow: var(--shadow-card); text-align: center; }
 .kpi-card::before { content:''; position:absolute; left:0; top:0; width:4px; height:100%; }
 #kpi-bruto::before { background: var(--gradient-primary); }
 #kpi-neto::before { background: var(--gradient-green); }
-#kpi-passengers::before { background: var(--accent-yellow); }
 #kpi-voucher::before { background: var(--accent-orange); }
-.kpi-icon { font-size: 1.5rem; }
-.kpi-value { font-size: 1.1rem; font-weight: 700; display: block; color: var(--text-primary); }
-.kpi-label { font-size: 0.65rem; color: var(--text-secondary); text-transform: uppercase; font-weight: 600; }
+.kpi-value { font-size: 0.95rem; font-weight: 800; display: block; color: var(--text-primary); }
+.kpi-label { font-size: 0.65rem; color: var(--text-secondary); text-transform: uppercase; font-weight: 700; margin-top: 4px; }
 
 /* --- Analisis por Unidad --- */
 .analysis-section { background: var(--bg-card); padding: 15px; border-radius: var(--radius-md); border: 1px solid var(--border-glass); margin-bottom: 20px; box-shadow: var(--shadow-card); }

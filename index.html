@@ -7,7 +7,7 @@
   <meta name="description" content="Dashboard de control operativo para rutas de transporte Smart">
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
-  <link rel="stylesheet" href="css/styles.css?v=2">
+  <link rel="stylesheet" href="css/styles.css?v=3">
 </head>
 <body>
   <!-- Pantalla de Login -->
@@ -125,16 +125,17 @@
       </div>
 
       <div class="filter-group">
-        <label>🗺️ Ruta</label>
-        <select id="filter-route" class="filter-input">
-          <option value="all">Todas las rutas</option>
-          <option value="Teh-Pue">Tehuacán → Puebla</option>
-          <option value="Pue-Teh">Puebla → Tehuacán</option>
-          <option value="Teh-Pue-both">Teh ↔ Pue (ambas)</option>
-          <option value="Teh-Mex">Tehuacán → CDMX</option>
-          <option value="Mex-Teh">CDMX → Tehuacán</option>
-          <option value="Teh-Mex-both">Teh ↔ CDMX (ambas)</option>
-        </select>
+        <label>🗺️ Rutas</label>
+        <div id="filter-route-container" class="checkbox-list">
+          <label class="checkbox-item"><input type="checkbox" value="Teh-Pue" checked> Teh → Pue</label>
+          <label class="checkbox-item"><input type="checkbox" value="Pue-Teh" checked> Pue → Teh</label>
+          <label class="checkbox-item"><input type="checkbox" value="Teh-Mex" checked> Teh → CDMX</label>
+          <label class="checkbox-item"><input type="checkbox" value="Mex-Teh" checked> CDMX → Teh</label>
+        </div>
+        <div class="unit-actions">
+          <button id="btn-select-all-routes" class="btn-tiny">Todas</button>
+          <button id="btn-deselect-all-routes" class="btn-tiny">Ninguna</button>
+        </div>
       </div>
 
       <div class="filter-group">
@@ -165,34 +166,24 @@
         <span id="last-update" class="last-update"></span>
       </div>
 
-      <!-- KPI Cards (Simplificadas para móvil) -->
+      <!-- KPI Cards (Simplificadas en 1 fila) -->
       <section id="kpis-section">
         <div class="kpi-card" id="kpi-bruto">
-          <div class="kpi-icon">💰</div>
           <div class="kpi-content">
             <span class="kpi-value" id="kpi-bruto-value">$0</span>
-            <span class="kpi-label">Total BRUTO</span>
+            <span class="kpi-label">BRUTO</span>
           </div>
         </div>
         <div class="kpi-card" id="kpi-neto">
-          <div class="kpi-icon">📈</div>
           <div class="kpi-content">
             <span class="kpi-value" id="kpi-neto-value">$0</span>
-            <span class="kpi-label">Total NETO</span>
-          </div>
-        </div>
-        <div class="kpi-card" id="kpi-passengers">
-          <div class="kpi-icon">👥</div>
-          <div class="kpi-content">
-            <span class="kpi-value" id="kpi-passengers-value">0</span>
-            <span class="kpi-label">Pasajeros</span>
+            <span class="kpi-label">NETO</span>
           </div>
         </div>
         <div class="kpi-card" id="kpi-voucher">
-          <div class="kpi-icon">🎫</div>
           <div class="kpi-content">
             <span class="kpi-value" id="kpi-voucher-value">$0</span>
-            <span class="kpi-label">Voucher</span>
+            <span class="kpi-label">VOUCHER</span>
           </div>
         </div>
       </section>
@@ -246,7 +237,7 @@
   </div>
 
   <!-- JavaScript -->
-  <script src="js/data.js?v=2"></script>
-  <script src="js/app.js?v=2"></script>
+  <script src="js/data.js?v=3"></script>
+  <script src="js/app.js?v=3"></script>
 </body>
 </html>

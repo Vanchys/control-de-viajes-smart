@@ -45,7 +45,13 @@ document.addEventListener("DOMContentLoaded", () => {
 
 // --- FILTROS Y EVENTOS ---
 function initFilters() {
-  const units = [...new Set(APP.allData.map((r) => r.unidad))].sort();
+  const units = [...new Set(APP.allData.map((r) => r.unidad))]
+    .sort((a, b) => {
+      const numA = parseInt(a);
+      const numB = parseInt(b);
+      if (!isNaN(numA) && !isNaN(numB)) return numA - numB;
+      return a.localeCompare(b);
+    });
   const drivers = [...new Set(APP.allData.map((r) => r.conductor))].sort();
   const dates = APP.allData.map((r) => r.fecha).filter(Boolean);
   const minDate = new Date(Math.min(...dates));
@@ -71,17 +77,13 @@ function initFilters() {
 function getFilteredData() {
   const dateFrom = new Date(document.getElementById("filter-date-from").value + "T00:00:00");
   const dateTo = new Date(document.getElementById("filter-date-to").value + "T23:59:59");
-  const route = document.getElementById("filter-route").value;
+  const checkedRoutes = [...document.querySelectorAll("#filter-route-container input:checked")].map((cb) => cb.value);
   const driver = document.getElementById("filter-driver").value;
   const checkedUnits = [...document.querySelectorAll("#filter-units-container input:checked")].map((cb) => cb.value);
 
   return APP.allData.filter((r) => {
     if (r.fecha < dateFrom || r.fecha > dateTo) return false;
-    if (route !== "all") {
-      if (route === "Teh-Pue-both" && r.ruta !== "Teh-Pue" && r.ruta !== "Pue-Teh") return false;
-      if (route === "Teh-Mex-both" && r.ruta !== "Teh-Mex" && r.ruta !== "Mex-Teh") return false;
-      if (!route.includes("both") && r.ruta !== route) return false;
-    }
+    if (!checkedRoutes.includes(r.ruta)) return false;
     if (driver !== "all" && r.conductor !== driver) return false;
     if (!checkedUnits.includes(r.unidad)) return false;
     return true;
@@ -119,12 +121,19 @@ function setupEvents() {
   });
 
   document.getElementById("btn-clear-filters").addEventListener("click", () => {
-    document.getElementById("filter-route").value = "all";
+    document.querySelectorAll("#filter-route-container input").forEach((cb) => { cb.checked = true; });
     document.getElementById("filter-driver").value = "all";
     document.querySelectorAll("#filter-units-container input").forEach((cb) => { cb.checked = true; });
     APP.filteredData = [...APP.allData];
     APP.currentPage = 1;
     renderAll();
+  });
+
+  document.getElementById("btn-select-all-routes").addEventListener("click", () => {
+    document.querySelectorAll("#filter-route-container input").forEach((cb) => { cb.checked = true; });
+  });
+  document.getElementById("btn-deselect-all-routes").addEventListener("click", () => {
+    document.querySelectorAll("#filter-route-container input").forEach((cb) => { cb.checked = false; });
   });
 
   document.getElementById("btn-select-all-units").addEventListener("click", () => {
@@ -180,12 +189,10 @@ function renderKPIs() {
   const d = APP.filteredData;
   const bruto = d.reduce((s, r) => s + r.totalBruto, 0);
   const neto = d.reduce((s, r) => s + r.totalNeto, 0);
-  const pax = d.reduce((s, r) => s + r.totalPasajeros, 0);
   const voucher = d.reduce((s, r) => s + r.voucher, 0);
 
   document.getElementById("kpi-bruto-value").textContent = formatMoney(bruto);
   document.getElementById("kpi-neto-value").textContent = formatMoney(neto);
-  document.getElementById("kpi-passengers-value").textContent = pax.toLocaleString("es-MX");
   document.getElementById("kpi-voucher-value").textContent = formatMoney(voucher);
 }
 
@@ -206,8 +213,12 @@ function renderUnitAnalysis() {
   }, { neto: 0, bruto: 0, trips: 0, pax: 0, voucher: 0 });
 
   // Tarjeta COMBINADA (muy importante)
+  let desc = `Suma total basada en tus filtros actuales de ${totals.trips} viajes en ${sorted.length} unidades.`;
   let html = `<div class="unit-summary-card" style="border-color: var(--accent-blue); background: rgba(45, 116, 180, 0.03);">
-    <div class="unit-card-header"><h4>📊 TOTAL COMBINADO (${sorted.length} u.)</h4><span>${totals.trips} viajes</span></div>
+    <div class="unit-card-header" style="flex-direction:column; align-items:flex-start; gap:4px;">
+      <div style="display:flex; justify-content:space-between; width:100%;"><h4>📊 TOTAL COMBINADO</h4><span>${totals.trips} viajes</span></div>
+      <span style="font-size:0.7rem; color:var(--text-muted);">${desc}</span>
+    </div>
     <div class="unit-card-stats">
       <div class="unit-stat"><span class="unit-stat-value">${formatMoney(totals.bruto)}</span><span class="unit-stat-label">BRUTO</span></div>
       <div class="unit-stat"><span class="unit-stat-value ${totals.neto >= 0 ? "positive" : "negative"}">${formatMoney(totals.neto)}</span><span class="unit-stat-label">NETO</span></div>
