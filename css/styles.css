@@ -226,7 +226,7 @@ body::before {
 .splash-container h2 {
   font-family: var(--font-display);
   font-weight: 500;
-  font-style: italic;
+  font-style: normal;
   color: var(--brand-blue-deep);
   font-size: 1.35rem;
   letter-spacing: 0.02em;
@@ -621,9 +621,9 @@ body::before {
   letter-spacing: 0.14em;
 }
 .kpi-value {
-  font-family: var(--font-display);
+  font-family: var(--font-mono);
   font-weight: 600;
-  font-variation-settings: "opsz" 144;
+  font-variation-settings: normal;
   font-size: clamp(1.5rem, 5vw, 2.4rem);
   line-height: 1;
   letter-spacing: -0.02em;
@@ -703,9 +703,9 @@ body::before {
 }
 .unit-stat:hover { border-color: #D5DDE5; background: #FFFFFF; }
 .unit-stat-value {
-  font-family: var(--font-display);
+  font-family: var(--font-mono);
   font-weight: 600;
-  font-variation-settings: "opsz" 72;
+  font-variation-settings: normal;
   font-size: 1.05rem;
   color: var(--text-primary);
   display: block;
@@ -788,9 +788,22 @@ table {
   border-collapse: collapse;
   font-size: 0.82rem;
   font-variant-numeric: tabular-nums lining-nums;
+  font-family: var(--font-sans);
 }
 table td {
   font-feature-settings: "tnum" 1, "lnum" 1;
+}
+/* En tabla, números más “serios” (monospace) sin afectar nombres/rutas */
+#data-table td:nth-child(5),
+#data-table td:nth-child(6),
+#data-table td:nth-child(7),
+#data-table td:nth-child(8),
+#data-table td:nth-child(9),
+#data-table td:nth-child(10),
+#data-table td:nth-child(11),
+#data-table td:nth-child(12),
+#data-table td:nth-child(13) {
+  font-family: var(--font-mono);
 }
 thead th {
   background: linear-gradient(180deg, #F8FAFB, #F0F4FA);
@@ -854,6 +867,7 @@ td strong { font-weight: 700; color: var(--brand-blue-deep); }
   font-weight: 700;
   color: var(--text-primary);
   font-variant-numeric: tabular-nums;
+  font-family: var(--font-mono);
   padding: 0 6px;
 }
 
@@ -1111,6 +1125,43 @@ td strong { font-weight: 700; color: var(--brand-blue-deep); }
   .analysis-section, .table-section { padding: 28px 28px; }
 }
 
+/* =================  MOBILE FILTERS — bottom sheet (≤767px)  ================= */
+@media (max-width: 767px) {
+  #filters-panel {
+    top: auto;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    width: 100%;
+    height: auto;
+    max-height: 78vh;
+    transform: translateY(105%);
+    transition: transform 320ms var(--ease);
+    border-right: none;
+    border-top: 1px solid var(--sidebar-border);
+    border-radius: 18px 18px 0 0;
+    padding: 18px 16px 88px;
+  }
+  #filters-panel.open {
+    transform: translateY(0);
+  }
+  /* “handle” visual */
+  #filters-panel .filter-header::before {
+    content: "";
+    display: block;
+    width: 44px;
+    height: 4px;
+    border-radius: 999px;
+    background: rgba(255,255,255,0.22);
+    margin: -6px auto 14px;
+  }
+
+  /* Botón aplicar fijo al fondo del sheet (más intuitivo) */
+  #filters-panel #btn-apply-filters {
+    position: sticky;
+    bottom: 10px;
+  }
+}
 @media (min-width: 1100px) {
   #kpis-section { grid-template-columns: repeat(3, 1fr); }
 }
