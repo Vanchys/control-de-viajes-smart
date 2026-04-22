@@ -9,7 +9,7 @@
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap"
     rel="stylesheet">
-  <link rel="stylesheet" href="css/styles.css?v=13">
+  <link rel="stylesheet" href="css/styles.css?v=14">
 </head>
 
 <body>
@@ -120,12 +120,20 @@
 
       <div class="filter-group">
         <label>🚌 Unidades <span style="font-size:0.7rem; color:var(--text-muted); font-weight:normal;">(Desliza ➡️)</span></label>
-        <div id="filter-units-container" class="scroll-x-list"></div>
+        <div id="filter-units-container" class="scroll-x-grid-5"></div>
+        <div class="unit-actions action-buttons">
+          <button id="btn-select-all-units" class="btn-actions">Todas</button>
+          <button id="btn-deselect-all-units" class="btn-actions">Ninguna</button>
+        </div>
       </div>
 
       <div class="filter-group">
         <label>👤 Conductores <span style="font-size:0.7rem; color:var(--text-muted); font-weight:normal;">(Desliza ➡️)</span></label>
-        <div id="filter-driver-container" class="scroll-x-list"></div>
+        <div id="filter-driver-container" class="scroll-x-grid-4"></div>
+        <div class="unit-actions action-buttons">
+          <button id="btn-select-all-drivers" class="btn-actions">Todos</button>
+          <button id="btn-deselect-all-drivers" class="btn-actions">Ninguno</button>
+        </div>
       </div>
 
       <button id="btn-apply-filters" class="btn-primary">Aplicar Filtros</button>
@@ -246,9 +254,9 @@
   </div>
 
   <!-- JavaScript -->
-  <script src="js/auth.js?v=13"></script>
-  <script src="js/data.js?v=13"></script>
-  <script src="js/app.js?v=13"></script>
+  <script src="js/auth.js?v=14"></script>
+  <script src="js/data.js?v=14"></script>
+  <script src="js/app.js?v=14"></script>
 </body>
 
 </html>

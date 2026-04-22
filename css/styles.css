@@ -235,20 +235,26 @@ td { padding: 10px; border-bottom: 1px solid var(--border-glass); white-space: n
 .month-btn.active-month { background: var(--accent-blue); color: white; border-color: var(--accent-blue); }
 .disabled-month { opacity: 0.4; cursor: not-allowed; background: var(--bg-secondary); border-color: transparent !important; color: var(--text-muted); }
 
-/* --- Listas Horizontales Deslizables --- */
-.scroll-x-list {
-  display: flex;
+/* --- Listas Horizontales Multi-fila --- */
+.scroll-x-grid-4, .scroll-x-grid-5 {
+  display: grid;
+  grid-auto-columns: max-content;
+  grid-auto-flow: column;
+  gap: 8px;
   overflow-x: auto;
-  gap: 10px;
-  padding: 5px;
+  padding-bottom: 8px;
   -webkit-overflow-scrolling: touch;
+  scrollbar-width: none;
+  background: var(--bg-primary);
   border: 1px solid var(--border-glass);
   border-radius: var(--radius-sm);
-  background: var(--bg-primary);
-  scrollbar-width: none;
+  padding: 8px;
 }
-.scroll-x-list::-webkit-scrollbar { display: none; }
-.scroll-x-list .checkbox-item {
+.scroll-x-grid-4 { grid-template-rows: repeat(4, auto); }
+.scroll-x-grid-5 { grid-template-rows: repeat(5, auto); }
+.scroll-x-grid-4::-webkit-scrollbar, .scroll-x-grid-5::-webkit-scrollbar { display: none; }
+
+.checkbox-item {
   white-space: nowrap;
   background: var(--bg-secondary);
   padding: 6px 12px;

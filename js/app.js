@@ -20,11 +20,11 @@ window.showAlert = function(message) {
     msgEl.innerHTML = message.replace(/\n/g, "<br>");
     modal.classList.remove("hidden");
     
-    // Auto-ocultar a los medio segundo
+    // Auto-ocultar a los 3/4 de segundo
     if (alertTimeout) clearTimeout(alertTimeout);
     alertTimeout = setTimeout(() => {
       modal.classList.add("hidden");
-    }, 500);
+    }, 750);
   }
 };
 
@@ -119,14 +119,7 @@ function initFilters() {
   document.querySelectorAll("#filter-route-container input").forEach(cb => cb.checked = false);
 
   const container = document.getElementById("filter-units-container");
-  let unitHtml = `<label class="checkbox-item"><input type="checkbox" id="unit-all" value="all" checked> Todas</label>`;
-  unitHtml += units.map((u) => `<label class="checkbox-item"><input type="checkbox" class="unit-cb" value="${u}"> ${u}</label>`).join("");
-  container.innerHTML = unitHtml;
-
-  const unitAll = document.getElementById("unit-all");
-  const unitCbs = document.querySelectorAll(".unit-cb");
-  unitAll.addEventListener("change", (e) => { if(e.target.checked) unitCbs.forEach(cb => cb.checked = false); });
-  unitCbs.forEach(cb => { cb.addEventListener("change", () => { if(cb.checked) unitAll.checked = false; }); });
+  container.innerHTML = units.map((u) => `<label class="checkbox-item"><input type="checkbox" class="unit-cb" value="${u}"> ${u}</label>`).join("");
 
   const driverContainer = document.getElementById("filter-driver-container");
   if(driverContainer) {
@@ -146,16 +139,13 @@ function getFilteredData() {
   const dt = document.getElementById("filter-date-to").value;
   
   const checkedRoutes = [...document.querySelectorAll("#filter-route-container input:checked")].map((cb) => cb.value);
-  
-  const unitAllChecked = document.getElementById("unit-all")?.checked;
   const checkedUnits = [...document.querySelectorAll(".unit-cb:checked")].map((cb) => cb.value);
   
   const driverAllChecked = document.getElementById("driver-all")?.checked;
   const checkedDrivers = [...document.querySelectorAll(".driver-cb:checked")].map((cb) => cb.value);
 
-  // Todo vacío = nada (excepto si están en "Todos")
-  if (!df || !dt || checkedRoutes.length === 0) return [];
-  if (!unitAllChecked && checkedUnits.length === 0) return [];
+  // Todo vacío = nada (excepto si están en "Todos" los conductores)
+  if (!df || !dt || checkedRoutes.length === 0 || checkedUnits.length === 0) return [];
   if (!driverAllChecked && checkedDrivers.length === 0) return [];
 
   const dateFrom = new Date(df + "T00:00:00");
@@ -164,7 +154,7 @@ function getFilteredData() {
   return APP.allData.filter((r) => {
     if (r.fecha < dateFrom || r.fecha > dateTo) return false;
     if (!checkedRoutes.includes(r.ruta)) return false;
-    if (!unitAllChecked && !checkedUnits.includes(r.unidad)) return false;
+    if (!checkedUnits.includes(r.unidad)) return false;
     if (!driverAllChecked && !checkedDrivers.includes(r.conductor)) return false;
     return true;
   });
@@ -212,6 +202,12 @@ function setupEvents() {
     document.querySelectorAll("#filter-route-container input").forEach((cb) => { cb.checked = false; });
     document.querySelectorAll("#filter-units-container input").forEach((cb) => { cb.checked = false; });
     document.querySelectorAll("#filter-driver-container input").forEach((cb) => { cb.checked = false; });
+    const driverAll = document.getElementById("driver-all");
+    if(driverAll) driverAll.checked = true;
+    
+    // Limpiar seleccion de meses
+    document.querySelectorAll('.month-btn').forEach(b => b.classList.remove("active-month"));
+    
     APP.filteredData = [];
     APP.currentPage = 1;
     renderAll();
@@ -219,6 +215,20 @@ function setupEvents() {
 
   document.getElementById("btn-select-all-routes").addEventListener("click", () => { document.querySelectorAll("#filter-route-container input").forEach((cb) => { cb.checked = true; }); });
   document.getElementById("btn-deselect-all-routes").addEventListener("click", () => { document.querySelectorAll("#filter-route-container input").forEach((cb) => { cb.checked = false; }); });
+  
+  document.getElementById("btn-select-all-units").addEventListener("click", () => { document.querySelectorAll(".unit-cb").forEach((cb) => { cb.checked = true; }); });
+  document.getElementById("btn-deselect-all-units").addEventListener("click", () => { document.querySelectorAll(".unit-cb").forEach((cb) => { cb.checked = false; }); });
+  
+  document.getElementById("btn-select-all-drivers").addEventListener("click", () => { 
+    document.querySelectorAll(".driver-cb").forEach((cb) => { cb.checked = true; }); 
+    const driverAll = document.getElementById("driver-all");
+    if(driverAll) driverAll.checked = false;
+  });
+  document.getElementById("btn-deselect-all-drivers").addEventListener("click", () => { 
+    document.querySelectorAll(".driver-cb").forEach((cb) => { cb.checked = false; }); 
+    const driverAll = document.getElementById("driver-all");
+    if(driverAll) driverAll.checked = true; // Si no hay nada, asumo que prefiere "Todos"
+  });
 
   document.getElementById("btn-refresh").addEventListener("click", async () => {
     const syncStatus = document.getElementById("header-sync-status");
@@ -415,22 +425,20 @@ function setupMonthPicker() {
   
   if(!grid.dataset.listener) {
     grid.dataset.listener = "true";
-    let lastTap = 0;
     
     grid.addEventListener("click", (e) => {
       if (e.target.classList.contains("month-btn")) {
         const btn = e.target;
         if (btn.classList.contains("disabled-month")) {
           showAlert("❌ No hay información cargada para este mes.");
+          const old = btn.innerHTML;
           btn.innerHTML = "❌";
-          setTimeout(() => btn.innerHTML = monthNames[btn.dataset.month], 1500);
+          setTimeout(() => btn.innerHTML = old, 1500);
           return;
         }
         
-        const currentTime = new Date().getTime();
-        const tapLength = currentTime - lastTap;
-        
-        if (tapLength < 500 && tapLength > 0) {
+        if (btn.classList.contains("active-month")) {
+          // Segundo toque: Confirmar y cargar
           const m = parseInt(btn.dataset.month);
           const firstDay = new Date(latestYear, m, 1);
           const lastDay = new Date(latestYear, m + 1, 0);
@@ -444,14 +452,11 @@ function setupMonthPicker() {
           document.getElementById("filter-date-from").value = fmt(firstDay);
           document.getElementById("filter-date-to").value = fmt(lastDay);
           
+          modal.classList.add("hidden");
+        } else {
+          // Primer toque: Solo seleccionar
           document.querySelectorAll('.month-btn').forEach(b => b.classList.remove("active-month"));
           btn.classList.add("active-month");
-          modal.classList.add("hidden");
-          lastTap = 0;
-        } else {
-          lastTap = currentTime;
-          document.querySelectorAll('.month-btn').forEach(b => b.style.borderColor = "");
-          btn.style.borderColor = "var(--accent-blue)";
         }
       }
     });
