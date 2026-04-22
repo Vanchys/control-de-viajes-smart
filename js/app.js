@@ -27,6 +27,11 @@ document.addEventListener("DOMContentLoaded", () => {
   const loginScreen = document.getElementById("login-screen");
   const loadingScreen = document.getElementById("loading-screen");
 
+  // Botón OK de la alerta (Debe estar activo SIEMPRE desde el inicio)
+  document.getElementById("btn-alert-ok").addEventListener("click", () => {
+    document.getElementById("custom-alert-modal").classList.add("hidden");
+  });
+
   // Sistema de Login con Autenticación (auth.js)
   loginForm.addEventListener("submit", async (e) => {
     e.preventDefault();
@@ -156,11 +161,6 @@ function setupEvents() {
   });
   document.getElementById("btn-close-settings").addEventListener("click", () => {
     settingsModal.classList.add("hidden");
-  });
-
-  // Botón OK de la alerta personalizada
-  document.getElementById("btn-alert-ok").addEventListener("click", () => {
-    document.getElementById("custom-alert-modal").classList.add("hidden");
   });
 
   // Filtros aplicados
