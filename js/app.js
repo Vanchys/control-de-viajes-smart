@@ -17,11 +17,29 @@ document.addEventListener("DOMContentLoaded", () => {
   const loginScreen = document.getElementById("login-screen");
   const loadingScreen = document.getElementById("loading-screen");
 
-  // Sistema de Login básico
+  // Sistema de Login con Autenticación (auth.js)
   loginForm.addEventListener("submit", async (e) => {
     e.preventDefault(); // Evitar recarga de página
     
+    const userSel = document.getElementById("username").value;
+    const passVal = document.getElementById("password").value;
+    
+    if (!userSel) { alert("Selecciona un usuario."); return; }
+    
+    const user = users.find(u => u.username === userSel);
+    if (!user || user.password !== passVal) {
+      alert("Contraseña incorrecta.");
+      return;
+    }
+    
+    // Guardar sesión globalmente
+    currentUser = { ...user, passwordUsed: passVal };
+    logAction("Inicio de Sesión", "Ingreso exitoso.");
+    resetSessionTimer();
+
     loginScreen.classList.add("hidden");
+    document.getElementById("main-header").style.display = "flex";
+    document.getElementById("app-container").style.display = "flex";
     loadingScreen.classList.remove("hidden");
 
     try {
@@ -106,7 +124,7 @@ function setupEvents() {
   // Settings Modal (Engranaje)
   const settingsModal = document.getElementById("settings-modal");
   document.getElementById("btn-settings").addEventListener("click", () => {
-    settingsModal.classList.remove("hidden");
+    openSettingsModal(); // Lógica dinámica dependiendo del rol
   });
   document.getElementById("btn-close-settings").addEventListener("click", () => {
     settingsModal.classList.add("hidden");
@@ -117,6 +135,12 @@ function setupEvents() {
     APP.filteredData = getFilteredData();
     APP.currentPage = 1;
     renderAll();
+    
+    // Registro de auditoría
+    const routes = [...document.querySelectorAll("#filter-route-container input:checked")].map(cb=>cb.value).join(", ");
+    const driver = document.getElementById("filter-driver").value;
+    logAction("Filtros Aplicados", `Rutas: [${routes}] | Conductor: ${driver}`);
+
     if (window.innerWidth < 768) toggleSidebar(); // Cerrar sidebar en móvil al aplicar
   });
 
