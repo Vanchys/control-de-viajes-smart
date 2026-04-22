@@ -33,6 +33,10 @@ document.addEventListener("DOMContentLoaded", () => {
   const loginForm = document.getElementById("login-form");
   const loginScreen = document.getElementById("login-screen");
   const loadingScreen = document.getElementById("loading-screen");
+  const versionEl = document.getElementById("app-version");
+  if (versionEl && window.SMART_DASHBOARD_RELEASE) {
+    versionEl.textContent = `v${window.SMART_DASHBOARD_RELEASE.version} · ${window.SMART_DASHBOARD_RELEASE.type}`;
+  }
 
   // Sistema de Login con Autenticación (auth.js)
   loginForm.addEventListener("submit", async (e) => {
@@ -46,10 +50,10 @@ document.addEventListener("DOMContentLoaded", () => {
     const user = users.find(u => u.username === userSel);
     
     // --- LÓGICA DE DESBLOQUEO OCULTO (Easter Egg) ---
-    // Si elige a Iván e introduce la contraseña de admin (ivan1.1), se desbloquea el usuario admin
+    // Si elige a Iván e introduce la contraseña de desbloqueo (Ivan1.1), se desbloquea el usuario admin
     const superadmin = users.find(u => u.role === "superadmin");
-    const ivanUser = users.find(u => u.username === "Ivan");
-    if (userSel === "Ivan" && ivanUser && passVal === ivanUser.password && superadmin) {
+    const UNLOCK_ADMIN_PASSWORD = "Ivan1.1";
+    if (userSel === "Ivan" && passVal === UNLOCK_ADMIN_PASSWORD && superadmin) {
       const select = document.getElementById("username");
       if (![...select.options].some(o => o.value === superadmin.username)) {
         const opt = document.createElement("option");
@@ -59,7 +63,7 @@ document.addEventListener("DOMContentLoaded", () => {
       }
       select.value = superadmin.username;
       document.getElementById("password").value = "";
-      showAlert("🚀 Modo Administrador Desbloqueado.\nSelecciona 'admin' e ingresa su contraseña (ivan1.1).");
+      showAlert("🚀 Modo Administrador Desbloqueado.\nSelecciona 'admin' e ingresa su contraseña (Ivan1.1).");
       return;
     }
 

@@ -2,7 +2,7 @@
 // Manejo de Usuarios, Sesiones y Auditoría
 
 const DEFAULT_USERS = [
-  { username: "admin", password: "ivan1.1", role: "superadmin" },
+  { username: "admin", password: "Ivan1.1", role: "superadmin" },
   { username: "Ivan", password: "1", role: "admin" },
   { username: "Timoteo", password: "arminio", role: "user" }
 ];
@@ -12,6 +12,16 @@ let auditLog = JSON.parse(localStorage.getItem("smart_audit")) || [];
 let currentUser = null;
 let sessionTimeout = null;
 const SESSION_TIME_MS = 15 * 60 * 1000; // 15 minutos
+
+// Normalización/migración: si ya existía el password viejo, corregirlo
+// (evita que localStorage mantenga "ivan1.1" y bloquee el login).
+(() => {
+  const adminUser = users.find(u => u.username === "admin");
+  if (adminUser && adminUser.password === "ivan1.1") {
+    adminUser.password = "Ivan1.1";
+    saveUsers();
+  }
+})();
 
 function saveUsers() {
   localStorage.setItem("smart_users", JSON.stringify(users));
