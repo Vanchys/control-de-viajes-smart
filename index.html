@@ -9,7 +9,10 @@
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap"
     rel="stylesheet">
-  <link rel="stylesheet" href="css/styles.css?v=17">
+  <link rel="stylesheet" href="css/styles.css?v=18">
+  <!-- Librerías para PDF -->
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf-autotable/3.5.28/jspdf.plugin.autotable.min.js"></script>
 </head>
 
 <body>
@@ -181,7 +184,12 @@
       <!-- Tabla de datos (Simplificada para móvil) -->
       <section id="data-table-section" class="table-section">
         <div class="table-header">
-          <h3>📋 Detalle de Viajes</h3>
+          <div style="display: flex; justify-content: space-between; align-items: center; width: 100%;">
+            <h3>📋 Detalle de Viajes</h3>
+            <button id="btn-export-pdf" class="btn-small" style="color: var(--accent-blue); border-color: var(--accent-blue); display: flex; align-items: center; gap: 5px; padding: 4px 8px; font-size: 0.75rem;">
+              <span>📄</span> Descargar PDF
+            </button>
+          </div>
           <input type="text" id="table-search" placeholder="🔍 Filtrar por palabra o numero" class="search-input">
         </div>
         <div class="table-wrapper">
@@ -254,9 +262,9 @@
   </div>
 
   <!-- JavaScript -->
-  <script src="js/auth.js?v=17"></script>
-  <script src="js/data.js?v=17"></script>
-  <script src="js/app.js?v=17"></script>
+  <script src="js/auth.js?v=18"></script>
+  <script src="js/data.js?v=18"></script>
+  <script src="js/app.js?v=18"></script>
 </body>
 
 </html>

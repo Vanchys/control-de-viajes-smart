@@ -248,6 +248,33 @@ function setupEvents() {
     if(driverAll) driverAll.checked = true; // Si no hay nada, asumo que prefiere "Todos"
   });
 
+  const btnExport = document.getElementById("btn-export-pdf");
+  if (btnExport) {
+    let confirmMode = false;
+    btnExport.addEventListener("click", () => {
+      if (APP.filteredData.length === 0) {
+        showAlert("⚠️ Aplica filtros para descargar datos.");
+        return;
+      }
+      if (!confirmMode) {
+        confirmMode = true;
+        btnExport.innerHTML = "<span>❓</span> ¿Confirmar PDF?";
+        btnExport.style.backgroundColor = "rgba(45,116,180,0.1)";
+        setTimeout(() => {
+          confirmMode = false;
+          btnExport.innerHTML = "<span>📄</span> Descargar PDF";
+          btnExport.style.backgroundColor = "";
+        }, 3000);
+      } else {
+        confirmMode = false;
+        btnExport.innerHTML = "<span>📄</span> Descargar PDF";
+        btnExport.style.backgroundColor = "";
+        exportToPDF();
+      }
+    });
+  }
+
+
   document.getElementById("btn-refresh").addEventListener("click", async () => {
     const syncStatus = document.getElementById("header-sync-status");
     const syncText = document.getElementById("sync-text");
@@ -479,4 +506,43 @@ function setupMonthPicker() {
       }
     });
   }
+}
+
+function exportToPDF() {
+  const { jsPDF } = window.jspdf;
+  const doc = new jsPDF('l', 'pt');
+  
+  doc.setFontSize(18);
+  doc.setTextColor(45, 116, 180);
+  doc.text("SMART TRANSPORTS - REPORTE DE VIAJES", 40, 40);
+  
+  doc.setFontSize(10);
+  doc.setTextColor(100);
+  doc.text(`Generado por: ${currentUser.username} | Fecha: ${new Date().toLocaleString('es-MX')}`, 40, 60);
+
+  const head = [["Fecha", "Unidad", "Ruta", "Conductor", "Bruto", "Gastos", "Neto", "Voucher"]];
+  const body = APP.filteredData.map(r => [
+    r.fecha.toLocaleDateString('es-MX'),
+    r.unidad,
+    r.ruta,
+    r.conductor,
+    r.ventaBruto.toLocaleString('es-MX', {style:'currency', currency:'MXN'}),
+    r.gastos.toLocaleString('es-MX', {style:'currency', currency:'MXN'}),
+    r.neto.toLocaleString('es-MX', {style:'currency', currency:'MXN'}),
+    r.voucher
+  ]);
+
+  doc.autoTable({
+    head: head,
+    body: body,
+    startY: 80,
+    theme: 'grid',
+    styles: { fontSize: 8, cellPadding: 3 },
+    headStyles: { fillColor: [45, 116, 180], textColor: 255 },
+    alternateRowStyles: { fillColor: [245, 245, 245] }
+  });
+
+  doc.save(`Reporte_Viajes_${new Date().getTime()}.pdf`);
+  logAction("Descarga PDF", `Reporte generado con ${APP.filteredData.length} registros filtrados.`);
+  showAlert("✅ PDF generado y registrado en auditoría.");
 }
