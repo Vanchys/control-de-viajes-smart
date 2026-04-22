@@ -20,11 +20,11 @@ window.showAlert = function(message) {
     msgEl.innerHTML = message.replace(/\n/g, "<br>");
     modal.classList.remove("hidden");
     
-    // Auto-ocultar a los 3 segundos
+    // Auto-ocultar a los medio segundo
     if (alertTimeout) clearTimeout(alertTimeout);
     alertTimeout = setTimeout(() => {
       modal.classList.add("hidden");
-    }, 3000);
+    }, 500);
   }
 };
 
@@ -56,6 +56,17 @@ document.addEventListener("DOMContentLoaded", () => {
 
     loginScreen.classList.add("hidden");
     loadingScreen.classList.remove("hidden"); // Muestra splash animation
+
+    // Reiniciar y sincronizar animaciones visuales exactamente al dar click
+    const van = document.querySelector(".van-animation");
+    const bar = document.querySelector(".progress-bar-fill");
+    if (van && bar) {
+      van.style.animation = 'none';
+      bar.style.animation = 'none';
+      void van.offsetWidth; // Forzar reinicio del navegador
+      van.style.animation = 'drive 2s linear forwards';
+      bar.style.animation = 'progress 2s ease-in-out forwards';
+    }
 
     // Animación de 2 segundos
     setTimeout(async () => {
