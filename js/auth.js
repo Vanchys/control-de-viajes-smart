@@ -78,37 +78,23 @@ function openSettingsModal() {
   
   if (currentUser.role === "superadmin" || currentUser.role === "admin" || currentUser.role === "user") {
     let tabsHtml = `<div class="tabs">`;
-    tabsHtml += `<button class="tab-btn active" onclick="switchTab('users-tab', this)">Gestión de Usuarios</button>`;
+    tabsHtml += `<button class="tab-btn active" onclick="switchTab('myaccount-tab', this)">Cambiar Contraseña</button>`;
+    tabsHtml += `<button class="tab-btn" onclick="switchTab('users-tab', this)">Gestión de Usuarios</button>`;
     if (currentUser.role === "superadmin") {
       tabsHtml += `<button class="tab-btn" onclick="switchTab('audit-tab', this)">Registro de Actividad</button>`;
     }
-    tabsHtml += `<button class="tab-btn" onclick="switchTab('myaccount-tab', this)">Mi Cuenta</button>`;
     tabsHtml += `</div>`;
     
-    let visibleUsers = [];
     let roleOptions = "";
-    
+
     if (currentUser.role === "superadmin") {
-      visibleUsers = users;
       roleOptions = `<option value="user">Normal</option><option value="admin">Administrador</option>`;
     } else if (currentUser.role === "admin") {
-      visibleUsers = users.filter(u => u.role !== "superadmin");
       roleOptions = `<option value="user">Normal</option><option value="admin">Administrador</option>`;
     } else if (currentUser.role === "user") {
-      visibleUsers = users.filter(u => u.createdBy === currentUser.username);
       roleOptions = `<option value="subuser">Sub-Usuario</option>`;
     }
 
-    let usersHtml = visibleUsers.map((u) => {
-      let idx = users.findIndex(ux => ux.username === u.username);
-      let badge = u.role === "superadmin" ? "S-Admin" : (u.role === "admin" ? "Admin" : (u.role === "user" ? "User" : "SubUser"));
-      return `<tr>
-        <td>${u.username}</td>
-        <td>${u.password}</td>
-        <td><span class="badge badge-user">${badge}</span></td>
-        <td><button class="btn-tiny" onclick="deleteUser(${idx})">Eliminar</button></td>
-      </tr>`;
-    }).join("");
 
     let auditHtml = "";
     if (currentUser.role === "superadmin") {
@@ -135,28 +121,7 @@ function openSettingsModal() {
     }
 
     modalBody.innerHTML = tabsHtml + `
-      <div id="users-tab" class="tab-content active">
-        <div class="table-wrapper" style="margin-top: 10px;">
-          <table class="users-table" style="width: 100%; text-align: left;">
-            <thead><tr><th>Usuario</th><th>Contraseña</th><th>Rol</th><th>Acciones</th></tr></thead>
-            <tbody>${usersHtml}</tbody>
-          </table>
-        </div>
-        <div style="margin-top:15px; border-top:1px solid var(--border-soft); padding-top:15px;">
-          <h4 style="font-size:0.95rem; margin-bottom:10px; color:var(--text-primary);">Agregar / Editar Usuario</h4>
-          <input type="text" id="new-user-name" placeholder="Nombre" class="filter-input" style="margin-bottom:10px;">
-          <div class="password-wrapper" style="margin-bottom:10px;">
-            <input type="password" id="new-user-pass" placeholder="Contraseña" class="filter-input" style="background:#fff; width:100%;">
-            <button type="button" class="password-toggle" onclick="togglePasswordVisibility('new-user-pass', event)" title="Mostrar contraseña">👁️</button>
-          </div>
-          <select id="new-user-role" class="filter-input" style="margin-bottom:10px;">
-            ${roleOptions}
-          </select>
-          <button class="btn-primary" onclick="addOrUpdateUser()">Guardar Usuario</button>
-        </div>
-      </div>
-      ${auditHtml}
-      <div id="myaccount-tab" class="tab-content">
+      <div id="myaccount-tab" class="tab-content active">
         <div style="padding:10px 0 6px;">
           <p style="font-size:0.85rem; color:var(--text-secondary); margin-bottom:18px;">
             Sesión activa como <strong>${currentUser.username}</strong>
@@ -165,7 +130,7 @@ function openSettingsModal() {
           <label style="display:block; font-size:0.72rem; font-weight:700; text-transform:uppercase; letter-spacing:0.08em; color:var(--text-muted); margin-bottom:8px;">Nueva contraseña</label>
           <div class="password-wrapper" style="margin-bottom:10px;">
             <input type="password" id="my-new-pass" placeholder="Escribe tu nueva contraseña" class="filter-input" style="background:#fff; width:100%;">
-            <button type="button" class="password-toggle" onclick="togglePasswordVisibility('my-new-pass', event)" title="Mostrar contraseña">👁️</button>
+            <button type="button" class="password-toggle" onclick="togglePasswordVisibility('my-new-pass', event)">Mostrar Contraseña</button>
           </div>
           <button class="btn-primary" onclick="changeMyPassword()">Actualizar Contraseña</button>
           <div style="margin-top:20px; border-top:1px solid var(--border-soft); padding-top:16px;">
@@ -173,6 +138,21 @@ function openSettingsModal() {
           </div>
         </div>
       </div>
+      <div id="users-tab" class="tab-content">
+        <div style="margin-top:10px;">
+          <h4 style="font-size:0.95rem; margin-bottom:15px; color:var(--text-primary);">Agregar / Editar Usuario</h4>
+          <input type="text" id="new-user-name" placeholder="Nombre" class="filter-input" style="margin-bottom:10px;">
+          <div class="password-wrapper" style="margin-bottom:10px;">
+            <input type="password" id="new-user-pass" placeholder="Contraseña" class="filter-input" style="background:#fff; width:100%;">
+            <button type="button" class="password-toggle" onclick="togglePasswordVisibility('new-user-pass', event)">Mostrar Contraseña</button>
+          </div>
+          <select id="new-user-role" class="filter-input" style="margin-bottom:10px;">
+            ${roleOptions}
+          </select>
+          <button class="btn-primary" onclick="addOrUpdateUser()">Guardar Usuario</button>
+        </div>
+      </div>
+      ${auditHtml}
     `;
   } else {
     // Subuser — solo puede cambiar su propia contraseña
@@ -288,17 +268,14 @@ window.clearAudit = function() {
 
 window.togglePasswordVisibility = function(inputId, evt) {
   const input = document.getElementById(inputId);
-  const btn = evt?.target?.closest?.('.password-toggle') || document.querySelector(`[data-toggle-for="${inputId}"]`);
-  if (!input || !btn) return;
+  if (!input) return;
 
   if (input.type === 'password') {
     input.type = 'text';
-    btn.textContent = '👁️';
-    btn.title = 'Ocultar contraseña';
+    evt.target.textContent = 'Ocultar Contraseña';
   } else {
     input.type = 'password';
-    btn.textContent = '👁️';
-    btn.title = 'Mostrar contraseña';
+    evt.target.textContent = 'Mostrar Contraseña';
   }
   input.focus();
 }

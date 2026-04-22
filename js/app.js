@@ -250,27 +250,12 @@ function setupEvents() {
 
   const btnExport = document.getElementById("btn-export-pdf");
   if (btnExport) {
-    let confirmMode = false;
     btnExport.addEventListener("click", () => {
       if (APP.filteredData.length === 0) {
         showAlert("⚠️ Aplica filtros para descargar datos.");
         return;
       }
-      if (!confirmMode) {
-        confirmMode = true;
-        btnExport.innerHTML = "<span>❓</span> ¿Confirmar PDF?";
-        btnExport.style.backgroundColor = "rgba(45,116,180,0.1)";
-        setTimeout(() => {
-          confirmMode = false;
-          btnExport.innerHTML = "<span>📄</span> Descargar PDF";
-          btnExport.style.backgroundColor = "";
-        }, 3000);
-      } else {
-        confirmMode = false;
-        btnExport.innerHTML = "<span>📄</span> Descargar PDF";
-        btnExport.style.backgroundColor = "";
-        exportToPDF();
-      }
+      document.getElementById("pdf-confirm-modal").classList.remove("hidden");
     });
   }
 
@@ -511,11 +496,11 @@ function setupMonthPicker() {
 function exportToPDF() {
   const { jsPDF } = window.jspdf;
   const doc = new jsPDF('l', 'pt');
-  
+
   doc.setFontSize(18);
   doc.setTextColor(45, 116, 180);
   doc.text("SMART TRANSPORTS - REPORTE DE VIAJES", 40, 40);
-  
+
   doc.setFontSize(10);
   doc.setTextColor(100);
   doc.text(`Generado por: ${currentUser.username} | Fecha: ${new Date().toLocaleString('es-MX')}`, 40, 60);
@@ -544,5 +529,9 @@ function exportToPDF() {
 
   doc.save(`Reporte_Viajes_${new Date().getTime()}.pdf`);
   logAction("Descarga PDF", `Reporte generado con ${APP.filteredData.length} registros filtrados.`);
-  showAlert("✅ PDF generado y registrado en auditoría.");
+  showAlert("✅ PDF descargado exitosamente.");
+}
+
+window.confirmedExportToPDF = function() {
+  exportToPDF();
 }

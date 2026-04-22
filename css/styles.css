@@ -421,7 +421,7 @@ body::before {
   box-shadow: 0 2px 8px rgba(45, 116, 180, 0.25);
 }
 
-.scroll-x-grid-3, .scroll-x-grid-4, .scroll-x-grid-5 {
+.scroll-x-grid-2, .scroll-x-grid-3, .scroll-x-grid-4, .scroll-x-grid-5 {
   display: grid;
   grid-auto-columns: max-content;
   grid-auto-flow: column;
@@ -434,9 +434,11 @@ body::before {
   border: 1px solid rgba(255,255,255,0.07);
   border-radius: 12px;
 }
+.scroll-x-grid-2 { grid-template-rows: repeat(2, auto); }
 .scroll-x-grid-3 { grid-template-rows: repeat(3, auto); }
 .scroll-x-grid-4 { grid-template-rows: repeat(4, auto); }
 .scroll-x-grid-5 { grid-template-rows: repeat(5, auto); }
+.scroll-x-grid-2::-webkit-scrollbar,
 .scroll-x-grid-3::-webkit-scrollbar,
 .scroll-x-grid-4::-webkit-scrollbar,
 .scroll-x-grid-5::-webkit-scrollbar { display: none; }
@@ -1083,33 +1085,35 @@ td strong { font-weight: 700; color: var(--brand-blue-deep); }
 
 /* Password Toggle */
 .password-wrapper {
-  position: relative;
   display: flex;
-  align-items: center;
+  flex-direction: column;
+  gap: 6px;
 }
 .password-wrapper input[type="password"],
 .password-wrapper input[type="text"] {
-  padding-right: 42px;
+  width: 100%;
 }
 .password-toggle {
-  position: absolute;
-  right: 12px;
-  top: 50%;
-  transform: translateY(-50%);
   background: transparent;
-  border: none;
+  border: 1px solid var(--border-glass);
+  color: var(--text-secondary);
+  padding: 7px 12px;
+  border-radius: 8px;
+  font-size: 0.75rem;
+  font-weight: 600;
   cursor: pointer;
-  font-size: 1.1rem;
-  opacity: 0.55;
-  transition: opacity 150ms ease;
-  padding: 4px 6px;
-  line-height: 1;
+  font-family: var(--font-sans);
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+  transition: var(--transition);
 }
 .password-toggle:hover {
-  opacity: 0.85;
+  border-color: var(--brand-blue);
+  color: var(--brand-blue);
+  background: rgba(45, 116, 180, 0.05);
 }
 .password-toggle:active {
-  opacity: 1;
+  transform: translateY(1px);
 }
 
 /* Accesibilidad focus visible */
