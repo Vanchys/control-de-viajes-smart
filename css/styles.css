@@ -42,6 +42,8 @@ body {
   background: var(--bg-primary);
   color: var(--text-primary);
   min-height: 100vh;
+  width: 100%;
+  max-width: 100vw;
   overflow-x: hidden;
 }
 
@@ -121,8 +123,8 @@ body {
 .btn-small { background: transparent; border: 1px solid var(--border-glass); padding: 6px 12px; border-radius: 4px; font-size: 0.85rem; cursor: pointer; }
 
 /* --- Dashboard Main --- */
-#app-container { padding-top: var(--header-height); }
-#dashboard { padding: 15px; }
+#app-container { padding-top: var(--header-height); width: 100%; }
+#dashboard { padding: 15px; width: 100%; overflow-x: hidden; }
 .mobile-stats-header { text-align: right; margin-bottom: 15px; font-size: 0.8rem; color: var(--text-muted); }
 
 /* --- KPIs --- */
@@ -150,11 +152,11 @@ body {
 .negative { color: var(--accent-red); }
 
 /* --- Tabla --- */
-.table-section { background: var(--bg-card); padding: 15px; border-radius: var(--radius-md); border: 1px solid var(--border-glass); box-shadow: var(--shadow-card); margin-bottom: 20px; }
+.table-section { background: var(--bg-card); padding: 15px; border-radius: var(--radius-md); border: 1px solid var(--border-glass); box-shadow: var(--shadow-card); margin-bottom: 20px; width: 100%; }
 .table-header { display: flex; flex-direction: column; gap: 10px; margin-bottom: 15px; }
 .table-header h3 { font-size: 1rem; }
 .search-input { width: 100%; padding: 10px; border: 1px solid var(--border-glass); border-radius: var(--radius-sm); }
-.table-wrapper { overflow-x: auto; border: 1px solid var(--border-glass); border-radius: var(--radius-sm); }
+.table-wrapper { width: 100%; overflow-x: auto; border: 1px solid var(--border-glass); border-radius: var(--radius-sm); -webkit-overflow-scrolling: touch; }
 table { width: 100%; border-collapse: collapse; font-size: 0.8rem; }
 th { background: var(--bg-primary); padding: 10px; text-align: left; font-weight: 600; color: var(--text-secondary); white-space: nowrap; }
 td { padding: 10px; border-bottom: 1px solid var(--border-glass); white-space: nowrap; }
@@ -164,11 +166,11 @@ td { padding: 10px; border-bottom: 1px solid var(--border-glass); white-space: n
 /* --- Modal Ajustes --- */
 .modal { position: fixed; inset: 0; background: rgba(0,0,0,0.6); display: flex; align-items: center; justify-content: center; z-index: 1000; padding: 15px; }
 .modal.hidden { display: none; }
-.modal-content { background: var(--bg-secondary); width: 100%; max-width: 500px; border-radius: var(--radius-md); overflow: hidden; }
+.modal-content { background: var(--bg-secondary); width: 100%; max-width: 500px; max-height: 90vh; display: flex; flex-direction: column; border-radius: var(--radius-md); overflow: hidden; }
 .modal-header { background: var(--bg-primary); padding: 15px 20px; display: flex; justify-content: space-between; align-items: center; border-bottom: 1px solid var(--border-glass); }
 .modal-header h2 { font-size: 1.1rem; color: var(--text-primary); }
 .btn-close { background: transparent; border: none; font-size: 1.2rem; cursor: pointer; color: var(--text-muted); }
-.modal-body { padding: 20px; }
+.modal-body { padding: 20px; overflow-y: auto; flex: 1; }
 .admin-warning { background: rgba(245, 158, 11, 0.1); border: 1px solid var(--accent-yellow); padding: 10px; border-radius: var(--radius-sm); display: flex; gap: 10px; align-items: flex-start; margin-bottom: 20px; }
 .admin-warning p { font-size: 0.8rem; color: #b45309; }
 .users-table { width: 100%; }
