@@ -910,6 +910,51 @@ td strong { font-weight: 700; color: var(--brand-blue-deep); }
 
 .modal-body { padding: 22px; overflow-y: auto; flex: 1; }
 
+/* Inputs dentro de modales (Ajustes, PDF, Meses)
+   Nota: `filter-input` nació para el sidebar oscuro; aquí lo “re-tematizamos”. */
+.modal .filter-input,
+.modal input.filter-input,
+.modal select.filter-input {
+  background: #FFFFFF;
+  color: var(--text-primary);
+  border: 1px solid var(--border-glass);
+  padding: 12px 14px;
+  font-size: 0.95rem;
+  line-height: 1.2;
+  box-shadow: var(--shadow-xs);
+}
+.modal .filter-input::placeholder {
+  color: #8A97A6;
+}
+.modal .filter-input:focus {
+  border-color: var(--brand-blue);
+  background: #FFFFFF;
+  box-shadow: 0 0 0 4px rgba(45, 116, 180, 0.12), var(--shadow-xs);
+}
+
+/* Password wrapper en modales: más espacio y mejor jerarquía visual */
+.modal .password-wrapper {
+  gap: 6px;
+}
+.modal .password-toggle {
+  background: rgba(45, 116, 180, 0.06);
+  border: 1px solid rgba(45, 116, 180, 0.18);
+  color: var(--brand-blue-deep);
+  padding: 6px 10px;
+  border-radius: 10px;
+  font-size: 0.72rem;
+  letter-spacing: 0.08em;
+}
+.modal .password-toggle:hover {
+  background: rgba(45, 116, 180, 0.10);
+  border-color: rgba(45, 116, 180, 0.28);
+}
+.modal .password-toggle.active {
+  background: rgba(45, 116, 180, 0.14);
+  border-color: rgba(45, 116, 180, 0.35);
+  color: var(--brand-blue-deep);
+}
+
 .admin-warning {
   background: rgba(242, 183, 5, 0.08);
   border: 1px solid rgba(242, 183, 5, 0.35);

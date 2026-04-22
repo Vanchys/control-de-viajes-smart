@@ -511,16 +511,16 @@ function exportToPDF() {
   doc.text(`Generado por: ${currentUser.username} | Fecha: ${new Date().toLocaleString('es-MX')}`, 40, 60);
 
   const head = [["Fecha", "Unidad", "Ruta", "Conductor", "Bruto", "Gastos", "Neto", "Voucher"]];
-  const body = APP.filteredData.map(r => [
-    r.fecha.toLocaleDateString('es-MX'),
-    r.unidad,
-    r.ruta,
-    r.conductor,
-    r.ventaBruto.toLocaleString('es-MX', {style:'currency', currency:'MXN'}),
-    r.gastos.toLocaleString('es-MX', {style:'currency', currency:'MXN'}),
-    r.neto.toLocaleString('es-MX', {style:'currency', currency:'MXN'}),
-    r.voucher
-  ]);
+  const body = APP.filteredData.map(r => ([
+    (r.fecha ? formatDateStr(r.fecha) : "-"),
+    r.unidad ?? "-",
+    r.ruta ?? "-",
+    r.conductor ?? "-",
+    formatMoney(r.totalBruto || 0),
+    formatMoney(r.totalGastos || 0),
+    formatMoney(r.totalNeto || 0),
+    (r.voucher && r.voucher > 0) ? formatMoney(r.voucher) : "-"
+  ]));
 
   doc.autoTable({
     head: head,
