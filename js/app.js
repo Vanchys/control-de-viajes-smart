@@ -68,12 +68,12 @@ document.addEventListener("DOMContentLoaded", () => {
   const loginScreen = document.getElementById("login-screen");
   const loadingScreen = document.getElementById("loading-screen");
   const versionEl = document.getElementById("app-version");
-  const loginVersionEl = document.getElementById("login-version");
+  const loginVersionTextEl = document.getElementById("login-version-text");
   if (versionEl && window.SMART_DASHBOARD_RELEASE) {
-    versionEl.textContent = `v${window.SMART_DASHBOARD_RELEASE.version} · ${window.SMART_DASHBOARD_RELEASE.type}`;
+    versionEl.textContent = `v${window.SMART_DASHBOARD_RELEASE.version}`;
   }
-  if (loginVersionEl && window.SMART_DASHBOARD_RELEASE) {
-    loginVersionEl.textContent = `v${window.SMART_DASHBOARD_RELEASE.version} · ${window.SMART_DASHBOARD_RELEASE.type}`;
+  if (loginVersionTextEl && window.SMART_DASHBOARD_RELEASE) {
+    loginVersionTextEl.textContent = window.SMART_DASHBOARD_RELEASE.version;
   }
 
   // Sistema de Login con Autenticación (auth.js)
