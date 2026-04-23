@@ -62,26 +62,6 @@ window.showAlert = function(message) {
   }
 };
 
-// Mostrar versión inmediatamente (no esperar DOMContentLoaded)
-if (window.SMART_DASHBOARD_RELEASE) {
-  const updateVersions = () => {
-    const versionEl = document.getElementById("app-version");
-    const loginVersionEl = document.getElementById("login-version");
-    if (versionEl) {
-      versionEl.textContent = `v${window.SMART_DASHBOARD_RELEASE.version} · ${window.SMART_DASHBOARD_RELEASE.type}`;
-    }
-    if (loginVersionEl) {
-      loginVersionEl.textContent = `v${window.SMART_DASHBOARD_RELEASE.version} · ${window.SMART_DASHBOARD_RELEASE.type}`;
-    }
-  };
-
-  if (document.readyState === 'loading') {
-    document.addEventListener('DOMContentLoaded', updateVersions);
-  } else {
-    updateVersions();
-  }
-}
-
 // --- INICIO ---
 document.addEventListener("DOMContentLoaded", () => {
   const loginForm = document.getElementById("login-form");
