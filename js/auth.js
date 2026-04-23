@@ -156,6 +156,64 @@ function openSettingsModal() {
             ${roleOptions}
           </select>
           <button class="btn-primary" onclick="addOrUpdateUser()">Guardar Usuario</button>
+
+          <!-- Nueva sección: Lista de Usuarios con opción de Eliminar -->
+          <div style="margin-top: 30px; border-top: 1px solid var(--border-soft); padding-top: 20px;">
+            <h4 style="font-size:0.95rem; margin-bottom:15px; color:var(--text-primary);">Usuarios Existentes</h4>
+            <div class="table-wrapper" style="overflow-x: auto; border-radius: 12px; background: rgba(0,0,0,0.01); padding: 5px;">
+              <table class="users-table" style="width: 100%; border-collapse: collapse; font-size: 0.82rem;">
+                <thead>
+                  <tr style="text-align: left; border-bottom: 2px solid var(--border-soft);">
+                    <th style="padding: 10px 8px; color: var(--text-muted); font-weight: 700; text-transform: uppercase; font-size: 0.65rem; letter-spacing: 0.05em;">Usuario</th>
+                    <th style="padding: 10px 8px; color: var(--text-muted); font-weight: 700; text-transform: uppercase; font-size: 0.65rem; letter-spacing: 0.05em;">Rol</th>
+                    <th style="padding: 10px 8px; color: var(--text-muted); font-weight: 700; text-transform: uppercase; font-size: 0.65rem; letter-spacing: 0.05em; text-align: right;">Acción</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  ${users.map((u, index) => {
+                    // Filtrado de visibilidad según rol
+                    if (currentUser.role === 'user' && u.createdBy !== currentUser.username) return '';
+                    if (u.username === 'admin' && currentUser.username !== 'admin') return '';
+                    
+                    const isSelf = u.username === currentUser.username;
+                    const isSuperAdmin = u.role === 'superadmin';
+                    const canDelete = !isSelf && (
+                      currentUser.role === 'superadmin' || 
+                      (currentUser.role === 'admin' && !isSuperAdmin) || 
+                      (currentUser.role === 'user' && u.createdBy === currentUser.username)
+                    );
+
+                    let badgeColor = "var(--brand-blue)";
+                    let badgeBg = "rgba(45, 116, 180, 0.1)";
+                    if (u.role === 'superadmin') { badgeColor = "var(--brand-gold)"; badgeBg = "rgba(242, 183, 5, 0.15)"; }
+                    else if (u.role === 'user') { badgeColor = "var(--brand-green)"; badgeBg = "rgba(108, 166, 54, 0.1)"; }
+
+                    return `
+                      <tr style="border-bottom: 1px solid var(--border-soft); transition: background 0.2s;">
+                        <td style="padding: 14px 8px;">
+                          <div style="font-weight: 700; color: var(--text-primary); font-size: 0.9rem;">${u.username}</div>
+                          ${u.createdBy ? `<div style="font-size: 0.65rem; color: var(--text-muted); margin-top: 2px;">Vía: ${u.createdBy}</div>` : ''}
+                        </td>
+                        <td style="padding: 14px 8px;">
+                          <span style="display: inline-block; background: ${badgeBg}; color: ${badgeColor}; padding: 3px 10px; border-radius: 999px; font-size: 0.65rem; font-weight: 800; text-transform: uppercase; letter-spacing: 0.04em;">
+                            ${u.role}
+                          </span>
+                        </td>
+                        <td style="padding: 14px 8px; text-align: right;">
+                          ${canDelete ? `
+                            <button class="btn-tiny" style="color: var(--accent-red); border-color: var(--accent-red); background: rgba(239, 68, 68, 0.02); font-weight: 700;" 
+                              onclick="deleteUser(${index})">
+                              Eliminar
+                            </button>
+                          ` : '<span style="color: var(--text-muted); font-size: 0.7rem; font-style: italic;">Bloqueado</span>'}
+                        </td>
+                      </tr>
+                    `;
+                  }).join('')}
+                </tbody>
+              </table>
+            </div>
+          </div>
         </div>
       </div>
       ${auditHtml}
