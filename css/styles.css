@@ -1491,6 +1491,10 @@ button:focus-visible, input:focus-visible, select:focus-visible, a:focus-visible
   outline: 2px solid var(--brand-blue);
   outline-offset: 2px;
 }
+#username:focus-visible {
+  outline: 2px solid var(--brand-blue) !important;
+  outline-offset: 2px !important;
+}
 
 /* Reduced motion */
 @media (prefers-reduced-motion: reduce) {
@@ -1499,4 +1503,19 @@ button:focus-visible, input:focus-visible, select:focus-visible, a:focus-visible
     animation-iteration-count: 1 !important;
     transition-duration: 0.01ms !important;
   }
+}
+
+/* Reset completo para selector de usuario - DEBE SER BLANCO */
+#username,
+#username * {
+  background-color: #FFFFFF !important;
+  background: #FFFFFF !important;
+  color: #0F1419 !important;
+  border-color: #D5DDE5 !important;
+  color-scheme: light !important;
+}
+#username option,
+#username optgroup {
+  background: #FFFFFF !important;
+  color: #0F1419 !important;
 }
