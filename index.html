@@ -14,7 +14,7 @@
   <script>
     // Version centralizada - cambia aqui y se cache-bustea todo
     // type: major | minor | patch | hotfix
-    window.SMART_DASHBOARD_RELEASE = { version: "20.3.0", type: "minor" };
+    window.SMART_DASHBOARD_RELEASE = { version: "20.3.1", type: "patch" };
     window.SMART_DASHBOARD_ASSET_V = `${window.SMART_DASHBOARD_RELEASE.version}-${window.SMART_DASHBOARD_RELEASE.type}`;
   </script>
   <script>
@@ -35,10 +35,10 @@
       <form id="login-form">
         <div class="input-group">
           <label for="username-display">Usuario</label>
-          <div id="username-display" style="width:100%; padding:11px 12px; border:1px solid #D5DDE5; border-radius:10px; font-size:0.9rem; background:#FFFFFF; color:#0F1419; cursor:pointer; display:flex; justify-content:space-between; align-items:center; margin-bottom:5px;">
+          <button type="button" id="username-display" style="width:100%; padding:11px 12px; border:1px solid #D5DDE5; border-radius:10px; font-size:0.9rem; background:#FFFFFF; color:#0F1419; cursor:pointer; display:flex; justify-content:space-between; align-items:center; margin-bottom:5px; font-family:inherit; transition:all 220ms cubic-bezier(0.22,1,0.36,1);">
             <span id="username-selected">Selecciona un usuario...</span>
             <span style="font-size:1.2rem; color:#2D74B4;">▼</span>
-          </div>
+          </button>
           <input type="hidden" id="username" value="">
         </div>
         <div class="input-group">

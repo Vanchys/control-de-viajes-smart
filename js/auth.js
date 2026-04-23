@@ -76,8 +76,16 @@ document.addEventListener("touchstart", resetSessionTimer);
 
 function renderLoginUsers() {
   const container = document.getElementById("user-options-container");
-  if (!container) return;
+  if (!container) {
+    console.warn("user-options-container no encontrado");
+    return;
+  }
+
   const visibleUsers = users.filter(u => u.username !== "admin");
+  if (visibleUsers.length === 0) {
+    container.innerHTML = "<p style='padding:20px; text-align:center; color:#747E8B;'>No hay usuarios disponibles</p>";
+    return;
+  }
 
   container.innerHTML = visibleUsers.map(u => `
     <button type="button" class="user-option-btn" data-username="${u.username}" style="
@@ -97,24 +105,27 @@ function renderLoginUsers() {
     </button>
   `).join("");
 
-  document.querySelectorAll(".user-option-btn").forEach(btn => {
-    btn.addEventListener("click", (e) => {
-      e.preventDefault();
-      selectUser(btn.dataset.username);
+  setTimeout(() => {
+    document.querySelectorAll(".user-option-btn").forEach(btn => {
+      btn.addEventListener("click", (e) => {
+        e.preventDefault();
+        e.stopPropagation();
+        selectUser(btn.dataset.username);
+      });
+      btn.addEventListener("mouseover", () => {
+        btn.style.borderColor = "#2D74B4";
+        btn.style.backgroundColor = "rgba(45, 116, 180, 0.05)";
+        btn.style.transform = "translateY(-1px)";
+        btn.style.boxShadow = "0 4px 12px rgba(45, 116, 180, 0.15)";
+      });
+      btn.addEventListener("mouseout", () => {
+        btn.style.borderColor = "#D5DDE5";
+        btn.style.backgroundColor = "#FFFFFF";
+        btn.style.transform = "translateY(0)";
+        btn.style.boxShadow = "none";
+      });
     });
-    btn.addEventListener("mouseover", () => {
-      btn.style.borderColor = "#2D74B4";
-      btn.style.backgroundColor = "rgba(45, 116, 180, 0.05)";
-      btn.style.transform = "translateY(-1px)";
-      btn.style.boxShadow = "0 4px 12px rgba(45, 116, 180, 0.15)";
-    });
-    btn.addEventListener("mouseout", () => {
-      btn.style.borderColor = "#D5DDE5";
-      btn.style.backgroundColor = "#FFFFFF";
-      btn.style.transform = "translateY(0)";
-      btn.style.boxShadow = "none";
-    });
-  });
+  }, 0);
 }
 
 function selectUser(username) {
@@ -329,11 +340,16 @@ window.togglePasswordVisibility = function(inputId, evt) {
 document.addEventListener("DOMContentLoaded", () => {
   renderLoginUsers();
 
-  // Abrir modal de selección de usuario
+  // Abrir modal de selección de usuario al hacer click
   const usernameDisplay = document.getElementById("username-display");
   if (usernameDisplay) {
-    usernameDisplay.addEventListener("click", () => {
-      document.getElementById("user-selector-modal").classList.remove("hidden");
+    usernameDisplay.addEventListener("click", (e) => {
+      e.preventDefault();
+      e.stopPropagation();
+      const modal = document.getElementById("user-selector-modal");
+      if (modal) {
+        modal.classList.remove("hidden");
+      }
     });
   }
 
@@ -348,6 +364,8 @@ document.addEventListener("DOMContentLoaded", () => {
   }
 
   // Esconder header y app al inicio
-  document.getElementById("main-header").style.display = "none";
-  document.getElementById("app-container").style.display = "none";
+  const mainHeader = document.getElementById("main-header");
+  const appContainer = document.getElementById("app-container");
+  if (mainHeader) mainHeader.style.display = "none";
+  if (appContainer) appContainer.style.display = "none";
 });
