@@ -595,41 +595,78 @@ function setupMonthPicker() {
 function exportToPDF() {
   try {
     const { jsPDF } = window.jspdf;
-    const doc = new jsPDF('l', 'pt');
+    const doc = new jsPDF('l', 'mm', 'a4');
 
-  doc.setFontSize(18);
-  doc.setTextColor(45, 116, 180);
-  doc.text("SMART TRANSPORTS - REPORTE DE VIAJES", 40, 40);
+    doc.setFontSize(16);
+    doc.setTextColor(45, 116, 180);
+    doc.text("SMART TRANSPORTS - REPORTE DE VIAJES", 15, 15);
 
-  doc.setFontSize(10);
-  doc.setTextColor(100);
-  doc.text(`Generado por: ${currentUser.username} | Fecha: ${new Date().toLocaleString('es-MX')}`, 40, 60);
+    doc.setFontSize(9);
+    doc.setTextColor(100);
+    doc.text(`Generado por: ${currentUser.username} | Fecha: ${new Date().toLocaleString('es-MX')}`, 15, 22);
 
-  const head = [["Fecha", "Unidad", "Ruta", "Conductor", "Bruto", "Gastos", "Neto", "Voucher"]];
-  const body = APP.filteredData.map(r => ([
-    (r.fecha ? formatDateStr(r.fecha) : "-"),
-    r.unidad ?? "-",
-    r.ruta ?? "-",
-    r.conductor ?? "-",
-    formatMoney(r.totalBruto || 0),
-    formatMoney(r.totalGastos || 0),
-    formatMoney(r.totalNeto || 0),
-    (r.voucher && r.voucher > 0) ? formatMoney(r.voucher) : "-"
-  ]));
+    const columnHeaders = ["Ruta", "Fecha", "Conductor", "Unidad", "Hora", "Adultos", "Menores", "Cuacno", "Venta L.", "Paquetes", "Bruto", "Neto", "Voucher"];
 
-  doc.autoTable({
-    head: head,
-    body: body,
-    startY: 80,
-    theme: 'grid',
-    styles: { fontSize: 8, cellPadding: 3 },
-    headStyles: { fillColor: [45, 116, 180], textColor: 255 },
-    alternateRowStyles: { fillColor: [245, 245, 245] }
-  });
+    const body = APP.filteredData.map(r => [
+      r.ruta ?? "-",
+      r.fecha ? formatDateStr(r.fecha) : "-",
+      r.conductor ?? "-",
+      r.unidad ?? "-",
+      r.hora ?? "-",
+      r.adultos ?? "-",
+      r.menores ?? "-",
+      r.cuacnopalan ?? "-",
+      r.ventaEnLinea ?? "-",
+      r.paquetes ?? "-",
+      formatMoney(r.totalBruto || 0),
+      formatMoney(r.totalNeto || 0),
+      (r.voucher && r.voucher > 0) ? formatMoney(r.voucher) : "-"
+    ]);
+
+    doc.autoTable({
+      head: [columnHeaders],
+      body: body,
+      startY: 28,
+      theme: 'grid',
+      margin: { top: 28, right: 10, bottom: 10, left: 10 },
+      styles: {
+        fontSize: 7,
+        cellPadding: 2,
+        overflow: 'linebreak',
+        halign: 'center',
+        valign: 'middle'
+      },
+      columnStyles: {
+        4: { halign: 'center' },
+        5: { halign: 'center' },
+        6: { halign: 'center' },
+        7: { halign: 'center' },
+        8: { halign: 'center' },
+        9: { halign: 'center' },
+        10: { halign: 'right' },
+        11: { halign: 'right' },
+        12: { halign: 'right' }
+      },
+      headStyles: {
+        fillColor: [45, 116, 180],
+        textColor: 255,
+        fontSize: 8,
+        fontStyle: 'bold'
+      },
+      alternateRowStyles: { fillColor: [245, 248, 252] },
+      didDrawPage: function(data) {
+        const pageSize = doc.internal.pageSize;
+        const pageHeight = pageSize.getHeight();
+        const pageWidth = pageSize.getWidth();
+        doc.setFontSize(8);
+        doc.setTextColor(150);
+        doc.text(`Pagina ${data.pageNumber}`, pageWidth - 20, pageHeight - 8);
+      }
+    });
 
     doc.save(`Reporte_Viajes_${new Date().getTime()}.pdf`);
     logAction("PDF: Descargado", `Registros: ${APP.filteredData.length} | ${buildAuditFiltersDetails()}`);
-    showAlert("✅ PDF descargado exitosamente.");
+    showAlert("✅ PDF descargado exitosamente con todas las columnas.");
   } catch (e) {
     logAction("PDF: Error", `${String(e?.message || e)} | ${buildAuditFiltersDetails()}`);
     showAlert("❌ Error al generar el PDF. Revisa tu conexión o intenta de nuevo.");
