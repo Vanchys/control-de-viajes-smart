@@ -14,7 +14,7 @@
   <script>
     // Versión centralizada (actualiza aquí y se “cache-bustea” todo al recargar)
     // type: major | minor | patch | hotfix
-    window.SMART_DASHBOARD_RELEASE = { version: “20.1.4”, type: “patch” };
+    window.SMART_DASHBOARD_RELEASE = { version: “20.1.5”, type: “patch” };
     window.SMART_DASHBOARD_ASSET_V = `${window.SMART_DASHBOARD_RELEASE.version}-${window.SMART_DASHBOARD_RELEASE.type}`;
   </script>
   <script>
@@ -51,9 +51,9 @@
       </form>
       <div class="developer-credit">
         Developed by Ivan Apolinar
-        <div style="margin-top:10px; font-size:0.72rem; color:#747E8B; letter-spacing:0.08em; font-weight:600; text-transform:none;">
-          <script>document.write('v' + window.SMART_DASHBOARD_RELEASE.version + ' &middot; ' + window.SMART_DASHBOARD_RELEASE.type);</script>
-        </div>
+        <script>
+          document.write(`<div style="margin-top:10px; font-size:0.72rem; color:#747E8B; letter-spacing:0.08em; font-weight:600;">v${window.SMART_DASHBOARD_RELEASE.version} &middot; ${window.SMART_DASHBOARD_RELEASE.type}</div>`);
+        </script>
       </div>
     </div>
   </div>
@@ -271,9 +271,9 @@
       <!-- Pie de página -->
       <footer class="app-footer">
         <p>Developed by Ivan Apolinar</p>
-        <p style="margin-top:6px; color:#747E8B; font-weight:600; font-size:0.72rem; letter-spacing:0.06em;">
-          <script>document.write('v' + window.SMART_DASHBOARD_RELEASE.version + ' &middot; ' + window.SMART_DASHBOARD_RELEASE.type);</script>
-        </p>
+        <script>
+          document.write(`<p style="margin-top:6px; color:#747E8B; font-weight:600; font-size:0.72rem; letter-spacing:0.06em;">v${window.SMART_DASHBOARD_RELEASE.version} &middot; ${window.SMART_DASHBOARD_RELEASE.type}</p>`);
+        </script>
       </footer>
     </main>
   </div>
