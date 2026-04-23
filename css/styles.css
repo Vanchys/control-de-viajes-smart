@@ -179,10 +179,18 @@ body::before {
 #username {
   max-width: 320px;
   margin: 0 auto;
+  width: 100% !important;
+  padding: 11px 12px !important;
+  border: 1px solid #D5DDE5 !important;
+  border-radius: 10px !important;
+  font-size: 0.9rem !important;
+  font-family: var(--font-sans) !important;
+  background: #FFFFFF !important;
+  color: var(--text-primary) !important;
+  transition: var(--transition) !important;
 }
 .input-group input,
-.input-group select,
-#username {
+.input-group select {
   width: 100%;
   padding: 11px 12px;
   border: 1px solid #D5DDE5;
@@ -194,11 +202,15 @@ body::before {
   transition: var(--transition);
 }
 .input-group input:focus,
-.input-group select:focus,
-#username:focus {
+.input-group select:focus {
   outline: none;
   border-color: var(--brand-blue);
   box-shadow: 0 0 0 4px rgba(45, 116, 180, 0.15);
+}
+#username:focus {
+  outline: none !important;
+  border-color: var(--brand-blue) !important;
+  box-shadow: 0 0 0 4px rgba(45, 116, 180, 0.15) !important;
 }
 .developer-credit {
   margin-top: 24px;
