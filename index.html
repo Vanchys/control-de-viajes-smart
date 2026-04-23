@@ -14,7 +14,7 @@
   <script>
     // Versión centralizada (actualiza aquí y se “cache-bustea” todo al recargar)
     // type: major | minor | patch | hotfix
-    window.SMART_DASHBOARD_RELEASE = { version: “20.1.6”, type: “patch” };
+    window.SMART_DASHBOARD_RELEASE = { version: “20.1.7”, type: “patch” };
     window.SMART_DASHBOARD_ASSET_V = `${window.SMART_DASHBOARD_RELEASE.version}-${window.SMART_DASHBOARD_RELEASE.type}`;
   </script>
   <script>
@@ -330,6 +330,19 @@
     document.write(`<script src="js/auth.js?v=${window.SMART_DASHBOARD_ASSET_V}"><\/script>`);
     document.write(`<script src="js/data.js?v=${window.SMART_DASHBOARD_ASSET_V}"><\/script>`);
     document.write(`<script src="js/app.js?v=${window.SMART_DASHBOARD_ASSET_V}"><\/script>`);
+  </script>
+
+  <!-- Versión: se ejecuta después de cargar todos los scripts -->
+  <script>
+    (function() {
+      var rel = window.SMART_DASHBOARD_RELEASE;
+      if (!rel) return;
+      var text = 'v' + rel.version + ' · ' + rel.type;
+      var vEl = document.getElementById('app-version');
+      var lEl = document.getElementById('login-version');
+      if (vEl) vEl.textContent = text;
+      if (lEl) lEl.textContent = text;
+    })();
   </script>
 </body>
 

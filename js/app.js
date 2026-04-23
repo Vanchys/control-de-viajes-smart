@@ -68,15 +68,6 @@ document.addEventListener("DOMContentLoaded", () => {
   const loginScreen = document.getElementById("login-screen");
   const loadingScreen = document.getElementById("loading-screen");
 
-  // Mostrar versión en ambas pantallas
-  const rel = window.SMART_DASHBOARD_RELEASE;
-  if (rel) {
-    const versionText = `v${rel.version} · ${rel.type}`;
-    const vEl = document.getElementById("app-version");
-    const lEl = document.getElementById("login-version");
-    if (vEl) vEl.textContent = versionText;
-    if (lEl) lEl.textContent = versionText;
-  }
 
   // Sistema de Login con Autenticación (auth.js)
   loginForm.addEventListener("submit", async (e) => {
