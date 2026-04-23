@@ -411,13 +411,13 @@ body::before {
   font-variation-settings: "opsz" 72;
 }
 
-.filter-group { margin-bottom: 18px; }
+.filter-group { margin-bottom: 12px; }
 .filter-group label {
   display: block;
   font-size: 0.68rem;
   font-weight: 700;
   color: var(--sidebar-muted);
-  margin-bottom: 8px;
+  margin-bottom: 6px;
   text-transform: uppercase;
   letter-spacing: 0.1em;
 }
@@ -430,7 +430,7 @@ body::before {
   background:
     radial-gradient(320px 160px at 15% 10%, rgba(45,116,180,0.12), transparent 62%),
     rgba(255,255,255,0.03);
-  padding: 12px;
+  padding: 10px;
   box-shadow: 0 1px 0 rgba(255,255,255,0.06) inset;
 }
 #filters-panel .filter-group:focus-within {
@@ -438,7 +438,7 @@ body::before {
   box-shadow: 0 0 0 3px rgba(45,116,180,0.18), 0 1px 0 rgba(255,255,255,0.06) inset;
 }
 #filters-panel .filter-group > label {
-  margin-bottom: 10px;
+  margin-bottom: 6px;
 }
 
 .filter-input {
@@ -601,19 +601,35 @@ body::before {
   background: rgba(255,255,255,0.08);
 }
 
+/* Alineación de títulos con acciones en una línea */
+.filter-label-with-actions {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 8px;
+  margin-bottom: 8px;
+}
+.filter-label-with-actions label {
+  flex: 1;
+  margin-bottom: 0 !important;
+  white-space: nowrap;
+}
+
 /* Acciones dentro del sidebar */
 .action-buttons {
-  display: flex; gap: 8px; justify-content: stretch;
-  margin-top: 8px;
+  display: flex;
+  gap: 6px;
+  justify-content: flex-end;
+  flex-shrink: 0;
+  align-items: center;
 }
 .btn-actions {
-  flex: 1;
-  background: rgba(255,255,255,0.03);
-  border: 1px solid rgba(255,255,255,0.1);
-  color: var(--sidebar-muted);
-  padding: 7px 10px;
+  background: rgba(45, 116, 180, 0.12);
+  border: 1px solid rgba(45, 116, 180, 0.3);
+  color: rgba(255,255,255,0.85);
+  padding: 6px 11px;
   border-radius: 8px;
-  font-size: 0.72rem;
+  font-size: 0.68rem;
   font-weight: 600;
   letter-spacing: 0.04em;
   text-transform: uppercase;
@@ -621,11 +637,15 @@ body::before {
   transition: var(--transition);
   text-align: center;
   font-family: var(--font-sans);
+  white-space: nowrap;
+  box-shadow: 0 2px 6px rgba(45, 116, 180, 0.15);
 }
 .btn-actions:hover {
-  background: rgba(45, 116, 180, 0.18);
+  background: rgba(45, 116, 180, 0.22);
   color: #fff;
-  border-color: rgba(45, 116, 180, 0.55);
+  border-color: rgba(45, 116, 180, 0.6);
+  box-shadow: 0 4px 12px rgba(45, 116, 180, 0.25);
+  transform: translateY(-1px);
 }
 
 /* =================  CONTENIDO PRINCIPAL  ================= */
@@ -1247,7 +1267,7 @@ td strong { font-weight: 700; color: var(--brand-blue-deep); }
     border-right: none;
     border-top: 1px solid var(--sidebar-border);
     border-radius: 0;
-    padding: 16px 14px 16px;
+    padding: 14px 14px 70px 14px;
     z-index: 1001; /* sobre el header */
     display: flex;
     flex-direction: column;
@@ -1257,25 +1277,45 @@ td strong { font-weight: 700; color: var(--brand-blue-deep); }
   }
   /* “handle” visual */
   #filters-panel .filter-header::before {
-    content: "";
+    content: “”;
     display: block;
     width: 44px;
     height: 4px;
     border-radius: 999px;
     background: rgba(255,255,255,0.22);
-    margin: -6px auto 14px;
+    margin: -6px auto 12px;
   }
 
-  /* Botón aplicar: siempre visible al final */
+  /* Asegurar que los filtros llenen todo el viewport disponible */
+  #filters-panel {
+    max-height: calc(100vh - 70px);
+  }
+  #filters-panel .filter-group:last-of-type {
+    margin-bottom: 12px;
+  }
+
+  /* Botón aplicar: siempre visible y accesible al final */
   #filters-panel #btn-apply-filters {
     margin-top: auto;
-    position: sticky;
-    bottom: 12px;
-    z-index: 2;
-    box-shadow: 0 10px 24px rgba(14,34,53,0.35);
+    margin-left: -14px;
+    margin-right: -14px;
+    margin-bottom: -16px;
+    padding: 14px 14px;
+    border-radius: 0;
+    width: calc(100% + 28px);
+    position: fixed;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    z-index: 2000;
+    box-shadow: 0 -4px 16px rgba(14,34,53,0.25);
+    background: var(--gradient-primary);
+    border: none;
   }
-  #filters-panel { padding-bottom: 78px; }
-  #filters-panel { overflow-y: auto; }
+  #filters-panel { padding-bottom: 0; }
+  #filters-panel { overflow-y: auto; padding-right: 10px; }
+  #filters-panel::-webkit-scrollbar { width: 6px; }
+  #filters-panel::-webkit-scrollbar-thumb { background: rgba(255,255,255,0.12); border-radius: 3px; }
 
   /* Header: título izquierda, acciones derecha */
   #filters-panel .filter-header {
@@ -1313,18 +1353,20 @@ td strong { font-weight: 700; color: var(--brand-blue-deep); }
   }
 
   /* Compactar secciones y controles */
-  #filters-panel .filter-header { margin-bottom: 12px; padding-bottom: 12px; }
-  #filters-panel .filter-group { margin-bottom: 10px; padding: 10px; border-radius: 14px; }
-  #filters-panel .filter-group label { margin-bottom: 6px; font-size: 0.64rem; letter-spacing: 0.09em; }
-  #filters-panel .filter-input { padding: 9px 10px; font-size: 0.84rem; }
+  #filters-panel .filter-header { margin-bottom: 10px; padding-bottom: 10px; }
+  #filters-panel .filter-group { margin-bottom: 8px; padding: 9px; border-radius: 14px; }
+  #filters-panel .filter-group label { margin-bottom: 5px; font-size: 0.64rem; letter-spacing: 0.09em; }
+  #filters-panel .filter-label-with-actions { margin-bottom: 6px; gap: 6px; }
+  #filters-panel .filter-label-with-actions label { margin-bottom: 0 !important; }
+  #filters-panel .filter-input { padding: 8px 10px; font-size: 0.82rem; }
   #filters-panel .checkbox-list,
   #filters-panel .scroll-x-grid-2,
   #filters-panel .scroll-x-grid-3,
   #filters-panel .scroll-x-grid-4,
-  #filters-panel .scroll-x-grid-5 { padding: 8px; }
-  #filters-panel .checkbox-item { padding: 8px 10px; font-size: 0.78rem; }
-  #filters-panel .action-buttons { margin-top: 6px; }
-  #filters-panel .btn-actions { padding: 6px 8px; font-size: 0.68rem; }
+  #filters-panel .scroll-x-grid-5 { padding: 7px; }
+  #filters-panel .checkbox-item { padding: 7px 9px; font-size: 0.76rem; }
+  #filters-panel .action-buttons { margin-top: 0; gap: 5px; }
+  #filters-panel .btn-actions { padding: 5px 9px; font-size: 0.66rem; }
 }
 
 /* Botón 🚐 (abrir filtros) más visible en móvil */
