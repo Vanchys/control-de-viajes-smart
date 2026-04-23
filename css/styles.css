@@ -186,8 +186,14 @@ body::before {
   font-size: 0.9rem !important;
   font-family: var(--font-sans) !important;
   background: #FFFFFF !important;
-  color: var(--text-primary) !important;
+  color: #0F1419 !important;
   transition: var(--transition) !important;
+  color-scheme: light !important;
+}
+#username option {
+  background: #FFFFFF;
+  color: #0F1419;
+  padding: 8px;
 }
 .input-group input,
 .input-group select {
