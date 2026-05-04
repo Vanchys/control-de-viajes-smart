@@ -1708,17 +1708,18 @@ td strong { font-weight: 700; color: var(--brand-blue-deep); }
   }
   #filters-panel #btn-apply-filters {
     margin: 0;
-    padding: 12px 20px;
-    border-radius: 14px;
+    padding: 14px 22px;
+    border-radius: 12px;
     width: 100%;
     min-width: 0;
     position: static;
+    box-sizing: border-box;
     align-self: stretch;
     z-index: 2000;
     box-shadow: 0 10px 24px -10px rgba(27, 79, 138, 0.72), inset 0 1px 0 rgba(255,255,255,0.22);
     background: var(--gradient-primary);
     border: none;
-    font-size: 0.88rem;
+    font-size: 0.95rem;
   }
   #filters-panel .filters-scroll::-webkit-scrollbar { width: 6px; }
   #filters-panel .filters-scroll::-webkit-scrollbar-thumb { background: rgba(255,255,255,0.12); border-radius: 3px; }

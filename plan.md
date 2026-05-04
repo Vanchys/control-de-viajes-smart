@@ -193,3 +193,4 @@ Rediseñar la interfaz manteniendo la lógica actual intacta. El trabajo será p
   - Archivos afectados: plan.md
   - Criterios de aceptación: Checklist documentada y referenciada en PR/commit
   - Dependencias: Ninguna
+Versión actual: 2.1.3
