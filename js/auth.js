@@ -88,8 +88,11 @@ function renderUsernameDropdown() {
   const menu = document.getElementById("username-options");
   if (!display || !menu) return;
   const visibleUsers = users.filter(u => u.username !== "admin");
-  menu.innerHTML = `<div class="username-option" data-username="">Selecciona un usuario...</div>` +
-    visibleUsers.map(u => `<div class="username-option" data-username="${u.username}">${u.username}</div>`).join("");
+  if (visibleUsers.length === 0) {
+    menu.innerHTML = `<div class="username-option" data-username="" style="opacity:.6; cursor:not-allowed">Sin usuarios</div>`;
+  } else {
+    menu.innerHTML = visibleUsers.map(u => `<div class="username-option" data-username="${u.username}">${u.username}</div>`).join("");
+  }
 
   // Bind click handlers for options
   menu.querySelectorAll('.username-option').forEach((el) => {

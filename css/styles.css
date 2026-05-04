@@ -1298,11 +1298,15 @@ td strong { font-weight: 700; color: var(--brand-blue-deep); }
   font-weight: 600;
 }
 #month-picker-modal .modal-header {
-  background: var(--gradient-primary);
+  /* Dark header for dark-mode modal */
+  background: var(--bg-dark);
   border-bottom: none;
   color: #fff;
 }
 #month-picker-modal .modal-header h2 {
+  color: #fff;
+}
+#month-picker-modal .month-year {
   color: #fff;
 }
 #month-picker-modal .btn-close {
