@@ -1776,6 +1776,35 @@ td strong { font-weight: 700; color: var(--brand-blue-deep); }
   #filters-panel .btn-actions { padding: 5px 8px; font-size: 0.64rem; }
 }
 
+/* Enhancements: filter buttons visuals & interactions */
+#filters-panel .btn-small, #filters-panel .btn-tiny {
+  background: rgba(255,255,255,0.12);
+  border: 1px solid rgba(255,255,255,0.40);
+  color: #FFFFFF;
+  padding: 9px 14px;
+  border-radius: 999px;
+  font-size: 0.78rem;
+  font-weight: 700;
+  text-transform: uppercase;
+  cursor: pointer;
+  transition: transform 120ms ease, background 200ms ease, border-color 200ms ease;
+  box-shadow: 0 4px 12px rgba(0,0,0,.25);
+}
+#filters-panel .btn-small:hover, #filters-panel .btn-tiny:hover {
+  background: rgba(255,255,255,0.20);
+  transform: translateY(-1px);
+  border-color: rgba(255,255,255,0.70);
+}
+#filters-panel .btn-small:active, #filters-panel .btn-tiny:active {
+  transform: scale(0.98);
+}
+/* Selected state for filter actions */
+#filters-panel .btn-actions.selected {
+  background: rgba(27, 79, 138, 0.50);
+  border-color: rgba(27, 79, 138, 0.95);
+  box-shadow: 0 6px 18px rgba(13, 33, 55, 0.5);
+}
+
 /* Botón 🚐 (abrir filtros) más visible en móvil */
 @media (max-width: 767px) {
   #btn-toggle-filters.btn-icon {
