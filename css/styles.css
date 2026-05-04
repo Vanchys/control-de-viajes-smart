@@ -149,9 +149,7 @@ body::before {
 }
 .login-card::before {
   content: "";
-  position: absolute; left: 0; right: 0; top: 0; height: 3px;
-  background: var(--gradient-primary);
-  border-radius: var(--radius-lg) var(--radius-lg) 0 0;
+  display: none;
 }
 .login-logo { max-width: 190px; margin-bottom: 22px; }
 .login-card h2 {
@@ -1553,14 +1551,14 @@ td strong { font-weight: 700; color: var(--brand-blue-deep); }
   font-family: var(--font-sans);
   font-weight: 750;
   font-size: 0.85rem;
-  color: #fff;
+  color: var(--brand-blue);
   cursor: pointer;
   transition: var(--transition);
   box-shadow: var(--shadow-xs);
 }
 .month-btn:hover:not(.disabled-month) {
   border-color: var(--brand-blue);
-  color: #fff;
+  color: var(--brand-blue);
   background: rgba(27, 79, 138, 0.28);
   transform: translateY(-1px);
   box-shadow: var(--shadow-sm);
