@@ -1,5 +1,5 @@
 # plan2_button_fullwidth_v1.1.md
-Versión: v1.2
+Versión: V 3.1.1 PATCH
 Objetivo
 - Asegurar que el botón "Aplicar Filtros" tenga ancho completo del contenedor y padding adecuado en todos los tamaños.
 

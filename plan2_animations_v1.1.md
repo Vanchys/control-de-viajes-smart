@@ -1,5 +1,5 @@
 # plan2_animations_v1.1.md
-Versión: v1.2
+Versión: V 3.1.1 PATCH
 Objetivo
 - Mejorar visualmente los botones del menú de filtros con animaciones suaves, mejor contraste y presencia.
 
