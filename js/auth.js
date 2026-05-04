@@ -82,6 +82,51 @@ function renderLoginUsers() {
     visibleUsers.map(u => `<option value="${u.username}">${u.username}</option>`).join("");
 }
 
+// Render custom dropdown for username (non-native UI)
+function renderUsernameDropdown() {
+  const display = document.getElementById("username-display");
+  const menu = document.getElementById("username-options");
+  if (!display || !menu) return;
+  const visibleUsers = users.filter(u => u.username !== "admin");
+  menu.innerHTML = `<div class="username-option" data-username="">Selecciona un usuario...</div>` +
+    visibleUsers.map(u => `<div class="username-option" data-username="${u.username}">${u.username}</div>`).join("");
+
+  // Bind click handlers for options
+  menu.querySelectorAll('.username-option').forEach((el) => {
+    el.addEventListener('click', () => {
+      const user = el.dataset.username;
+      if (!user) return;
+      display.textContent = user;
+      const native = document.getElementById("username");
+      if (native) native.value = user;
+      // Close menu
+      menu.classList.add("hidden");
+      display.setAttribute("aria-expanded", "false");
+    });
+  });
+
+  // Toggle on dropdown click
+  const dropdown = document.getElementById("username-dropdown");
+  if (dropdown) {
+    dropdown.addEventListener("click", (e) => {
+      // ignore clicks on the options themselves
+      if (e.target.closest('.username-option')) return;
+      menu.classList.toggle("hidden");
+      const expanded = !menu.classList.contains("hidden");
+      dropdown.setAttribute("aria-expanded", expanded ? "true" : "false");
+    });
+  }
+
+  // Close when clicking outside
+  document.addEventListener("click", (ev) => {
+    if (!dropdown || dropdown.contains(ev.target)) return;
+    if (menu && !menu.contains(ev.target)) {
+      menu.classList.add("hidden");
+      dropdown.setAttribute("aria-expanded", "false");
+    }
+  });
+}
+
 function openSettingsModal() {
   const modal = document.getElementById("settings-modal");
   const modalBody = document.getElementById("settings-modal-body");
@@ -340,9 +385,10 @@ window.togglePasswordVisibility = function(inputId, evt) {
   input.focus();
 }
 
-document.addEventListener("DOMContentLoaded", () => {
-  renderLoginUsers();
-  // Esconder header y app al inicio
-  document.getElementById("main-header").style.display = "none";
-  document.getElementById("app-container").style.display = "none";
+  document.addEventListener("DOMContentLoaded", () => {
+   renderLoginUsers();
+   renderUsernameDropdown();
+   // Esconder header y app al inicio
+   document.getElementById("main-header").style.display = "none";
+   document.getElementById("app-container").style.display = "none";
 });

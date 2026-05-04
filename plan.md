@@ -170,3 +170,26 @@ Rediseñar la interfaz manteniendo la lógica actual intacta. El trabajo será p
 - El rediseño será CSS-first; JavaScript solo se tocará para cambiar estilos inline por clases.
 - Se conservarán todos los IDs actuales usados por eventos y renderizado.
 - La corrección responsiva debe priorizar teléfonos reales: el botón principal de filtros debe permanecer visible y usable aunque el contenido del panel sea largo.
+
+## Tareas Adicionales
+
+- Tarea 10: Optimización de carga de recursos
+  - Descripción: Minificar CSS y JS, eliminar estilos no usados, asegurar cache busting sin romper compatibilidad.
+  - Prioridad: alta
+  - Archivos afectados: css/styles.css, index.html
+  - Criterios de aceptación: Tamaño de CSS reducido, no romper UI, pruebas manuales pasan
+  - Dependencias: Ninguna
+
+- Tarea 11: Accesibilidad y navegación por teclado
+  - Descripción: Reforzar accesibilidad (contraste, foco visible, etiquetas ARIA donde aplique).
+  - Prioridad: media
+  - Archivos afectados: css/styles.css, index.html, js/app.js
+  - Criterios de aceptación: Contraste adecuado; foco visible; lectura de screen reader mejora
+  - Dependencias: Ninguna
+
+- Tarea 12: Plan de pruebas de regresión
+  - Descripción: Crear y adjuntar una checklist de pruebas de regresión para todas las fases.
+  - Prioridad: baja
+  - Archivos afectados: plan.md
+  - Criterios de aceptación: Checklist documentada y referenciada en PR/commit
+  - Dependencias: Ninguna

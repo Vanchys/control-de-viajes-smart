@@ -210,6 +210,51 @@ body::before {
   -webkit-appearance: none !important;
   box-shadow: var(--shadow-xs) !important;
 }
+/* Custom username dropdown (modern look) */
+.custom-dropdown {
+  position: relative;
+  display: block;
+  width: 100%;
+  max-width: 320px;
+  margin: 0 auto;
+  padding: 12px 14px;
+  border: 1px solid var(--border-glass);
+  border-radius: 10px;
+  background: #fff;
+  cursor: pointer;
+}
+.custom-dropdown .username-selected {
+  display: inline-block;
+  color: #0F1419;
+  font-weight: 650;
+}
+.custom-dropdown .dropdown-arrow {
+  float: right;
+  color: var(--text-muted);
+}
+.custom-dropdown .dropdown-menu {
+  position: absolute;
+  top: 100%; left: 0; right: 0;
+  background: #fff;
+  border: 1px solid var(--border-soft);
+  border-radius: 12px;
+  margin-top: 8px;
+  max-height: 240px;
+  overflow: auto;
+  z-index: 999;
+  box-shadow: 0 8px 24px rgba(0,0,0,.08);
+}
+.custom-dropdown .dropdown-menu.hidden { display: none; }
+.custom-dropdown .dropdown-menu .username-option {
+  padding: 10px 12px;
+  font-family: var(--font-sans);
+  font-weight: 600;
+  color: #1a1a1a;
+  cursor: pointer;
+}
+.custom-dropdown .dropdown-menu .username-option:hover {
+  background: #f5f8fc;
+}
 #username option {
   background: #FFFFFF;
   color: #0F1419;
@@ -1497,26 +1542,27 @@ td strong { font-weight: 700; color: var(--brand-blue-deep); }
   gap: 10px;
 }
 .month-btn {
-  background: linear-gradient(180deg, #FFFFFF 0%, #F7FAFD 100%);
-  border: 1px solid #DDE5F0;
+  background: rgba(255, 255, 255, 0.15);
+  border: 1px solid rgba(255, 255, 255, 0.35);
   padding: 14px 8px;
   border-radius: 12px;
   font-family: var(--font-sans);
   font-weight: 750;
   font-size: 0.85rem;
-  color: var(--text-primary);
+  color: #fff;
   cursor: pointer;
   transition: var(--transition);
   box-shadow: var(--shadow-xs);
 }
 .month-btn:hover:not(.disabled-month) {
   border-color: var(--brand-blue);
-  color: var(--brand-blue);
+  color: #fff;
+  background: rgba(27, 79, 138, 0.28);
   transform: translateY(-1px);
   box-shadow: var(--shadow-sm);
 }
 .month-btn.active-month {
-  background: var(--gradient-primary);
+  background: #1B4F8A; /* Brighter blue for the selected month */
   color: #fff;
   border-color: transparent;
   box-shadow: 0 10px 24px -12px rgba(27, 79, 138, 0.76), inset 0 1px 0 rgba(255,255,255,0.22);
