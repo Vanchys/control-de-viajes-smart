@@ -490,6 +490,12 @@ body::before {
 }
 .filter-handle-icon { font-size: 1.05rem; line-height: 1; transform: translateY(-1px); }
 .filter-gear {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 1em;
+  height: 1em;
+  line-height: 1;
   opacity: 0.9;
   margin-right: 6px;
 }
