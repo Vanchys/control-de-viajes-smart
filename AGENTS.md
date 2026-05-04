@@ -4,37 +4,38 @@
 Smart Dashboard - Control operativo de viajes para flota de transporte - HTML5 + CSS3 + JS vanilla + Google Sheets
 
 ### Dónde quedamos
-- Archivo: Proyecto iniciado, estructura completa
-- Módulo: Sistema de autenticación, auditoría, filtros y datos
-- Línea aproximada: N/A (proyecto funcional desde cero)
-- Qué hace: Dashboard que carga datos de Google Sheets, gestiona usuarios, auditología de acciones, filtros por ruta/unidad/conductor/fecha, exporta a PDF
-- Qué falta: Validar si hay nuevos requerimientos o bugfixes
+- Archivo: css/styles.css (rediseño visual principal), index.html (ajustes menores)
+- Módulo: Rediseño visual completo en 9 fases (UI/UX mejorada, responsividad móvil optimizada)
+- Línea aproximada: Fase 1 iniciada (variables de marca)
+- Qué hace: Rediseño de interfaz manteniendo lógica intacta. Paleta de marca actualizada (#1B4F8A azul, #4CAF50 verde, #F5A623 oro), KPIs rediseñados, panel filtros mejorado, tabla con colores semánticos, responsividad crítica móvil en panel filtros
+- Qué falta: Completar 9 fases de rediseño + validación responsive en móviles reales (320px-390px)
 
 ### Qué ya funciona (no repetir)
-- Login con 3 usuarios (admin, Ivan, Timoteo) + desbloqueo de superadmin
-- Carga de datos desde Google Sheets (4 rutas: Teh-Pue, Pue-Teh, Teh-Mex, Mex-Teh)
-- Sistema de auditoría completo (loguea todas las acciones)
-- Filtros por fecha rango, ruta, unidades, conductores
-- Exportación a PDF con jsPDF
-- Interfaz mobile-first con sidebar responsive
-- Splash screen de carga
-- Versionado centralizado (20.3.2)
-- Tipografía premium (Manrope + Fraunces + JetBrains Mono)
+- Login con 3 usuarios + desbloqueo superadmin (mantener intacto)
+- Carga datos desde Google Sheets (mantener intacto)
+- Sistema de auditoría (mantener intacto)
+- Filtros, exportación PDF, sesiones (mantener intacto)
+- plan.md con especificaciones de rediseño completamente documentado
 
 ### Código a medias (si hay)
-Ninguno. Proyecto está en estado completo y funcional.
+Nada. Rediseño empieza desde cero en css/styles.css respetando estructura funcional.
 
 ### Reglas críticas
-- NO tocar: Google Sheets Config en js/data.js sin validar IDs (producción)
-- NO modificar: Passwords en auth.js sin comunicar cambios a usuarios
-- SÍ puedes modificar: Rutas, estilos, filtros, funcionalidad de exportación
+- NO tocar: js/data.js (Google Sheets IDs), js/auth.js (credenciales, auditoría)
+- NO quebrar: IDs HTML usados por eventos (mantener todos los data-id, #username, #month-picker-modal, etc.)
+- NO remover: Scripts de jsPDF, Google Fonts, cache-busting de version
+- SÍ modificar: css/styles.css (principal del rediseño), estilos inline de HTML por clases CSS
 
 ### Siguiente paso concreto
-Esperar instrucción del usuario sobre qué hacer (bugfix, nueva feature, mantenimiento, etc.)
+1. Actualizar `:root` en css/styles.css con paleta oficial (Fase 1)
+2. Rediseñar botones, login, KPIs (Fases 3-4)
+3. Fijar responsividad móvil del panel de filtros (Fase 5 crítica)
+4. Completar fases 6-8
+5. Validación responsive en múltiples dispositivos
 
 ### Meta info
-- Última sesión: Antigravity AI - 3 de mayo de 2026
-- Primera creación de AGENTS.md
+- Última sesión: Usuario (IDE desconocido) - 4 de mayo de 2026
+- Cambio: Iniciando Rediseño Visual - v20.4.0
 
 <!-- END HANDOFF -->
 
@@ -57,7 +58,7 @@ Esperar instrucción del usuario sobre qué hacer (bugfix, nueva feature, manten
   - jsPDF AutoTable (tablas en PDF)
   - Google Fonts (Manrope, Fraunces, JetBrains Mono)
 - **Hosting:** Antigravity (asumido por ubicación del proyecto)
-- **Version:** 20.3.2 (major.minor.patch)
+- **Version:** 20.4.0 (major.minor.patch) - Rediseño Visual Iniciado
 
 ## Project Structure
 ```
@@ -109,10 +110,19 @@ d:\Antigravity\SmartT\Smart Dashboard\
 - ✅ Versionado centralizado
 
 ### Features In Progress
-Ninguno actualmente. Esperar instrucción del usuario.
+- 🎨 Rediseño Visual Completo (9 fases)
+  - Fase 1: Variables de marca (#1B4F8A, #4CAF50, #F5A623, etc.)
+  - Fase 2: Limpieza visual segura de HTML
+  - Fase 3: Rediseño de botones y login
+  - Fase 4: KPIs con gradientes de marca
+  - Fase 5: Panel filtros mejorado + corrección responsividad móvil (crítica)
+  - Fase 6: Tabla con colores semánticos
+  - Fase 7: Modales y selector de meses
+  - Fase 8: HTML dinámico (usuarios, resumen)
+  - Fase 9: Validación visual y técnica en dispositivos reales
 
 ### Features Not Started
-- Integración con backend real (actualmente solo Google Sheets)
+- Integración con backend real (mantener Google Sheets por ahora)
 - Sistema de permisos granulares por rol
 - Notificaciones en tiempo real
 - Gráficos/dashboards analíticos
@@ -132,6 +142,14 @@ Ninguno actualmente. Esperar instrucción del usuario.
 - **Mobile-first CSS**: Prioridad en experiencia mobile, desktop es mejora progresiva
 
 ## Session History
+
+### Session 2 - Usuario - 4 de mayo de 2026
+- Completed: Creación de plan.md con 9 fases de rediseño visual, actualización de versión a 20.4.0
+- In Progress: Rediseño Visual completo (comenzando Fase 1)
+- Modified: AGENTS.md (Handoff + Current Status), version en index.html (20.3.2 → 20.4.0)
+- Bugs: Ninguno detectado
+- Important: Plan.md contiene especificaciones detalladas. Responsividad móvil es crítica en Fase 5 (panel filtros debe mantener botón visible en 320px-390px).
+- Next Steps: Iniciar Fase 1 (Variables de marca en css/styles.css)
 
 ### Session 1 - Antigravity AI - 3 de mayo de 2026
 - Completed: Escaneo inicial del proyecto, creación de AGENTS.md
