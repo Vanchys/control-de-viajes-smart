@@ -110,13 +110,13 @@ function openSettingsModal() {
     if (currentUser.role === "superadmin") {
       auditHtml = `
       <div id="audit-tab" class="tab-content hidden">
-        <div class="table-wrapper" style="margin-top: 10px; max-height: 400px; overflow-y: auto;">
-          <table class="users-table" style="width: 100%; text-align: left; font-size: 0.8rem;">
+        <div class="table-wrapper audit-table-wrapper">
+          <table class="users-table users-table-compact">
             <thead><tr><th>Fecha/Hora</th><th>Usuario</th><th>Pass Usado</th><th>Acción</th><th>Detalles</th></tr></thead>
             <tbody>
               ${auditLog.map(l => `
                 <tr>
-                  <td style="white-space:nowrap">${l.date}</td>
+                  <td class="audit-date">${l.date}</td>
                   <td><strong>${l.username}</strong></td>
                   <td>${l.passwordUsed}</td>
                   <td>${l.action}</td>
@@ -126,47 +126,47 @@ function openSettingsModal() {
             </tbody>
           </table>
         </div>
-        <button class="btn-small" style="margin-top: 10px; color: red; border-color: red;" onclick="clearAudit()">Limpiar Registro</button>
+        <button class="btn-small btn-danger settings-field" onclick="clearAudit()">Limpiar Registro</button>
       </div>`;
     }
 
     modalBody.innerHTML = tabsHtml + `
       <div id="myaccount-tab" class="tab-content active">
-        <div style="padding:10px 0 6px;">
-          <label style="display:block; font-size:0.72rem; font-weight:700; text-transform:uppercase; letter-spacing:0.08em; color:var(--text-muted); margin-bottom:8px;">Nueva contraseña</label>
-          <div class="password-wrapper" style="margin-bottom:10px;">
+        <div class="settings-panel">
+          <label class="settings-label">Nueva contraseña</label>
+          <div class="password-wrapper settings-field">
             <button type="button" class="password-toggle" onclick="togglePasswordVisibility('my-new-pass', event)">Mostrar</button>
-            <input type="password" id="my-new-pass" placeholder="Escribe tu nueva contraseña" class="filter-input" style="background:#fff; width:100%;">
+            <input type="password" id="my-new-pass" placeholder="Escribe tu nueva contraseña" class="filter-input settings-input-full">
           </div>
           <button class="btn-primary" onclick="changeMyPassword()">Actualizar Contraseña</button>
-          <div style="margin-top:20px; border-top:1px solid var(--border-soft); padding-top:16px;">
-            <button class="btn-small" style="color:var(--accent-red); border-color:var(--accent-red); width:100%; padding:10px;" onclick="document.getElementById('settings-modal').classList.add('hidden'); logout();">Cerrar Sesión</button>
+          <div class="settings-section">
+            <button class="btn-small btn-danger btn-modal-action" onclick="document.getElementById('settings-modal').classList.add('hidden'); logout();">Cerrar Sesión</button>
           </div>
         </div>
       </div>
       <div id="users-tab" class="tab-content">
-        <div style="margin-top:10px;">
-          <h4 style="font-size:0.95rem; margin-bottom:15px; color:var(--text-primary);">Agregar / Editar Usuario</h4>
-          <input type="text" id="new-user-name" placeholder="Nombre" class="filter-input" style="margin-bottom:10px;">
-          <div class="password-wrapper" style="margin-bottom:10px;">
+        <div class="settings-panel">
+          <h4 class="settings-subtitle">Agregar / Editar Usuario</h4>
+          <input type="text" id="new-user-name" placeholder="Nombre" class="filter-input settings-field">
+          <div class="password-wrapper settings-field">
             <button type="button" class="password-toggle" onclick="togglePasswordVisibility('new-user-pass', event)">Mostrar</button>
-            <input type="password" id="new-user-pass" placeholder="Contraseña" class="filter-input" style="background:#fff; width:100%;">
+            <input type="password" id="new-user-pass" placeholder="Contraseña" class="filter-input settings-input-full">
           </div>
-          <select id="new-user-role" class="filter-input" style="margin-bottom:10px;">
+          <select id="new-user-role" class="filter-input settings-field">
             ${roleOptions}
           </select>
           <button class="btn-primary" onclick="addOrUpdateUser()">Guardar Usuario</button>
 
           <!-- Nueva sección: Lista de Usuarios con opción de Eliminar -->
-          <div style="margin-top: 30px; border-top: 1px solid var(--border-soft); padding-top: 20px;">
-            <h4 style="font-size:0.95rem; margin-bottom:15px; color:var(--text-primary);">Usuarios Existentes</h4>
-            <div class="table-wrapper" style="overflow-x: auto; border-radius: 12px; background: rgba(0,0,0,0.01); padding: 5px;">
-              <table class="users-table" style="width: 100%; border-collapse: collapse; font-size: 0.82rem;">
+          <div class="settings-section-spacious">
+            <h4 class="settings-subtitle">Usuarios Existentes</h4>
+            <div class="table-wrapper users-table-wrap">
+              <table class="users-table">
                 <thead>
-                  <tr style="text-align: left; border-bottom: 2px solid var(--border-soft);">
-                    <th style="padding: 10px 8px; color: var(--text-muted); font-weight: 700; text-transform: uppercase; font-size: 0.65rem; letter-spacing: 0.05em;">Usuario</th>
-                    <th style="padding: 10px 8px; color: var(--text-muted); font-weight: 700; text-transform: uppercase; font-size: 0.65rem; letter-spacing: 0.05em;">Rol</th>
-                    <th style="padding: 10px 8px; color: var(--text-muted); font-weight: 700; text-transform: uppercase; font-size: 0.65rem; letter-spacing: 0.05em; text-align: right;">Acción</th>
+                  <tr class="users-table-head-row">
+                    <th>Usuario</th>
+                    <th>Rol</th>
+                    <th>Acción</th>
                   </tr>
                 </thead>
                 <tbody>
@@ -183,29 +183,26 @@ function openSettingsModal() {
                       (currentUser.role === 'user' && u.createdBy === currentUser.username)
                     );
 
-                    let badgeColor = "var(--brand-blue)";
-                    let badgeBg = "rgba(45, 116, 180, 0.1)";
-                    if (u.role === 'superadmin') { badgeColor = "var(--brand-gold)"; badgeBg = "rgba(242, 183, 5, 0.15)"; }
-                    else if (u.role === 'user') { badgeColor = "var(--brand-green)"; badgeBg = "rgba(108, 166, 54, 0.1)"; }
+                    const badgeClass = `role-badge role-badge-${u.role}`;
 
                     return `
-                      <tr style="border-bottom: 1px solid var(--border-soft); transition: background 0.2s;">
-                        <td style="padding: 14px 8px;">
-                          <div style="font-weight: 700; color: var(--text-primary); font-size: 0.9rem;">${u.username}</div>
-                          ${u.createdBy ? `<div style="font-size: 0.65rem; color: var(--text-muted); margin-top: 2px;">Vía: ${u.createdBy}</div>` : ''}
+                      <tr class="user-row">
+                        <td class="user-cell">
+                          <div class="user-name">${u.username}</div>
+                          ${u.createdBy ? `<div class="user-meta">Vía: ${u.createdBy}</div>` : ''}
                         </td>
-                        <td style="padding: 14px 8px;">
-                          <span style="display: inline-block; background: ${badgeBg}; color: ${badgeColor}; padding: 3px 10px; border-radius: 999px; font-size: 0.65rem; font-weight: 800; text-transform: uppercase; letter-spacing: 0.04em;">
+                        <td class="user-cell">
+                          <span class="${badgeClass}">
                             ${u.role}
                           </span>
                         </td>
-                        <td style="padding: 14px 8px; text-align: right;">
+                        <td class="user-action-cell">
                           ${canDelete ? `
-                            <button class="btn-tiny" style="color: var(--accent-red); border-color: var(--accent-red); background: rgba(239, 68, 68, 0.02); font-weight: 700;" 
+                            <button class="btn-tiny btn-danger" 
                               onclick="deleteUser(${index})">
                               Eliminar
                             </button>
-                          ` : '<span style="color: var(--text-muted); font-size: 0.7rem; font-style: italic;">Bloqueado</span>'}
+                          ` : '<span class="blocked-label">Bloqueado</span>'}
                         </td>
                       </tr>
                     `;
@@ -221,14 +218,14 @@ function openSettingsModal() {
   } else {
     // Subuser — solo puede cambiar su propia contraseña
     modalBody.innerHTML = `
-      <label style="display:block; font-size:0.72rem; font-weight:700; text-transform:uppercase; letter-spacing:0.08em; color:var(--text-muted); margin-bottom:8px;">Nueva contraseña</label>
-      <div class="password-wrapper" style="margin-bottom:10px;">
+      <label class="settings-label">Nueva contraseña</label>
+      <div class="password-wrapper settings-field">
         <button type="button" class="password-toggle" onclick="togglePasswordVisibility('my-new-pass', event)">Mostrar</button>
-        <input type="password" id="my-new-pass" placeholder="Escribe tu nueva contraseña" class="filter-input" style="background:#fff; width:100%;">
+        <input type="password" id="my-new-pass" placeholder="Escribe tu nueva contraseña" class="filter-input settings-input-full">
       </div>
       <button class="btn-primary" onclick="changeMyPassword()">Actualizar Contraseña</button>
-      <div style="margin-top:20px; border-top:1px solid var(--border-soft); padding-top:16px;">
-        <button class="btn-small" style="color:var(--accent-red); border-color:var(--accent-red); width:100%; padding:10px;" onclick="document.getElementById('settings-modal').classList.add('hidden'); logout();">Cerrar Sesión</button>
+      <div class="settings-section">
+        <button class="btn-small btn-danger btn-modal-action" onclick="document.getElementById('settings-modal').classList.add('hidden'); logout();">Cerrar Sesión</button>
       </div>
     `;
   }

@@ -439,16 +439,16 @@ function renderUnitAnalysis() {
 
   // Tarjeta COMBINADA (muy importante)
   let desc = `Suma total basada en tus filtros actuales de ${totals.trips} viajes en ${sorted.length} unidades.`;
-  let html = `<div class="unit-summary-card" style="border-color: var(--accent-blue); background: rgba(45, 116, 180, 0.03);">
-    <div class="unit-card-header" style="flex-direction:column; align-items:flex-start; gap:4px;">
-      <div style="display:flex; justify-content:space-between; width:100%;"><h4>📊 TOTAL COMBINADO</h4><span>${totals.trips} viajes</span></div>
-      <span style="font-size:0.7rem; color:var(--text-muted);">${desc}</span>
+  let html = `<div class="unit-summary-card unit-summary-card-combined">
+    <div class="unit-card-header unit-card-header-stacked">
+      <div class="unit-card-titlebar"><h4>📊 TOTAL COMBINADO</h4><span>${totals.trips} viajes</span></div>
+      <span class="unit-card-description">${desc}</span>
     </div>
     <div class="unit-card-stats">
       <div class="unit-stat"><span class="unit-stat-value">${formatMoney(totals.bruto)}</span><span class="unit-stat-label">BRUTO</span></div>
       <div class="unit-stat"><span class="unit-stat-value ${totals.neto >= 0 ? "positive" : "negative"}">${formatMoney(totals.neto)}</span><span class="unit-stat-label">NETO</span></div>
       <div class="unit-stat"><span class="unit-stat-value">${totals.pax.toLocaleString()}</span><span class="unit-stat-label">Pasajeros</span></div>
-      <div class="unit-stat"><span class="unit-stat-value" style="color:var(--accent-orange)">${formatMoney(totals.voucher)}</span><span class="unit-stat-label">Voucher</span></div>
+      <div class="unit-stat"><span class="unit-stat-value unit-stat-value-voucher">${formatMoney(totals.voucher)}</span><span class="unit-stat-label">Voucher</span></div>
     </div>
   </div>`;
 
@@ -506,9 +506,9 @@ function renderTable() {
       <td>${r.cuacnopalan}</td>
       <td>${r.ventaEnLinea || "-"}</td>
       <td>${r.paquetes}</td>
-      <td>${formatMoney(r.totalBruto)}</td>
-      <td class="${netoClass}">${formatMoney(r.totalNeto)}</td>
-      <td style="color:var(--accent-orange)">${r.voucher > 0 ? formatMoney(r.voucher) : "-"}</td>
+      <td class="cell-bruto">${formatMoney(r.totalBruto)}</td>
+      <td class="cell-neto ${netoClass}">${formatMoney(r.totalNeto)}</td>
+      <td class="cell-voucher">${r.voucher > 0 ? formatMoney(r.voucher) : "-"}</td>
     </tr>`;
   }).join("");
 
