@@ -1776,6 +1776,9 @@ td strong { font-weight: 700; color: var(--brand-blue-deep); }
   #filters-panel .btn-actions { padding: 5px 8px; font-size: 0.64rem; }
 }
 
+/* Ensure Apply Filters button full width on all viewports (in case not inherited) */
+#filters-panel #btn-apply-filters { width: 100%; max-width: 100%; box-sizing: border-box; padding: 14px 22px; }
+
 /* Enhancements: filter buttons visuals & interactions */
 #filters-panel .btn-small, #filters-panel .btn-tiny {
   background: rgba(255,255,255,0.12);
