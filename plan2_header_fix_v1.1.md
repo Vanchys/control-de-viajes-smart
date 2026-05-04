@@ -1,5 +1,5 @@
 # plan2_header_fix_v1.1.md
-Versión: v1.1
+Versión: v1.2
 Objetivo
 - Alinear el header del panel de filtros para que el ícono de engranaje y el texto queden en una misma línea y bien alineados.
 
