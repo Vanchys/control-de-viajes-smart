@@ -16,8 +16,29 @@ const SHEETS_CONFIG = {
         { name: "Hoja_Teh_Mex", route: "Teh-Mex", type: "cdmx" },
         { name: "Hoja_Mex_Teh", route: "Mex-Teh", type: "cdmx" }
       ]
-    }
-    // Agregar nuevos meses aquí
+    },
+    {
+      id: "147v2hB-J4nm540f8E5tNA_PNduYBUX10IVanpdgzupM",
+      name: "Smart 04 2026",
+      month: "2026-04",
+      sheets: [
+        { name: "Hoja_Teh_Pue", route: "Teh-Pue", type: "puebla" },
+        { name: "Hoja_Pue_Teh", route: "Pue-Teh", type: "puebla" },
+        { name: "Hoja_Teh_Mex", route: "Teh-Mex", type: "cdmx" },
+        { name: "Hoja_Mex_Teh", route: "Mex-Teh", type: "cdmx" }
+      ]
+    },
+    {
+      id: "1v30CzdtOpZKCEgfeDEx5fYia06XudZRqq0FLoVDFLCE",
+      name: "Smart 05 2026",
+      month: "2026-05",
+      sheets: [
+        { name: "Hoja_Teh_Pue", route: "Teh-Pue", type: "puebla" },
+        { name: "Hoja_Pue_Teh", route: "Pue-Teh", type: "puebla" },
+        { name: "Hoja_Teh_Mex", route: "Teh-Mex", type: "cdmx" },
+        { name: "Hoja_Mex_Teh", route: "Mex-Teh", type: "cdmx" }
+      ]
+    },
   ]
 };
 
