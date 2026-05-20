@@ -699,16 +699,18 @@ body::before {
 /* Chips / botones de selección — paleta de marca uniforme */
 .checkbox-item {
   white-space: nowrap;
-  background: rgba(255,255,255,0.07);
-  padding: 7px 12px;
-  border-radius: var(--radius-sm);
-  border: 1px solid rgba(255,255,255,0.15);
+  background: linear-gradient(180deg, rgba(255, 255, 255, 0.12) 0%, rgba(255, 255, 255, 0.05) 100%);
+  padding: 8px 14px;
+  border-radius: 999px; /* Forma de píldora más elegante */
+  border: 1px solid rgba(255, 255, 255, 0.25);
+  border-bottom-color: rgba(255, 255, 255, 0.1); /* Efecto 3D sutil */
+  box-shadow: 0 2px 5px rgba(0, 0, 0, 0.25), inset 0 1px 0 rgba(255, 255, 255, 0.15);
   display: inline-flex;
   align-items: center;
-  gap: 7px;
+  gap: 8px;
   font-size: 0.8rem;
   font-weight: 600;
-  color: rgba(255,255,255,0.8);
+  color: #F8FAFC;
   cursor: pointer;
   transition: var(--transition);
 }
