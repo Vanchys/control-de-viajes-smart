@@ -423,9 +423,6 @@ body::before {
   width: var(--sidebar-width);
   height: calc(100vh - var(--header-height));
   background: var(--sidebar-bg);
-  background-image:
-    radial-gradient(600px 400px at -20% -10%, rgba(27, 79, 138, 0.34), transparent 60%),
-    radial-gradient(400px 300px at 110% 100%, rgba(76, 175, 80, 0.12), transparent 60%);
   border-right: 1px solid var(--sidebar-border);
   padding: 22px 18px 18px;
   overflow: hidden;
@@ -547,37 +544,23 @@ body::before {
   letter-spacing: 0;
 }
 
-/* Delimitación de secciones (Fechas/Rutas/Unidades/Conductores) */
+/* Delimitación de secciones limpias */
 #filters-panel .filter-group {
-  border: 1px solid rgba(255,255,255,0.10);
-  border-radius: 14px;
-  background:
-    radial-gradient(320px 160px at 15% 10%, rgba(27,79,138,0.16), transparent 62%),
-    rgba(255,255,255,0.03);
-  padding: 10px;
-  box-shadow: 0 1px 0 rgba(255,255,255,0.06) inset;
+  border: 1px solid var(--sidebar-border);
+  border-radius: var(--radius-md);
+  background: var(--sidebar-bg-soft);
+  padding: 14px 12px;
   position: relative;
   overflow: hidden;
-}
-#filters-panel .filter-group::before {
-  content: "";
-  position: absolute;
-  inset: 0 auto 0 0;
-  width: 3px;
-  background: var(--brand-blue);
-  pointer-events: none;
+  transition: var(--transition);
 }
 #filters-panel .filter-group:focus-within {
-  border-color: rgba(245,166,35,0.48);
-  box-shadow: 0 0 0 3px rgba(245,166,35,0.14), 0 1px 0 rgba(255,255,255,0.06) inset;
+  border-color: var(--brand-blue-soft);
+  box-shadow: 0 0 0 2px rgba(43, 108, 176, 0.2);
 }
 #filters-panel .filter-group > label {
-  margin-bottom: 6px;
+  margin-bottom: 8px;
 }
-#filters-panel .filter-group-date::before { background: var(--brand-blue); }
-#filters-panel .filter-group-routes::before { background: var(--brand-green); }
-#filters-panel .filter-group-units::before { background: var(--brand-gold); }
-#filters-panel .filter-group-drivers::before { background: var(--accent-red); }
 
 .filter-input {
   width: 100%;
@@ -885,12 +868,13 @@ body::before {
 .kpi-value {
   font-family: var(--font-display);
   font-weight: 600;
-  font-size: clamp(1.8rem, 4vw, 2.8rem);
+  font-size: clamp(1.4rem, 3.5vw, 2.2rem);
   line-height: 1.1;
   letter-spacing: -0.02em;
   color: var(--text-primary);
   display: block;
   font-feature-settings: "tnum" 1, "lnum" 1;
+  word-wrap: break-word;
 }
 
 /* =================  ANÁLISIS POR UNIDAD  ================= */
