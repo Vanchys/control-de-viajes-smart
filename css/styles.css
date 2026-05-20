@@ -849,21 +849,25 @@ body::before {
   padding: 10px;
 }
 
-/* Sidebar-scoped variants para btn-small + btn-tiny */
+/* Sidebar-scoped variants para btn-small + btn-tiny (Limpiar, Cerrar, Mes) */
 #filters-panel .btn-small,
 #filters-panel .btn-tiny {
-  border: 1px solid rgba(255,255,255,0.2);
-  border-bottom-color: rgba(255,255,255,0.05);
-  color: #F8FAFC;
-  background: linear-gradient(180deg, rgba(255, 255, 255, 0.12) 0%, rgba(255, 255, 255, 0.03) 100%);
-  box-shadow: 0 2px 4px rgba(0,0,0,0.2), inset 0 1px 0 rgba(255,255,255,0.1);
+  border: 1px solid #63B3ED;
+  border-bottom-color: #2B6CB0;
+  color: #FFF;
+  background: linear-gradient(180deg, #3A82D0 0%, #2B6CB0 100%);
+  box-shadow: 0 2px 6px rgba(0,0,0,0.25), inset 0 1px 0 rgba(255,255,255,0.2);
+  font-weight: 700;
 }
 #filters-panel .btn-small:hover,
 #filters-panel .btn-tiny:hover {
-  color: #fff;
-  border-color: var(--brand-gold);
-  background: linear-gradient(180deg, rgba(214, 158, 46, 0.25) 0%, rgba(214, 158, 46, 0.1) 100%);
-  box-shadow: 0 3px 6px rgba(0,0,0,0.25), inset 0 1px 0 rgba(255,255,255,0.2);
+  background: linear-gradient(180deg, #63B3ED 0%, #3A82D0 100%);
+  transform: translateY(-1px);
+}
+#filters-panel .btn-small:active,
+#filters-panel .btn-tiny:active {
+  transform: scale(0.92);
+  box-shadow: 0 1px 2px rgba(0,0,0,0.3);
 }
 
 /* Alineación de títulos con acciones en una línea */
@@ -888,46 +892,48 @@ body::before {
   flex-shrink: 0;
   align-items: center;
 }
-/* Botones Todas/Ninguna dentro del sidebar — distintos por grupo */
+/* Botones Todas/Ninguna dentro del sidebar — Colores vivos permanentes */
 .btn-actions {
-  background: linear-gradient(180deg, rgba(255, 255, 255, 0.15) 0%, rgba(255, 255, 255, 0.04) 100%);
-  border: 1px solid rgba(255,255,255,0.25);
-  border-bottom-color: rgba(255,255,255,0.05);
-  color: #F8FAFC;
-  box-shadow: 0 2px 4px rgba(0,0,0,0.25), inset 0 1px 0 rgba(255,255,255,0.15);
-  padding: 5px 11px;
   border-radius: 6px;
+  padding: 6px 12px;
   font-size: 0.68rem;
-  font-weight: 700;
-  letter-spacing: 0.04em;
+  font-weight: 800;
+  letter-spacing: 0.05em;
   text-transform: uppercase;
   cursor: pointer;
-  transition: var(--transition);
+  transition: transform 0.15s ease, background 0.2s ease, box-shadow 0.2s ease;
   text-align: center;
   font-family: var(--font-sans);
   white-space: nowrap;
+  color: #FFF;
+  box-shadow: 0 3px 8px rgba(0,0,0,0.3), inset 0 1px 0 rgba(255,255,255,0.2);
 }
-.btn-actions:hover {
-  background: linear-gradient(180deg, rgba(255, 255, 255, 0.25) 0%, rgba(255, 255, 255, 0.1) 100%);
-  color: #fff;
-  border-color: rgba(255,255,255,0.4);
-  box-shadow: 0 4px 8px rgba(0,0,0,0.3), inset 0 1px 0 rgba(255,255,255,0.25);
-  transform: translateY(-1px);
+.btn-actions:active {
+  transform: scale(0.92);
+  box-shadow: 0 1px 3px rgba(0,0,0,0.4);
 }
-.filter-group-routes .btn-actions:hover {
-  background: linear-gradient(180deg, rgba(47,133,90,0.5) 0%, rgba(47,133,90,0.2) 100%);
-  border-color: #48BB78;
+
+/* Colores Oficiales por grupo para botones secundarios */
+.filter-group-routes .btn-actions {
+  background: linear-gradient(180deg, #38A169 0%, #2F855A 100%);
+  border: 1px solid #68D391;
+  border-bottom-color: #22543D;
 }
-.filter-group-units .btn-actions:hover {
-  background: linear-gradient(180deg, rgba(214,158,46,0.4) 0%, rgba(214,158,46,0.15) 100%);
-  border-color: #ECC94B;
-  color: #fff;
+.filter-group-units .btn-actions {
+  background: linear-gradient(180deg, #D69E2E 0%, #B7791F 100%);
+  border: 1px solid #F6E05E;
+  border-bottom-color: #975A16;
 }
-.filter-group-drivers .btn-actions:hover {
-  background: linear-gradient(180deg, rgba(197,48,48,0.4) 0%, rgba(197,48,48,0.15) 100%);
-  border-color: #F56565;
-  color: #fff;
+.filter-group-drivers .btn-actions {
+  background: linear-gradient(180deg, #E53E3E 0%, #C53030 100%);
+  border: 1px solid #FC8181;
+  border-bottom-color: #9B2C2C;
 }
+
+/* Hover effects for Desktop, but mobile users will just see the vibrant default states */
+.filter-group-routes .btn-actions:hover { background: linear-gradient(180deg, #48BB78 0%, #38A169 100%); transform: translateY(-1px); }
+.filter-group-units .btn-actions:hover { background: linear-gradient(180deg, #ECC94B 0%, #D69E2E 100%); transform: translateY(-1px); }
+.filter-group-drivers .btn-actions:hover { background: linear-gradient(180deg, #F56565 0%, #E53E3E 100%); transform: translateY(-1px); }
 
 /* =================  CONTENIDO PRINCIPAL  ================= */
 #app-container { padding-top: var(--header-height); width: 100%; position: relative; z-index: 1; }
