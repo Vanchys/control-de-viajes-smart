@@ -1922,8 +1922,8 @@ body.filters-open {
   gap: 4px;
 }
 .kpi-value {
-  font-size: clamp(0.55rem, 3.8vw, 1.1rem);
-  letter-spacing: -0.06em;
+  font-size: clamp(0.72rem, 4.2vw, 1.25rem);
+  letter-spacing: -0.05em;
 }
 .kpi-label {
   font-size: 0.55rem;
