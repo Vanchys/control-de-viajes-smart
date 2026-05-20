@@ -422,8 +422,10 @@ body::before {
   left: -100%;
   width: var(--sidebar-width);
   height: calc(100vh - var(--header-height));
-  background: var(--sidebar-bg);
-  border-right: 1px solid var(--sidebar-border);
+  background: rgba(10, 25, 41, 0.65);
+  backdrop-filter: blur(16px);
+  -webkit-backdrop-filter: blur(16px);
+  border-right: 1px solid rgba(255,255,255,0.08);
   padding: 22px 18px 18px;
   overflow: hidden;
   z-index: 90;
@@ -447,7 +449,18 @@ body::before {
 .filters-scroll::-webkit-scrollbar-thumb { background: rgba(255,255,255,0.12); border-radius: 3px; }
 .filter-actions-footer {
   flex-shrink: 0;
-  padding-top: 12px;
+  padding-top: 16px;
+}
+.filter-actions-footer .btn-primary {
+  width: 100%;
+  background: linear-gradient(135deg, var(--brand-blue-soft), var(--brand-blue));
+  border: 1px solid rgba(255,255,255,0.15);
+  box-shadow: 0 4px 12px rgba(43, 108, 176, 0.3);
+  font-size: 1rem;
+}
+.filter-actions-footer .btn-primary:hover {
+  background: linear-gradient(135deg, #3A82D0, var(--brand-blue-soft));
+  box-shadow: 0 6px 16px rgba(43, 108, 176, 0.4);
 }
 
 #filters-overlay {
@@ -546,38 +559,39 @@ body::before {
 
 /* Delimitación de secciones limpias */
 #filters-panel .filter-group {
-  border: 1px solid var(--sidebar-border);
-  border-radius: var(--radius-md);
-  background: var(--sidebar-bg-soft);
+  border: 1px solid rgba(255,255,255,0.06);
+  border-radius: var(--radius-lg);
+  background: rgba(255,255,255,0.03);
   padding: 14px 12px;
   position: relative;
   overflow: hidden;
   transition: var(--transition);
 }
 #filters-panel .filter-group:focus-within {
-  border-color: var(--brand-blue-soft);
-  box-shadow: 0 0 0 2px rgba(43, 108, 176, 0.2);
+  border-color: rgba(255,255,255,0.2);
+  background: rgba(255,255,255,0.06);
 }
 #filters-panel .filter-group > label {
   margin-bottom: 8px;
+  color: rgba(255,255,255,0.9);
 }
 
 .filter-input {
   width: 100%;
   padding: 12px 14px; /* Aumentado para touch friendly */
-  border: 1px solid rgba(255,255,255,0.15);
-  border-radius: var(--radius-sm);
-  font-size: 0.9rem;
+  border: 1px solid rgba(255,255,255,0.12);
+  border-radius: var(--radius-md);
+  font-size: 0.95rem;
   font-family: var(--font-sans);
-  background: rgba(255,255,255,0.05);
-  color: var(--sidebar-text);
+  background: rgba(0,0,0,0.2);
+  color: #fff;
   transition: var(--transition);
-  min-height: 44px; /* Touch target minimum */
+  min-height: 48px; /* Touch target superior */
 }
 .filter-input:focus {
   outline: none;
   border-color: var(--brand-blue-soft);
-  background: rgba(255,255,255,0.1);
+  background: rgba(0,0,0,0.4);
   box-shadow: 0 0 0 3px rgba(43, 108, 176, 0.3);
 }
 .filter-input::-webkit-calendar-picker-indicator {
@@ -608,28 +622,29 @@ body::before {
 /* chips dentro del sidebar oscuro */
 .checkbox-item {
   white-space: nowrap;
-  background: rgba(255,255,255,0.04);
-  padding: 5px 10px;
-  border-radius: 999px;
-  border: 1px solid rgba(255,255,255,0.08);
+  background: rgba(0,0,0,0.2);
+  padding: 8px 12px;
+  border-radius: var(--radius-sm);
+  border: 1px solid rgba(255,255,255,0.06);
   display: inline-flex;
   align-items: center;
-  gap: 5px;
-  font-size: 0.75rem;
-  color: var(--sidebar-text);
+  gap: 8px;
+  font-size: 0.8rem;
+  color: rgba(255,255,255,0.7);
   cursor: pointer;
   transition: var(--transition);
 }
 .checkbox-item:hover {
-  background: rgba(45, 116, 180, 0.18);
-  border-color: rgba(45, 116, 180, 0.55);
-}
-.checkbox-item input { margin: 0; accent-color: var(--brand-blue); cursor: pointer; }
-.checkbox-item:has(input:checked) {
-  background: linear-gradient(135deg, rgba(45,116,180,0.35), rgba(30,80,128,0.35));
-  border-color: rgba(45, 116, 180, 0.7);
+  background: rgba(255,255,255,0.08);
+  border-color: rgba(255,255,255,0.2);
   color: #fff;
-  box-shadow: 0 2px 8px rgba(45, 116, 180, 0.25);
+}
+.checkbox-item input { margin: 0; accent-color: var(--brand-blue-soft); cursor: pointer; width: 16px; height: 16px; }
+.checkbox-item:has(input:checked) {
+  background: var(--brand-blue-soft);
+  border-color: transparent;
+  color: #fff;
+  box-shadow: 0 2px 8px rgba(43, 108, 176, 0.4);
 }
 
 .scroll-x-grid-2, .scroll-x-grid-3, .scroll-x-grid-4, .scroll-x-grid-5 {
@@ -868,13 +883,13 @@ body::before {
 .kpi-value {
   font-family: var(--font-display);
   font-weight: 600;
-  font-size: clamp(1.4rem, 3.5vw, 2.2rem);
+  font-size: clamp(1.2rem, 2.5vw + 0.5rem, 2.2rem);
   line-height: 1.1;
   letter-spacing: -0.02em;
   color: var(--text-primary);
   display: block;
   font-feature-settings: "tnum" 1, "lnum" 1;
-  word-wrap: break-word;
+  white-space: nowrap;
 }
 
 /* =================  ANÁLISIS POR UNIDAD  ================= */
