@@ -50,7 +50,7 @@ Esperar instrucción del usuario — el proyecto está en estado estable y funci
 ## Project Overview
 - Purpose: Dashboard operativo para control y análisis de viajes de transporte terrestre (rutas Tehuacán ↔ Puebla y Tehuacán ↔ CDMX)
 - Target: Uso interno de la empresa Smart Transports — acceso vía navegador, optimizado para móvil y escritorio
-- Timeline: Proyecto en producción activa (versión 3.3.7 UPDATE)
+- Timeline: Proyecto en producción activa (versión 3.3.8 UPDATE)
 - Status: Near completion / Mantenimiento activo
 
 ## Tech Stack

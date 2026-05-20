@@ -1021,16 +1021,13 @@ body::before {
 .kpi-value {
   font-family: var(--font-display);
   font-weight: 600;
-  font-size: clamp(1.1rem, 5vw, 1.8rem);
+  font-size: clamp(0.9rem, 2.2vw, 1.8rem);
   line-height: 1.1;
-  letter-spacing: -0.02em;
+  letter-spacing: -0.04em;
   color: var(--text-primary);
   display: block;
   font-feature-settings: "tnum" 1, "lnum" 1;
   white-space: nowrap;
-  width: 100%;
-  overflow: hidden;
-  text-overflow: ellipsis;
 }
 
 /* =================  ANÁLISIS POR UNIDAD  ================= */
@@ -1741,8 +1738,8 @@ td strong { font-weight: 700; color: var(--brand-blue-deep); }
     grid-template-columns: repeat(3, 1fr);
     gap: 18px;
   }
-  .kpi-card { padding: 20px 14px; min-height: 120px; }
-  .kpi-value { font-size: clamp(1.05rem, 4.5vw, 1.5rem); }
+  .kpi-card { padding: 24px 20px; min-height: 130px; }
+  .kpi-value { font-size: clamp(1.1rem, 2.2vw, 1.6rem); letter-spacing: -0.04em; }
   .kpi-label { font-size: 0.72rem; }
 
   #unit-summary-cards { grid-template-columns: repeat(2, 1fr); gap: 14px; }
@@ -1909,6 +1906,28 @@ body.filters-open {
   height: 100vh;
   height: 100dvh;
   overscroll-behavior: none;
+}
+
+/* KPIs super compactos en móvil para no truncar números largos (≤767px) */
+#kpis-section {
+  gap: 4px;
+  margin-bottom: 16px;
+}
+.kpi-card {
+  padding: 12px 2px;
+  min-height: 80px;
+  border-radius: var(--radius-md);
+}
+.kpi-content {
+  gap: 4px;
+}
+.kpi-value {
+  font-size: clamp(0.55rem, 3.8vw, 1.1rem);
+  letter-spacing: -0.06em;
+}
+.kpi-label {
+  font-size: 0.55rem;
+  letter-spacing: 0.05em;
 }
 
 /* Cuando filtros están abiertos en móvil: ocultar header para que no “asome” */
