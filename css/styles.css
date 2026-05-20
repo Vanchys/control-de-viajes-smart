@@ -452,10 +452,11 @@ body::before {
 }
 .filter-actions-footer .btn-primary {
   width: 100%;
-  background: linear-gradient(135deg, #2B6CB0 0%, #1A4D8A 100%);
+  background: linear-gradient(180deg, #3A82D0 0%, #2B6CB0 100%);
   color: #fff;
-  border: 1px solid rgba(255,255,255,0.15);
-  box-shadow: 0 4px 16px rgba(43,108,176,0.45), 0 0 0 1px rgba(43,108,176,0.2);
+  border: 1px solid #1A4D8A;
+  border-top-color: #63B3ED;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3), inset 0 1px 0 rgba(255, 255, 255, 0.2);
   font-size: 1rem;
   font-weight: 800;
   min-height: 52px;
@@ -474,8 +475,8 @@ body::before {
   font-size: 1.1rem;
 }
 .filter-actions-footer .btn-primary:hover {
-  background: linear-gradient(135deg, #3A82D0 0%, #2B6CB0 100%);
-  box-shadow: 0 6px 20px rgba(43,108,176,0.55);
+  background: linear-gradient(180deg, #63B3ED 0%, #3A82D0 100%);
+  box-shadow: 0 6px 16px rgba(0, 0, 0, 0.4), inset 0 1px 0 rgba(255, 255, 255, 0.3);
   transform: translateY(-2px);
 }
 .filter-actions-footer .btn-primary:active {
@@ -851,15 +852,18 @@ body::before {
 /* Sidebar-scoped variants para btn-small + btn-tiny */
 #filters-panel .btn-small,
 #filters-panel .btn-tiny {
-  border-color: rgba(255,255,255,0.15);
-  color: rgba(255,255,255,0.65);
-  background: rgba(255,255,255,0.04);
+  border: 1px solid rgba(255,255,255,0.2);
+  border-bottom-color: rgba(255,255,255,0.05);
+  color: #F8FAFC;
+  background: linear-gradient(180deg, rgba(255, 255, 255, 0.12) 0%, rgba(255, 255, 255, 0.03) 100%);
+  box-shadow: 0 2px 4px rgba(0,0,0,0.2), inset 0 1px 0 rgba(255,255,255,0.1);
 }
 #filters-panel .btn-small:hover,
 #filters-panel .btn-tiny:hover {
   color: #fff;
   border-color: var(--brand-gold);
-  background: rgba(214, 158, 46, 0.12);
+  background: linear-gradient(180deg, rgba(214, 158, 46, 0.25) 0%, rgba(214, 158, 46, 0.1) 100%);
+  box-shadow: 0 3px 6px rgba(0,0,0,0.25), inset 0 1px 0 rgba(255,255,255,0.2);
 }
 
 /* Alineación de títulos con acciones en una línea */
@@ -886,9 +890,11 @@ body::before {
 }
 /* Botones Todas/Ninguna dentro del sidebar — distintos por grupo */
 .btn-actions {
-  background: rgba(255,255,255,0.06);
-  border: 1px solid rgba(255,255,255,0.15);
-  color: rgba(255,255,255,0.75);
+  background: linear-gradient(180deg, rgba(255, 255, 255, 0.15) 0%, rgba(255, 255, 255, 0.04) 100%);
+  border: 1px solid rgba(255,255,255,0.25);
+  border-bottom-color: rgba(255,255,255,0.05);
+  color: #F8FAFC;
+  box-shadow: 0 2px 4px rgba(0,0,0,0.25), inset 0 1px 0 rgba(255,255,255,0.15);
   padding: 5px 11px;
   border-radius: 6px;
   font-size: 0.68rem;
@@ -902,24 +908,25 @@ body::before {
   white-space: nowrap;
 }
 .btn-actions:hover {
-  background: rgba(255,255,255,0.14);
+  background: linear-gradient(180deg, rgba(255, 255, 255, 0.25) 0%, rgba(255, 255, 255, 0.1) 100%);
   color: #fff;
-  border-color: rgba(255,255,255,0.3);
+  border-color: rgba(255,255,255,0.4);
+  box-shadow: 0 4px 8px rgba(0,0,0,0.3), inset 0 1px 0 rgba(255,255,255,0.25);
   transform: translateY(-1px);
 }
 .filter-group-routes .btn-actions:hover {
-  background: rgba(47,133,90,0.35);
-  border-color: #2F855A;
+  background: linear-gradient(180deg, rgba(47,133,90,0.5) 0%, rgba(47,133,90,0.2) 100%);
+  border-color: #48BB78;
 }
 .filter-group-units .btn-actions:hover {
-  background: rgba(214,158,46,0.25);
-  border-color: #D69E2E;
-  color: #F6E05E;
+  background: linear-gradient(180deg, rgba(214,158,46,0.4) 0%, rgba(214,158,46,0.15) 100%);
+  border-color: #ECC94B;
+  color: #fff;
 }
 .filter-group-drivers .btn-actions:hover {
-  background: rgba(197,48,48,0.25);
-  border-color: #C53030;
-  color: #FC8181;
+  background: linear-gradient(180deg, rgba(197,48,48,0.4) 0%, rgba(197,48,48,0.15) 100%);
+  border-color: #F56565;
+  color: #fff;
 }
 
 /* =================  CONTENIDO PRINCIPAL  ================= */
