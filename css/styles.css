@@ -1715,8 +1715,8 @@ td strong { font-weight: 700; color: var(--brand-blue-deep); }
   text-transform: uppercase;
 }
 
-/* =================  DESKTOP (≥768)  ================= */
-@media (min-width: 768px) {
+/* =================  DESKTOP (≥1024)  ================= */
+@media (min-width: 1024px) {
   .mobile-only { display: none !important; }
   .desktop-only { display: flex; align-items: center; }
 
@@ -1753,8 +1753,8 @@ td strong { font-weight: 700; color: var(--brand-blue-deep); }
   .analysis-section, .table-section { padding: 28px 28px; }
 }
 
-/* =================  MOBILE FILTERS — bottom sheet (≤767px)  ================= */
-@media (max-width: 767px) {
+/* =================  MOBILE/TABLET FILTERS — bottom sheet (≤1023px)  ================= */
+@media (max-width: 1023px) {
   #filters-panel {
     top: 0;
     left: 0;
@@ -1879,7 +1879,7 @@ td strong { font-weight: 700; color: var(--brand-blue-deep); }
 }
 
 /* Botón 🚐 (abrir filtros) más visible en móvil */
-@media (max-width: 767px) {
+@media (max-width: 1023px) {
   #btn-toggle-filters.btn-icon {
     width: 44px;
     height: 44px;
@@ -1931,7 +1931,7 @@ body.filters-open {
 }
 
 /* Cuando filtros están abiertos en móvil: ocultar header para que no “asome” */
-@media (max-width: 767px) {
+@media (max-width: 1023px) {
   body.filters-open #main-header {
     visibility: hidden;
     pointer-events: none;

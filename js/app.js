@@ -277,7 +277,7 @@ function setupEvents() {
     // Registro de auditoría
     logAction("Filtros Aplicados", buildAuditFiltersDetails());
 
-    if (window.innerWidth < 768) toggleSidebar(); // Cerrar sidebar en móvil al aplicar
+    if (window.innerWidth < 1024) toggleSidebar(); // Cerrar sidebar en móvil/tablet al aplicar
   });
 
   document.getElementById("btn-clear-filters").addEventListener("click", () => {
