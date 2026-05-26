@@ -1257,8 +1257,9 @@ td {
   white-space: nowrap;
   color: var(--text-primary);
 }
-tbody tr { transition: background 150ms ease; }
-tbody tr:hover { background: #F5F8FC; }
+tbody tr { transition: background 150ms ease; cursor: pointer; }
+tbody tr:hover { background: rgba(45, 116, 180, 0.08); }
+tbody tr:active { background: rgba(45, 116, 180, 0.15); }
 tbody tr:last-child td { border-bottom: none; }
 td strong { font-weight: 700; color: var(--brand-blue-deep); }
 .cell-bruto {
