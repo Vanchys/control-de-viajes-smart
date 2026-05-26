@@ -1258,8 +1258,31 @@ td {
   color: var(--text-primary);
 }
 tbody tr { transition: background 150ms ease; cursor: pointer; }
-tbody tr:hover { background: rgba(45, 116, 180, 0.08); }
-tbody tr:active { background: rgba(45, 116, 180, 0.15); }
+tbody tr:hover { background: #2B6CB0; color: #FFFFFF; }
+tbody tr:hover td { color: #FFFFFF; }
+tbody tr:hover td strong { color: #FFFFFF; }
+tbody tr:hover .cell-bruto,
+tbody tr:hover .cell-neto,
+tbody tr:hover .cell-positive,
+tbody tr:hover .cell-voucher {
+  color: #FFFFFF;
+}
+tbody tr:hover .cell-negative {
+  color: #FFC0C0;
+}
+
+tbody tr:active { background: #1B4F8A; }
+tbody tr:active td { color: #FFFFFF; }
+tbody tr:active td strong { color: #FFFFFF; }
+tbody tr:active .cell-bruto,
+tbody tr:active .cell-neto,
+tbody tr:active .cell-positive,
+tbody tr:active .cell-voucher {
+  color: #FFFFFF;
+}
+tbody tr:active .cell-negative {
+  color: #FFC0C0;
+}
 tbody tr:last-child td { border-bottom: none; }
 td strong { font-weight: 700; color: var(--brand-blue-deep); }
 .cell-bruto {
