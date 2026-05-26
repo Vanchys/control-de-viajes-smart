@@ -71,7 +71,7 @@
   /* ease-out-expo */
   --transition: all 250ms var(--ease);
 
-  --sidebar-width: 320px;
+  --sidebar-width: 380px;
   --header-height: 72px;
 
   --font-sans: 'Manrope', system-ui, -apple-system, sans-serif;
