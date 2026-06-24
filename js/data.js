@@ -39,6 +39,18 @@ const SHEETS_CONFIG = {
         { name: "Hoja_Mex_Teh", route: "Mex-Teh", type: "cdmx" }
       ]
     },
+    {
+      // Configuración para el mes de Junio 2026
+      id: "1YRmGq7lH5xp7-Op2fYuBc5XqG2DPvL4XYLwnxbCoDW4",
+      name: "Smart 06 2026",
+      month: "2026-06",
+      sheets: [
+        { name: "Hoja_Teh_Pue", route: "Teh-Pue", type: "puebla" },
+        { name: "Hoja_Pue_Teh", route: "Pue-Teh", type: "puebla" },
+        { name: "Hoja_Teh_Mex", route: "Teh-Mex", type: "cdmx" },
+        { name: "Hoja_Mex_Teh", route: "Mex-Teh", type: "cdmx" }
+      ]
+    },
   ]
 };
 
