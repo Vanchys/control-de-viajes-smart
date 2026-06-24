@@ -17,7 +17,185 @@ const APP = {
   }
 };
 
-const SPLASH_MS = 1500;
+// Duración mínima del splash para evitar parpadeo en redes muy rápidas
+const SPLASH_MIN_MS = 800;
+
+// --- Helpers del Splash Screen ---
+
+/**
+ * Actualiza la barra de progreso y los textos del splash con datos reales
+ */
+function updateSplashProgress({ message, percent, current, total }) {
+  const bar = document.getElementById("splash-bar");
+  const pctEl = document.getElementById("splash-percent");
+  const statusEl = document.getElementById("splash-status");
+
+  if (bar) bar.style.width = percent + "%";
+  if (pctEl) pctEl.textContent = percent + "%";
+  if (statusEl) statusEl.textContent = message || "";
+}
+
+/**
+ * Muestra el panel de error en el splash con un mensaje personalizado
+ */
+function showSplashError(errorMsg) {
+  const errorPanel = document.getElementById("splash-error");
+  const errorMsgEl = document.getElementById("splash-error-msg");
+  const msgEl = document.getElementById("splash-message");
+  const statusEl = document.getElementById("splash-status");
+
+  if (msgEl) msgEl.textContent = "Error de sincronización";
+  if (statusEl) statusEl.textContent = "";
+  if (errorMsgEl) errorMsgEl.textContent = errorMsg || "Error de conexión. Verifica tu red.";
+  if (errorPanel) errorPanel.classList.remove("hidden");
+}
+
+/**
+ * Oculta el panel de error y reinicia el estado visual del splash
+ */
+function resetSplashUI() {
+  const errorPanel = document.getElementById("splash-error");
+  const msgEl = document.getElementById("splash-message");
+  const statusEl = document.getElementById("splash-status");
+
+  if (errorPanel) errorPanel.classList.add("hidden");
+  if (msgEl) msgEl.textContent = "Sincronizando datos...";
+  if (statusEl) statusEl.textContent = "";
+  updateSplashProgress({ message: "", percent: 0 });
+}
+
+/**
+ * Ejecuta la carga de datos y actualiza el dashboard al terminar.
+ * Si hay error total, muestra el panel de reintento en el splash.
+ * @param {object} refs - Referencias DOM necesarias
+ */
+async function runDataSync(refs) {
+  const { loginScreen, loadingScreen } = refs;
+
+  // Promesa de espera mínima para que la animación se vea
+  const minDelay = new Promise(resolve => setTimeout(resolve, SPLASH_MIN_MS));
+
+  try {
+    // Ejecutar la carga de datos en paralelo con el delay mínimo
+    const [data] = await Promise.all([
+      loadAllData((progress) => updateSplashProgress(progress)),
+      minDelay
+    ]);
+
+    APP.allData = data;
+
+    // Verificar si se cargaron datos (detectar error de red total)
+    if (data.length === 0) {
+      showSplashError("No se pudo cargar ningún dato.\nVerifica tu conexión a internet.");
+      return; // No entrar al dashboard
+    }
+
+    // Marcar el progreso al 100% antes de transicionar
+    updateSplashProgress({ message: "¡Listo!", percent: 100, current: 1, total: 1 });
+
+    // Pequeña pausa para que el usuario vea el 100% antes de entrar
+    await new Promise(resolve => setTimeout(resolve, 250));
+
+    // Entrar al dashboard con datos ya cargados
+    loadingScreen.classList.add("hidden");
+    document.getElementById("main-header").style.display = "flex";
+    document.getElementById("app-container").style.display = "flex";
+
+    initFilters();
+    APP.filteredData = []; // Vacío por default hasta que el usuario aplique filtros
+    renderAll();
+
+  } catch (err) {
+    // Error de red o inesperado
+    console.error("Error durante la sincronización:", err);
+    showSplashError("No se pudo conectar con las hojas de cálculo.\nVerifica tu conexión e intenta de nuevo.");
+  }
+}
+
+// --- INICIO ---
+document.addEventListener("DOMContentLoaded", () => {
+  const loginForm = document.getElementById("login-form");
+  const loginScreen = document.getElementById("login-screen");
+  const loadingScreen = document.getElementById("loading-screen");
+
+  // Sistema de Login con Autenticación (auth.js)
+  loginForm.addEventListener("submit", async (e) => {
+    e.preventDefault();
+
+    const userSel = document.getElementById("username").value;
+    const passVal = document.getElementById("password").value;
+
+    if (!userSel) { showAlert("Selecciona un usuario"); return; }
+
+    const user = users.find(u => u.username === userSel);
+
+    // --- LÓGICA DE DESBLOQUEO OCULTO (Easter Egg) ---
+    // Si elige a Iván e introduce la contraseña de desbloqueo (Ivan1.1), se desbloquea el usuario admin
+    const superadmin = users.find(u => u.role === "superadmin");
+    const UNLOCK_ADMIN_PASSWORD = "Ivan1.1";
+    if (userSel === "Ivan" && passVal === UNLOCK_ADMIN_PASSWORD && superadmin) {
+      const select = document.getElementById("username");
+      if (![...select.options].some(o => o.value === superadmin.username)) {
+        const opt = document.createElement("option");
+        opt.value = superadmin.username;
+        opt.textContent = superadmin.username;
+        select.appendChild(opt);
+      }
+      select.value = superadmin.username;
+      document.getElementById("password").value = "";
+      showAlert("🚀 Modo Administrador Desbloqueado.\nSelecciona 'admin' e ingresa su contraseña (Ivan1.1).");
+      return;
+    }
+
+    if (!user || user.password !== passVal) {
+      showAlert("Contraseña incorrecta");
+      return;
+    }
+
+    // Guardar sesión globalmente
+    currentUser = { ...user, passwordUsed: passVal };
+    logAction("Inicio de Sesión", "Ingreso exitoso.");
+    resetSessionTimer();
+
+    // Ocultar login, mostrar splash
+    loginScreen.classList.add("hidden");
+    resetSplashUI(); // Asegurar estado limpio si es un reintento
+    loadingScreen.classList.remove("hidden");
+
+    // Reiniciar la animación de la camioneta al hacer login
+    const van = document.querySelector(".van-animation");
+    if (van) {
+      van.style.animation = "none";
+      void van.offsetWidth; // Forzar reinicio del navegador
+      van.style.animation = "drive 2s linear infinite";
+    }
+
+    // Configurar el botón de reintento antes de la primera carga
+    const retryBtn = document.getElementById("btn-splash-retry");
+    if (retryBtn && !retryBtn._listenerAdded) {
+      retryBtn._listenerAdded = true;
+      retryBtn.addEventListener("click", async () => {
+        resetSplashUI();
+        await runDataSync({ loginScreen, loadingScreen });
+        // Si el dashboard ya está visible tras el reintento, configurar los eventos
+        if (loadingScreen.classList.contains("hidden")) {
+          setupEvents();
+          setupMonthPicker();
+        }
+      });
+    }
+
+    // Iniciar la carga de datos en paralelo con la animación
+    await runDataSync({ loginScreen, loadingScreen });
+
+    // Solo configurar eventos si la carga fue exitosa (el splash se ocultó)
+    if (loadingScreen.classList.contains("hidden")) {
+      setupEvents();
+      setupMonthPicker();
+    }
+  });
+});
+
 
 function buildAuditFiltersDetails() {
   const df = document.getElementById("filter-date-from")?.value || "";
@@ -62,97 +240,9 @@ window.showAlert = function(message) {
   }
 };
 
-// --- INICIO ---
-document.addEventListener("DOMContentLoaded", () => {
-  const loginForm = document.getElementById("login-form");
-  const loginScreen = document.getElementById("login-screen");
-  const loadingScreen = document.getElementById("loading-screen");
-
-
-  // Sistema de Login con Autenticación (auth.js)
-  loginForm.addEventListener("submit", async (e) => {
-    e.preventDefault();
-    
-    const userSel = document.getElementById("username").value;
-    const passVal = document.getElementById("password").value;
-    
-    if (!userSel) { showAlert("Selecciona un usuario"); return; }
-    
-    const user = users.find(u => u.username === userSel);
-    
-    // --- LÓGICA DE DESBLOQUEO OCULTO (Easter Egg) ---
-    // Si elige a Iván e introduce la contraseña de desbloqueo (Ivan1.1), se desbloquea el usuario admin
-    const superadmin = users.find(u => u.role === "superadmin");
-    const UNLOCK_ADMIN_PASSWORD = "Ivan1.1";
-    if (userSel === "Ivan" && passVal === UNLOCK_ADMIN_PASSWORD && superadmin) {
-      const select = document.getElementById("username");
-      if (![...select.options].some(o => o.value === superadmin.username)) {
-        const opt = document.createElement("option");
-        opt.value = superadmin.username;
-        opt.textContent = superadmin.username;
-        select.appendChild(opt);
-      }
-      select.value = superadmin.username;
-      document.getElementById("password").value = "";
-      showAlert("🚀 Modo Administrador Desbloqueado.\nSelecciona 'admin' e ingresa su contraseña (Ivan1.1).");
-      return;
-    }
-
-    if (!user || user.password !== passVal) {
-      showAlert("Contraseña incorrecta");
-      return;
-    }
-    
-    // Guardar sesión globalmente
-    currentUser = { ...user, passwordUsed: passVal };
-    logAction("Inicio de Sesión", "Ingreso exitoso.");
-    resetSessionTimer();
-
-    loginScreen.classList.add("hidden");
-    loadingScreen.classList.remove("hidden"); // Muestra splash animation
-
-    // Reiniciar y sincronizar animaciones visuales exactamente al dar click
-    const van = document.querySelector(".van-animation");
-    const bar = document.querySelector(".progress-bar-fill");
-    if (van && bar) {
-      van.style.animation = 'none';
-      bar.style.animation = 'none';
-      void van.offsetWidth; // Forzar reinicio del navegador
-      van.style.animation = `drive ${SPLASH_MS}ms linear forwards`;
-      bar.style.animation = `progress ${SPLASH_MS}ms ease-in-out forwards`;
-    }
-
-    // Animación de 1.5 segundos
-    setTimeout(async () => {
-      loadingScreen.classList.add("hidden");
-      document.getElementById("main-header").style.display = "flex";
-      document.getElementById("app-container").style.display = "flex";
-      
-      // Sincronización silenciosa
-      const syncStatus = document.getElementById("header-sync-status");
-      const syncText = document.getElementById("sync-text");
-      syncStatus.classList.remove("hidden");
-      
-      try {
-        APP.allData = await loadAllData((msg) => {
-          syncText.textContent = "Sincronizando...";
-        });
-        syncText.textContent = "¡Listo!";
-        setTimeout(() => syncStatus.classList.add("hidden"), 3000);
-        
-        initFilters();
-        APP.filteredData = []; // Vacio por default
-        renderAll();
-      } catch (err) {
-        syncText.textContent = "Error de conexión";
-      }
-      setupEvents();
-      setupMonthPicker();
-    }, SPLASH_MS);
-  });
-});
 
 // --- FILTROS Y EVENTOS ---
+
 function initFilters() {
   const units = [...new Set(APP.allData.map((r) => r.unidad))]
     .sort((a, b) => {

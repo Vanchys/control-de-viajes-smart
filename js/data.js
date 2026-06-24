@@ -254,14 +254,31 @@ function parseRowCDMX(row, route) {
 /**
  * Carga TODOS los datos de todos los documentos configurados
  * Retorna un array unificado de registros normalizados
+ *
+ * @param {Function} onStatus - Callback de progreso que recibe:
+ *   { message: string, percent: number, current: number, total: number }
  */
 async function loadAllData(onStatus) {
   const allRecords = [];
 
+  // Calcular el total de hojas antes del loop para el progreso real
+  const totalSheets = SHEETS_CONFIG.documents.reduce(
+    (sum, doc) => sum + doc.sheets.length, 0
+  );
+  let loadedSheets = 0;
+
   for (const doc of SHEETS_CONFIG.documents) {
     for (const sheet of doc.sheets) {
+
+      // Notificar inicio de carga de esta hoja con porcentaje real
       if (onStatus) {
-        onStatus(`Cargando ${sheet.name} de ${doc.name}...`);
+        const percent = Math.round((loadedSheets / totalSheets) * 100);
+        onStatus({
+          message: `Cargando ${sheet.name} (${doc.name})...`,
+          percent,
+          current: loadedSheets,
+          total: totalSheets
+        });
       }
 
       try {
@@ -294,9 +311,19 @@ async function loadAllData(onStatus) {
           }
         }
       } catch (error) {
-        console.error(
-          `Error cargando ${sheet.name}:`, error
-        );
+        console.error(`Error cargando ${sheet.name}:`, error);
+      }
+
+      // Contabilizar hoja terminada (con éxito o error) y notificar
+      loadedSheets++;
+      if (onStatus) {
+        const percent = Math.round((loadedSheets / totalSheets) * 100);
+        onStatus({
+          message: `✓ ${sheet.name} (${doc.name})`,
+          percent,
+          current: loadedSheets,
+          total: totalSheets
+        });
       }
     }
   }
