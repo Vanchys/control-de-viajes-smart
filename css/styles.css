@@ -404,10 +404,11 @@ body::before {
 .splash-road-container {
   display: flex;
   align-items: center;
-  gap: 12px;
-  margin-bottom: 18px;
-  width: 280px;
-  max-width: 90%;
+  gap: 14px;
+  margin-bottom: 22px;
+  /* Móvil: ocupa el 88% del ancho disponible */
+  width: 88%;
+  max-width: 320px;
   justify-content: center;
 }
 
@@ -416,6 +417,7 @@ body::before {
   font-size: 1.5rem;
   line-height: 1;
   user-select: none;
+  flex-shrink: 0; /* Evitar que se compriman */
 }
 
 /* El carril o camino sobre el que se desplaza la camioneta */
@@ -468,6 +470,59 @@ body::before {
   transform: scaleX(-1); /* Voltear horizontalmente */
   filter: drop-shadow(0 2px 4px rgba(15, 23, 42, 0.15));
 }
+
+/* --- Tablet (≥ 600px): carretera más ancha --- */
+@media (min-width: 600px) {
+  .splash-road-container {
+    max-width: 440px;
+    gap: 16px;
+  }
+
+  .road-icon {
+    font-size: 1.75rem;
+  }
+
+  .van-icon {
+    font-size: 2rem;
+  }
+}
+
+/* --- Desktop (≥ 1024px): carretera grande, camioneta prominente --- */
+@media (min-width: 1024px) {
+  .splash-road-container {
+    max-width: 580px;
+    gap: 20px;
+    margin-bottom: 28px;
+  }
+
+  .road-path {
+    height: 8px; /* Carretera ligeramente más gruesa */
+  }
+
+  .road-line {
+    height: 8px;
+  }
+
+  .road-progress {
+    height: 8px;
+  }
+
+  .road-icon {
+    font-size: 2rem;
+  }
+
+  .van-icon {
+    font-size: 2.4rem; /* Camioneta más grande en desktop */
+  }
+}
+
+/* --- Pantallas muy grandes (≥ 1440px) --- */
+@media (min-width: 1440px) {
+  .splash-road-container {
+    max-width: 660px;
+  }
+}
+
 
 .splash-container h2 {
   font-family: var(--font-display);
@@ -527,6 +582,12 @@ body::before {
   border-radius: var(--radius-md);
   max-width: 280px;
   animation: floatIn 300ms var(--ease) both;
+}
+
+/* Ocultar el panel de error cuando tiene la clase .hidden —
+   sin esta regla, display:flex sobreescribe la utilidad .hidden */
+.splash-error.hidden {
+  display: none !important;
 }
 
 .splash-error-icon {
