@@ -23,29 +23,54 @@ const SPLASH_MIN_MS = 800;
 // --- Helpers del Splash Screen ---
 
 /**
- * Actualiza la barra de progreso y los textos del splash con datos reales
+ * Retorna una frase de viaje genérica y descriptiva según el progreso real (0-100%).
+ * Evita mostrar nombres técnicos de hojas de cálculo al usuario.
+ * @param {number} percent - Porcentaje de progreso real (0 a 100)
+ * @returns {string} Frase temática del viaje
  */
-function updateSplashProgress({ message, percent, current, total }) {
-  const bar = document.getElementById("splash-bar");
-  const pctEl = document.getElementById("splash-percent");
-  const statusEl = document.getElementById("splash-status");
-
-  if (bar) bar.style.width = percent + "%";
-  if (pctEl) pctEl.textContent = percent + "%";
-  if (statusEl) statusEl.textContent = message || "";
+function getTravelMessage(percent) {
+  if (percent === 0) return "Preparando el viaje...";
+  if (percent < 15) return "Encendiendo motores...";
+  if (percent < 30) return "Cargando equipaje y pasajeros...";
+  if (percent < 45) return "Saliendo de la base de operaciones...";
+  if (percent < 60) return "Cruzando caseta de cobro...";
+  if (percent < 75) return "Avanzando por la autopista...";
+  if (percent < 90) return "Ingresando a la terminal de destino...";
+  if (percent < 100) return "Estacionando la unidad...";
+  return "✓ Todo listo"; // Mensaje final de éxito al llegar al 100%
 }
 
 /**
- * Muestra el panel de error en el splash con un mensaje personalizado
+ * Actualiza la barra de progreso de la carretera y la posición de la camioneta
+ */
+function updateSplashProgress({ message, percent, current, total }) {
+  const bar = document.getElementById("splash-bar");
+  const van = document.getElementById("splash-van");
+  const pctEl = document.getElementById("splash-percent");
+  const statusEl = document.getElementById("splash-status");
+
+  // El porcentaje numérico y el ancho de la carretera se actualizan
+  const safePercent = percent || 0;
+  if (bar) bar.style.width = safePercent + "%";
+  if (van) van.style.left = safePercent + "%";
+  if (pctEl) pctEl.textContent = safePercent + "%";
+  
+  // Mostrar frase temática en lugar de los detalles técnicos del sheet
+  if (statusEl) {
+    statusEl.textContent = getTravelMessage(safePercent);
+  }
+}
+
+/**
+ * Muestra el panel de error en el splash con un mensaje de fallo real
  */
 function showSplashError(errorMsg) {
   const errorPanel = document.getElementById("splash-error");
   const errorMsgEl = document.getElementById("splash-error-msg");
-  const msgEl = document.getElementById("splash-message");
   const statusEl = document.getElementById("splash-status");
 
-  if (msgEl) msgEl.textContent = "Error de sincronización";
-  if (statusEl) statusEl.textContent = "";
+  // El título principal (#splash-message) se mantiene como "Viajando..."
+  if (statusEl) statusEl.textContent = "El viaje se ha interrumpido.";
   if (errorMsgEl) errorMsgEl.textContent = errorMsg || "Error de conexión. Verifica tu red.";
   if (errorPanel) errorPanel.classList.remove("hidden");
 }
@@ -59,7 +84,7 @@ function resetSplashUI() {
   const statusEl = document.getElementById("splash-status");
 
   if (errorPanel) errorPanel.classList.add("hidden");
-  if (msgEl) msgEl.textContent = "Sincronizando datos...";
+  if (msgEl) msgEl.textContent = "Viajando...";
   if (statusEl) statusEl.textContent = "";
   updateSplashProgress({ message: "", percent: 0 });
 }
@@ -162,12 +187,10 @@ document.addEventListener("DOMContentLoaded", () => {
     resetSplashUI(); // Asegurar estado limpio si es un reintento
     loadingScreen.classList.remove("hidden");
 
-    // Reiniciar la animación de la camioneta al hacer login
-    const van = document.querySelector(".van-animation");
+    // Reiniciar la posición de la camioneta sobre la carretera
+    const van = document.getElementById("splash-van");
     if (van) {
-      van.style.animation = "none";
-      void van.offsetWidth; // Forzar reinicio del navegador
-      van.style.animation = "drive 2s linear infinite";
+      van.style.left = "0%";
     }
 
     // Configurar el botón de reintento antes de la primera carga

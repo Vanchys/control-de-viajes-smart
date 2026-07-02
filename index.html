@@ -71,19 +71,37 @@
   <div id="loading-screen" class="hidden">
     <div class="splash-container">
       <img src="img/logo.png" alt="Logo" class="splash-logo" onerror="this.style.display='none';">
-      <div class="van-animation">🚐</div>
-      <div class="progress-bar-container">
-        <div class="progress-bar-fill" id="splash-bar"></div>
+      
+      <!-- Contenedor de carretera y camioneta de progreso -->
+      <div class="splash-road-container">
+        <!-- Icono de salida/origen (punto de partida) -->
+        <span class="road-icon start-icon" title="Origen">🏠</span>
+        <div class="road-path">
+          <!-- Línea gris de fondo de la carretera -->
+          <div class="road-line"></div>
+          <!-- Barra de progreso que simula el camino recorrido en color verde/azul -->
+          <div class="road-progress" id="splash-bar"></div>
+          <!-- Vehículo que viaja a lo largo del camino -->
+          <div class="van-wrapper" id="splash-van">
+            <span class="van-icon">🚐</span>
+          </div>
+        </div>
+        <!-- Icono de llegada/destino -->
+        <span class="road-icon end-icon" title="Destino">📍</span>
       </div>
-      <!-- Porcentaje numérico de progreso -->
+
+      <!-- Porcentaje numérico de progreso en la sincronización -->
       <div class="splash-percent-row">
         <span id="splash-percent">0%</span>
       </div>
-      <!-- Mensaje principal dinámico -->
-      <h2 id="splash-message">Sincronizando datos...</h2>
-      <!-- Nombre de la hoja que se está cargando actualmente -->
+      
+      <!-- Texto principal fijo de la pantalla de carga -->
+      <h2 id="splash-message">Viajando...</h2>
+      
+      <!-- Mensajes dinámicos del viaje (sustituye los nombres de hojas técnicos) -->
       <p id="splash-status" class="splash-status-text"></p>
-      <!-- Panel de error (oculto por defecto) -->
+      
+      <!-- Panel de error (se muestra solo si falla toda la carga) -->
       <div id="splash-error" class="splash-error hidden">
         <span class="splash-error-icon">⚠️</span>
         <p id="splash-error-msg">Error de conexión. Verifica tu red.</p>

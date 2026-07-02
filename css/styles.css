@@ -400,32 +400,73 @@ body::before {
   filter: drop-shadow(0 6px 20px rgba(14, 34, 53, 0.08));
 }
 
-.van-animation {
-  font-size: 2.4rem;
-  margin-bottom: 14px;
-  display: inline-block;
-  /* Loop continuo — dura lo que tarde la sincronización */
-  animation: drive 2s linear infinite;
+/* Contenedor principal de la carretera visual en el splash */
+.splash-road-container {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  margin-bottom: 18px;
+  width: 280px;
+  max-width: 90%;
+  justify-content: center;
 }
 
-.progress-bar-container {
-  width: 240px;
-  height: 4px;
+/* Iconos de origen y destino en los extremos de la carretera */
+.road-icon {
+  font-size: 1.5rem;
+  line-height: 1;
+  user-select: none;
+}
+
+/* El carril o camino sobre el que se desplaza la camioneta */
+.road-path {
+  position: relative;
+  flex: 1;
+  height: 6px;
+  display: flex;
+  align-items: center;
+}
+
+/* Línea de fondo que representa la carretera gris sin recorrer */
+.road-line {
+  position: absolute;
+  left: 0;
+  right: 0;
+  height: 6px;
   background: rgba(14, 34, 53, 0.08);
   border-radius: 999px;
-  overflow: hidden;
-  margin-bottom: 18px;
 }
 
-.progress-bar-fill {
-  /* El ancho es controlado por JS (style.width = percent + '%') */
+/* Barra de progreso de color que avanza detrás de la camioneta */
+.road-progress {
+  position: absolute;
+  left: 0;
   width: 0%;
-  height: 100%;
+  height: 6px;
   background: var(--gradient-primary);
   border-radius: 999px;
   box-shadow: 0 0 12px rgba(45, 116, 180, 0.4);
-  /* Transición suave al actualizar el ancho via JS */
+  /* Transición suave para evitar saltos en el avance */
   transition: width 350ms cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+/* Contenedor de la camioneta para controlar su posición horizontal via JS (left) */
+.van-wrapper {
+  position: absolute;
+  left: 0%;
+  transform: translate(-50%, -4px); /* Centrar camioneta en el punto actual */
+  transition: left 350ms cubic-bezier(0.16, 1, 0.3, 1); /* Transición sincronizada con la barra */
+  z-index: 2;
+  will-change: left;
+}
+
+/* Icono 🚐 de la camioneta, volteado para avanzar hacia la derecha */
+.van-icon {
+  display: inline-block;
+  font-size: 1.8rem;
+  line-height: 1;
+  transform: scaleX(-1); /* Voltear horizontalmente */
+  filter: drop-shadow(0 2px 4px rgba(15, 23, 42, 0.15));
 }
 
 .splash-container h2 {
@@ -508,28 +549,6 @@ body::before {
   margin-top: 2px;
 }
 
-/* Animación loop de la camioneta — dura lo que tarde la carga */
-@keyframes drive {
-  0% {
-    transform: translateX(-42px) scaleX(-1);
-    opacity: 0;
-  }
-
-  15% {
-    opacity: 1;
-    transform: translateX(-24px) scaleX(-1);
-  }
-
-  85% {
-    opacity: 1;
-    transform: translateX(24px) scaleX(-1);
-  }
-
-  100% {
-    transform: translateX(42px) scaleX(-1);
-    opacity: 0;
-  }
-}
 
 @keyframes spin {
   to {
