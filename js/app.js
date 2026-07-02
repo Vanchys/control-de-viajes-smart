@@ -716,7 +716,7 @@ function exportToPDF() {
 
     doc.setFontSize(9);
     doc.setTextColor(100);
-    doc.text(`Generado por: ${currentUser.username} | Fecha: ${new Date().toLocaleString('es-MX')}`, 15, 22);
+    doc.text(`Fecha de generación: ${new Date().toLocaleString('es-MX')}`, 15, 22);
 
     const columnHeaders = ["Ruta", "Fecha", "Conductor", "Unidad", "Hora", "Adultos", "Menores", "Cuacno", "Venta L.", "Paquetes", "Bruto", "Neto", "Voucher"];
 
