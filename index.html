@@ -22,9 +22,10 @@
   <script>
     document.write(`<link rel="stylesheet" href="css/styles.css?v=${window.SMART_DASHBOARD_ASSET_V}">`);
   </script>
-  <!-- Librerías para PDF -->
+  <!-- Librerías para PDF y Excel (SheetJS) -->
   <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
   <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf-autotable/3.5.28/jspdf.plugin.autotable.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
 </head>
 
 <body>
@@ -275,8 +276,13 @@
         <div class="table-header">
           <div class="table-titlebar">
             <h3>📋 Detalle de Viajes</h3>
-            <button id="btn-export-pdf" class="btn-small btn-accent btn-export">
-              <span>📄</span> Descargar PDF
+            <!-- Botón de Descarga Estándar -->
+            <button id="btn-open-export-standard" class="btn-small btn-accent btn-export">
+              <span>📥</span> Descargar
+            </button>
+            <!-- Botón de Descarga simplificada para Voucher -->
+            <button id="btn-open-export-voucher" class="btn-small btn-export" style="background: rgba(245, 166, 35, 0.15); border-color: rgba(245, 166, 35, 0.45); color: #975A16; margin-left: 8px; font-weight: 600;">
+              <span>🎟️</span> Voucher
             </button>
           </div>
           <input type="text" id="table-search" placeholder="🔍 Filtrar por palabra o numero" class="search-input">
@@ -352,23 +358,53 @@
     </div>
   </div>
 
-  <!-- Modal de Confirmación PDF -->
-  <div id="pdf-confirm-modal" class="modal modal-pdf hidden">
+  <!-- Modal de Confirmación Descarga Estándar (PDF y Excel) -->
+  <div id="export-standard-modal" class="modal modal-pdf hidden">
     <div class="modal-content modal-content-md">
-      <div class="modal-header modal-header-stacked">
-        <h2 class="modal-title-sm">Descargar Reporte en PDF</h2>
+      <div class="modal-header modal-header-stacked modal-header-relative">
+        <h2 class="modal-title-sm">Descargar Reporte de Viajes</h2>
+        <!-- Botón 'X' de cierre en la esquina superior derecha -->
+        <button id="btn-close-standard-modal" class="btn-close modal-close-floating">✖</button>
       </div>
       <div class="modal-body">
         <p class="modal-copy">
-          ¿Deseas descargar todos los datos filtrados en formato PDF? Se incluirá un reporte completo con toda la
-          información de viajes.
+          ¿Cómo deseas exportar los datos filtrados del reporte de viajes? Selecciona una de las siguientes opciones:
         </p>
         <div class="modal-actions">
-          <button class="btn-small btn-modal-action"
-            onclick="document.getElementById('pdf-confirm-modal').classList.add('hidden');">Cancelar</button>
-          <button class="btn-primary btn-modal-action"
-            onclick="confirmedExportToPDF(); document.getElementById('pdf-confirm-modal').classList.add('hidden');">Descargar
-            PDF</button>
+          <!-- Botón para descargar PDF (con funcionalidad actual) -->
+          <button class="btn-primary btn-modal-action" id="btn-download-standard-pdf">
+            📄 Descargar PDF
+          </button>
+          <!-- Botón para descargar Excel -->
+          <button class="btn-primary btn-modal-action btn-excel-action" id="btn-download-standard-excel">
+            📊 Descargar Excel
+          </button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Modal de Confirmación Descarga Voucher (PDF y Excel) -->
+  <div id="export-voucher-modal" class="modal modal-pdf hidden">
+    <div class="modal-content modal-content-md">
+      <div class="modal-header modal-header-stacked modal-header-relative">
+        <h2 class="modal-title-sm">Descargar Reporte de Vouchers</h2>
+        <!-- Botón 'X' de cierre en la esquina superior derecha -->
+        <button id="btn-close-voucher-modal" class="btn-close modal-close-floating">✖</button>
+      </div>
+      <div class="modal-body">
+        <p class="modal-copy">
+          ¿Cómo deseas exportar el reporte simplificado de vouchers? Selecciona una de las siguientes opciones:
+        </p>
+        <div class="modal-actions">
+          <!-- Botón para descargar PDF simplificado -->
+          <button class="btn-primary btn-modal-action" id="btn-download-voucher-pdf">
+            📄 Descargar PDF
+          </button>
+          <!-- Botón para descargar Excel simplificado -->
+          <button class="btn-primary btn-modal-action btn-excel-action" id="btn-download-voucher-excel">
+            📊 Descargar Excel
+          </button>
         </div>
       </div>
     </div>

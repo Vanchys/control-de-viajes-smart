@@ -2878,3 +2878,33 @@ a:focus-visible {
   background: #FFFFFF !important;
   color: #0F1419 !important;
 }
+
+/* ===================================================================
+   Estilos para los nuevos modales y botones de exportación (Excel/Voucher)
+   =================================================================== */
+
+/* Botón de Excel de color verde premium */
+.modal-actions .btn-excel-action {
+  background: var(--brand-green);
+  border-color: var(--brand-green-deep);
+}
+
+.modal-actions .btn-excel-action:hover {
+  background: var(--brand-green-deep);
+  border-color: #1c4532;
+  box-shadow: 0 4px 12px rgba(47, 133, 90, 0.25);
+}
+
+/* Adaptación del tamaño y padding de los botones dentro de modales en móvil */
+@media (max-width: 480px) {
+  .modal-actions {
+    flex-direction: column;
+    width: 100%;
+  }
+
+  .modal-actions .btn-modal-action {
+    width: 100%;
+    margin-left: 0 !important;
+    margin-right: 0 !important;
+  }
+}

@@ -456,16 +456,96 @@ function setupEvents() {
     logAction("Conductores: Todos", buildAuditFiltersDetails());
   });
 
-  const btnExport = document.getElementById("btn-export-pdf");
-  if (btnExport) {
-    btnExport.addEventListener("click", () => {
+  // Configuración de los modales de exportación (Estándar y Voucher)
+  const standardModal = document.getElementById("export-standard-modal");
+  const voucherModal = document.getElementById("export-voucher-modal");
+
+  const btnOpenStandard = document.getElementById("btn-open-export-standard");
+  const btnOpenVoucher = document.getElementById("btn-open-export-voucher");
+
+  const btnCloseStandard = document.getElementById("btn-close-standard-modal");
+  const btnCloseVoucher = document.getElementById("btn-close-voucher-modal");
+
+  // Al hacer clic en "Descargar" (Estándar)
+  if (btnOpenStandard) {
+    btnOpenStandard.addEventListener("click", () => {
       if (APP.filteredData.length === 0) {
         showAlert("⚠️ Aplica filtros para descargar datos.");
-        logAction("PDF: Intento sin filtros", buildAuditFiltersDetails());
         return;
       }
-      document.getElementById("pdf-confirm-modal").classList.remove("hidden");
-      logAction("PDF: Modal abierto", `Registros: ${APP.filteredData.length} | ${buildAuditFiltersDetails()}`);
+      standardModal.classList.remove("hidden");
+      logAction("Exportar Estándar: Modal abierto", `Registros: ${APP.filteredData.length}`);
+    });
+  }
+
+  // Al hacer clic en "Voucher"
+  if (btnOpenVoucher) {
+    btnOpenVoucher.addEventListener("click", () => {
+      if (APP.filteredData.length === 0) {
+        showAlert("⚠️ Aplica filtros para descargar datos.");
+        return;
+      }
+      voucherModal.classList.remove("hidden");
+      logAction("Exportar Voucher: Modal abierto", `Registros: ${APP.filteredData.length}`);
+    });
+  }
+
+  // Cerrar modales con botón 'X'
+  if (btnCloseStandard) {
+    btnCloseStandard.addEventListener("click", () => {
+      standardModal.classList.add("hidden");
+    });
+  }
+  if (btnCloseVoucher) {
+    btnCloseVoucher.addEventListener("click", () => {
+      voucherModal.classList.add("hidden");
+    });
+  }
+
+  // Cerrar modales al hacer clic fuera del recuadro (backdrop/overlay)
+  if (standardModal) {
+    standardModal.addEventListener("click", (e) => {
+      if (e.target === standardModal) {
+        standardModal.classList.add("hidden");
+      }
+    });
+  }
+  if (voucherModal) {
+    voucherModal.addEventListener("click", (e) => {
+      if (e.target === voucherModal) {
+        voucherModal.classList.add("hidden");
+      }
+    });
+  }
+
+  // Acciones de descarga dentro de los modales
+  const btnDownloadStandardPDF = document.getElementById("btn-download-standard-pdf");
+  const btnDownloadStandardExcel = document.getElementById("btn-download-standard-excel");
+  const btnDownloadVoucherPDF = document.getElementById("btn-download-voucher-pdf");
+  const btnDownloadVoucherExcel = document.getElementById("btn-download-voucher-excel");
+
+  if (btnDownloadStandardPDF) {
+    btnDownloadStandardPDF.addEventListener("click", () => {
+      exportToPDF();
+      standardModal.classList.add("hidden");
+    });
+  }
+  if (btnDownloadStandardExcel) {
+    btnDownloadStandardExcel.addEventListener("click", () => {
+      exportToExcel();
+      standardModal.classList.add("hidden");
+    });
+  }
+  if (btnDownloadVoucherPDF) {
+    btnDownloadVoucherPDF.addEventListener("click", () => {
+      exportVoucherPDF();
+      voucherModal.classList.add("hidden");
+    });
+  }
+  if (btnDownloadVoucherExcel) {
+    btnDownloadVoucherExcel.addEventListener("click", () => {
+      exportVoucherExcel();
+      voucherModal.classList.add("hidden");
     });
   }
 
@@ -705,10 +785,13 @@ function setupMonthPicker() {
   }
 }
 
+/**
+ * Exporta el reporte completo de viajes en formato PDF
+ */
 function exportToPDF() {
   try {
     const { jsPDF } = window.jspdf;
-    const doc = new jsPDF('l', 'mm', 'a4');
+    const doc = new jsPDF('l', 'mm', 'a4'); // Orientación horizontal
 
     doc.setFontSize(16);
     doc.setTextColor(45, 116, 180);
@@ -773,7 +856,7 @@ function exportToPDF() {
         const pageWidth = pageSize.getWidth();
         doc.setFontSize(8);
         doc.setTextColor(150);
-        doc.text(`Pagina ${data.pageNumber}`, pageWidth - 20, pageHeight - 8);
+        doc.text(`Página ${data.pageNumber}`, pageWidth - 20, pageHeight - 8);
       }
     });
 
@@ -786,6 +869,150 @@ function exportToPDF() {
   }
 }
 
-window.confirmedExportToPDF = function() {
-  exportToPDF();
+/**
+ * Exporta el reporte completo de viajes en formato Excel (.xlsx) usando SheetJS
+ */
+function exportToExcel() {
+  try {
+    if (APP.filteredData.length === 0) {
+      showAlert("⚠️ No hay datos para exportar.");
+      return;
+    }
+
+    // Mapear los datos para las columnas del Excel
+    const dataToExport = APP.filteredData.map(r => ({
+      "Ruta": r.ruta ?? "-",
+      "Fecha": r.fecha ? formatDateStr(r.fecha) : "-",
+      "Conductor": r.conductor ?? "-",
+      "Unidad": r.unidad ?? "-",
+      "Hora": r.hora ?? "-",
+      "Adultos": r.adultos ?? 0,
+      "Menores": r.menores ?? 0,
+      "Cuacnopalan": r.cuacnopalan ?? 0,
+      "Venta en Línea": r.ventaEnLinea ?? 0,
+      "Paquetes": r.paquetes ?? 0,
+      "Total Bruto": r.totalBruto ?? 0,
+      "Total Neto": r.totalNeto ?? 0,
+      "Voucher": r.voucher ?? 0
+    }));
+
+    // Crear libro y hoja de cálculo
+    const worksheet = XLSX.utils.json_to_sheet(dataToExport);
+    const workbook = XLSX.utils.book_new();
+    XLSX.utils.book_append_sheet(workbook, worksheet, "Reporte Viajes");
+
+    // Descargar archivo Excel
+    XLSX.writeFile(workbook, `Reporte_Viajes_${new Date().getTime()}.xlsx`);
+    logAction("Excel: Descargado", `Registros: ${APP.filteredData.length} | ${buildAuditFiltersDetails()}`);
+    showAlert("✅ Excel descargado exitosamente.");
+  } catch (e) {
+    console.error(e);
+    logAction("Excel: Error", `${String(e?.message || e)} | ${buildAuditFiltersDetails()}`);
+    showAlert("❌ Error al generar el Excel. Intenta de nuevo.");
+  }
+}
+
+/**
+ * Exporta el reporte simplificado de Vouchers en formato PDF
+ */
+function exportVoucherPDF() {
+  try {
+    const { jsPDF } = window.jspdf;
+    const doc = new jsPDF('p', 'mm', 'a4'); // Orientación vertical (retratos)
+
+    doc.setFontSize(16);
+    doc.setTextColor(45, 116, 180);
+    doc.text("SMART TRANSPORTS - REPORTE DE VOUCHERS", 15, 15);
+
+    doc.setFontSize(9);
+    doc.setTextColor(100);
+    doc.text(`Fecha de generación: ${new Date().toLocaleString('es-MX')}`, 15, 22);
+
+    const columnHeaders = ["Ruta", "Fecha", "Unidad", "Hora", "Venta de Línea", "Voucher"];
+
+    const body = APP.filteredData.map(r => [
+      r.ruta ?? "-",
+      r.fecha ? formatDateStr(r.fecha) : "-",
+      r.unidad ?? "-",
+      r.hora ?? "-",
+      formatMoney(r.ventaEnLinea || 0),
+      (r.voucher && r.voucher > 0) ? formatMoney(r.voucher) : "-"
+    ]);
+
+    doc.autoTable({
+      head: [columnHeaders],
+      body: body,
+      startY: 28,
+      theme: 'grid',
+      margin: { top: 28, right: 15, bottom: 15, left: 15 },
+      styles: {
+        fontSize: 9,
+        cellPadding: 3,
+        halign: 'center',
+        valign: 'middle'
+      },
+      columnStyles: {
+        4: { halign: 'right' },
+        5: { halign: 'right' }
+      },
+      headStyles: {
+        fillColor: [45, 116, 180],
+        textColor: 255,
+        fontSize: 10,
+        fontStyle: 'bold'
+      },
+      alternateRowStyles: { fillColor: [245, 248, 252] },
+      didDrawPage: function(data) {
+        const pageSize = doc.internal.pageSize;
+        const pageHeight = pageSize.getHeight();
+        const pageWidth = pageSize.getWidth();
+        doc.setFontSize(8);
+        doc.setTextColor(150);
+        doc.text(`Página ${data.pageNumber}`, pageWidth - 25, pageHeight - 10);
+      }
+    });
+
+    doc.save(`Reporte_Vouchers_${new Date().getTime()}.pdf`);
+    logAction("Voucher PDF: Descargado", `Registros: ${APP.filteredData.length} | ${buildAuditFiltersDetails()}`);
+    showAlert("✅ Reporte de Vouchers en PDF descargado exitosamente.");
+  } catch (e) {
+    logAction("Voucher PDF: Error", `${String(e?.message || e)} | ${buildAuditFiltersDetails()}`);
+    showAlert("❌ Error al generar el PDF de Vouchers.");
+  }
+}
+
+/**
+ * Exporta el reporte simplificado de Vouchers en formato Excel (.xlsx) usando SheetJS
+ */
+function exportVoucherExcel() {
+  try {
+    if (APP.filteredData.length === 0) {
+      showAlert("⚠️ No hay datos para exportar.");
+      return;
+    }
+
+    // Mapear solo los 6 campos del voucher
+    const dataToExport = APP.filteredData.map(r => ({
+      "Ruta": r.ruta ?? "-",
+      "Fecha": r.fecha ? formatDateStr(r.fecha) : "-",
+      "Unidad": r.unidad ?? "-",
+      "Hora": r.hora ?? "-",
+      "Venta de Línea": r.ventaEnLinea ?? 0,
+      "Voucher": r.voucher ?? 0
+    }));
+
+    // Crear libro y hoja de cálculo
+    const worksheet = XLSX.utils.json_to_sheet(dataToExport);
+    const workbook = XLSX.utils.book_new();
+    XLSX.utils.book_append_sheet(workbook, worksheet, "Reporte Vouchers");
+
+    // Descargar archivo Excel
+    XLSX.writeFile(workbook, `Reporte_Vouchers_${new Date().getTime()}.xlsx`);
+    logAction("Voucher Excel: Descargado", `Registros: ${APP.filteredData.length} | ${buildAuditFiltersDetails()}`);
+    showAlert("✅ Reporte de Vouchers en Excel descargado exitosamente.");
+  } catch (e) {
+    console.error(e);
+    logAction("Voucher Excel: Error", `${String(e?.message || e)} | ${buildAuditFiltersDetails()}`);
+    showAlert("❌ Error al generar el Excel de Vouchers.");
+  }
 }
