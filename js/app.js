@@ -713,77 +713,171 @@ function renderTable() {
 function setupMonthPicker() {
   const modal = document.getElementById("month-picker-modal");
   const grid = document.getElementById("months-grid");
-  if(!modal || !grid) return;
-  
-  const monthNames = ["Enero", "Febrero", "Marzo", "Abril", "Mayo", "Junio", "Julio", "Agosto", "Septiembre", "Octubre", "Noviembre", "Diciembre"];
-  
-  const availableMonths = new Set();
-  let latestYear = new Date().getFullYear();
-  
+  if (!modal || !grid) return;
+
+  const monthNames = [
+    "Enero", "Febrero", "Marzo", "Abril", "Mayo", "Junio",
+    "Julio", "Agosto", "Septiembre", "Octubre", "Noviembre", "Diciembre"
+  ];
+
+  // Construir mapa: año (number) → Set de índices de meses disponibles (0-11)
+  // Se agrupan por año para que la disponibilidad sea correcta por año, no mezclada
+  const availableByYear = {};
   APP.allData.forEach(r => {
     if (r.fecha) {
-      availableMonths.add(r.fecha.getMonth());
-      latestYear = r.fecha.getFullYear();
+      const y = r.fecha.getFullYear();
+      const m = r.fecha.getMonth();
+      if (!availableByYear[y]) availableByYear[y] = new Set();
+      availableByYear[y].add(m);
     }
   });
-  
-  const yearText = document.getElementById("month-picker-year");
-  if(yearText) yearText.textContent = `Año: ${latestYear}`;
-  
-  document.getElementById("btn-open-months").addEventListener("click", () => modal.classList.remove("hidden"));
-  document.getElementById("btn-close-months").addEventListener("click", () => modal.classList.add("hidden"));
-  
-  const currentMonth = new Date().getMonth(); 
-  
-  grid.innerHTML = monthNames.map((m, i) => {
-    const isAvail = availableMonths.has(i);
-    const disabledClass = isAvail ? "" : "disabled-month";
-    const isCurrent = (i === currentMonth && isAvail) ? "active-month" : "";
-    return `<button class="month-btn ${disabledClass} ${isCurrent}" data-month="${i}" ${isAvail ? '' : 'title="No hay datos"'}>${m}</button>`;
-  }).join("");
-  
-  if(!grid.dataset.listener) {
-    grid.dataset.listener = "true";
-    
-    grid.addEventListener("click", (e) => {
-      if (e.target.classList.contains("month-btn")) {
-        const btn = e.target;
-        if (btn.classList.contains("disabled-month")) {
-          showAlert("❌ No hay información cargada para este mes.");
-          const old = btn.innerHTML;
-          btn.innerHTML = "❌";
-          setTimeout(() => btn.innerHTML = old, 1500);
-          return;
-        }
-        
-        if (btn.classList.contains("active-month")) {
-          // Segundo toque: Confirmar y cargar
-          const m = parseInt(btn.dataset.month);
-          const firstDay = new Date(latestYear, m, 1);
-          const lastDay = new Date(latestYear, m + 1, 0);
-          
-          const fmt = (d) => {
-            const mm = String(d.getMonth()+1).padStart(2,'0');
-            const dd = String(d.getDate()).padStart(2,'0');
-            return `${d.getFullYear()}-${mm}-${dd}`;
-          };
-          
-          document.getElementById("filter-date-from").value = fmt(firstDay);
-          document.getElementById("filter-date-to").value = fmt(lastDay);
 
-          APP.auditCtx.lastMonthPick = { year: latestYear, monthIndex: m, monthName: monthNames[m] };
-          logAction("Mes seleccionado", buildAuditFiltersDetails());
-          
-          modal.classList.add("hidden");
-        } else {
-          // Primer toque: Solo seleccionar
-          document.querySelectorAll('.month-btn').forEach(b => b.classList.remove("active-month"));
-          btn.classList.add("active-month");
-        }
+  // Lista de años disponibles ordenados de mayor a menor
+  const availableYears = Object.keys(availableByYear).map(Number).sort((a, b) => b - a);
+  if (availableYears.length === 0) return;
+
+  // Comenzar mostrando el año más reciente
+  let currentYear = availableYears[0];
+
+  // Renderizar el header del año con flechas de navegación
+  const yearContainer = document.getElementById("month-picker-year");
+
+  function renderYearHeader() {
+    const yearIdx = availableYears.indexOf(currentYear);
+    const hasPrev = yearIdx < availableYears.length - 1;  // Hay año más antiguo
+    const hasNext = yearIdx > 0;                           // Hay año más reciente
+
+    if (yearContainer) {
+      yearContainer.innerHTML = `
+        <div class="year-nav">
+          <button class="year-nav-btn" id="btn-year-prev" ${hasPrev ? '' : 'disabled'} title="Año anterior">‹</button>
+          <span class="year-nav-label">${currentYear}</span>
+          <button class="year-nav-btn" id="btn-year-next" ${hasNext ? '' : 'disabled'} title="Año siguiente">›</button>
+        </div>`;
+
+      // Navegación de año: anterior
+      const btnPrev = document.getElementById("btn-year-prev");
+      if (btnPrev) {
+        btnPrev.addEventListener("click", () => {
+          const idx = availableYears.indexOf(currentYear);
+          if (idx < availableYears.length - 1) {
+            currentYear = availableYears[idx + 1];
+            renderYearHeader();
+            renderMonthGrid();
+          }
+        });
+      }
+
+      // Navegación de año: siguiente
+      const btnNext = document.getElementById("btn-year-next");
+      if (btnNext) {
+        btnNext.addEventListener("click", () => {
+          const idx = availableYears.indexOf(currentYear);
+          if (idx > 0) {
+            currentYear = availableYears[idx - 1];
+            renderYearHeader();
+            renderMonthGrid();
+          }
+        });
+      }
+    }
+  }
+
+  // Renderizar la cuadrícula de meses para el año actual
+  function renderMonthGrid() {
+    const monthsForYear = availableByYear[currentYear] || new Set();
+    const yearSuffix = String(currentYear).slice(-2); // ej: "26" o "25"
+
+    grid.innerHTML = monthNames.map((name, i) => {
+      const isAvail = monthsForYear.has(i);
+      const disabledClass = isAvail ? "" : "disabled-month";
+      return `
+        <button class="month-btn ${disabledClass}"
+          data-month="${i}"
+          data-year="${currentYear}"
+          ${isAvail ? '' : 'title="No hay datos para este mes"'}>
+          <span class="month-btn-name">${name}</span>
+          <span class="month-btn-year">'${yearSuffix}</span>
+        </button>`;
+    }).join("");
+  }
+
+  // Inicializar header y grid
+  renderYearHeader();
+  renderMonthGrid();
+
+  // Listeners de apertura/cierre del modal (protegidos contra duplicación)
+  const btnOpen = document.getElementById("btn-open-months");
+  const btnClose = document.getElementById("btn-close-months");
+
+  if (btnOpen && !btnOpen._listenerAdded) {
+    btnOpen._listenerAdded = true;
+    btnOpen.addEventListener("click", () => {
+      // Al abrir el modal, mostrar siempre el año más reciente
+      currentYear = availableYears[0];
+      renderYearHeader();
+      renderMonthGrid();
+      modal.classList.remove("hidden");
+    });
+  }
+
+  if (btnClose && !btnClose._listenerAdded) {
+    btnClose._listenerAdded = true;
+    btnClose.addEventListener("click", () => modal.classList.add("hidden"));
+  }
+
+  // Cerrar al hacer clic en el fondo del modal (backdrop)
+  if (!modal._backdropListenerAdded) {
+    modal._backdropListenerAdded = true;
+    modal.addEventListener("click", (e) => {
+      if (e.target === modal) modal.classList.add("hidden");
+    });
+  }
+
+  // Delegación de clics en la cuadrícula de meses
+  if (!grid.dataset.listener) {
+    grid.dataset.listener = "true";
+
+    grid.addEventListener("click", (e) => {
+      const btn = e.target.closest(".month-btn");
+      if (!btn) return;
+
+      // Bloquear meses deshabilitados
+      if (btn.classList.contains("disabled-month")) {
+        const nameEl = btn.querySelector(".month-btn-name");
+        const original = nameEl ? nameEl.textContent : btn.textContent;
+        if (nameEl) nameEl.textContent = "❌";
+        setTimeout(() => { if (nameEl) nameEl.textContent = original; }, 1200);
+        return;
+      }
+
+      if (btn.classList.contains("active-month")) {
+        // Segundo toque: confirmar selección de mes y cerrar modal
+        const m = parseInt(btn.dataset.month);
+        const y = parseInt(btn.dataset.year);
+
+        const fmt = (d) => {
+          const mm = String(d.getMonth() + 1).padStart(2, '0');
+          const dd = String(d.getDate()).padStart(2, '0');
+          return `${d.getFullYear()}-${mm}-${dd}`;
+        };
+
+        document.getElementById("filter-date-from").value = fmt(new Date(y, m, 1));
+        document.getElementById("filter-date-to").value = fmt(new Date(y, m + 1, 0));
+
+        APP.auditCtx.lastMonthPick = { year: y, monthIndex: m, monthName: monthNames[m] };
+        logAction("Mes seleccionado", buildAuditFiltersDetails());
+
+        modal.classList.add("hidden");
+      } else {
+        // Primer toque: solo marcar el mes seleccionado
+        grid.querySelectorAll(".month-btn").forEach(b => b.classList.remove("active-month"));
+        btn.classList.add("active-month");
       }
     });
   }
 }
+
 
 /**
  * Exporta el reporte completo de viajes en formato PDF
