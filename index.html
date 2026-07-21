@@ -15,7 +15,7 @@
     // Actualización de versión para UI: mostrar como "V 3.4.0 Nombre"
     // Version centralizada - cambia aqui y se cache-bustea todo
     // type: major | minor | patch | hotfix
-    window.SMART_DASHBOARD_RELEASE = { version: "4.0.3", type: "major" };
+    window.SMART_DASHBOARD_RELEASE = { version: "4.0.3", type: "minor" };
     // Usa lowercase en el sufijo para el busting de assets, sin afectar la visualización
     window.SMART_DASHBOARD_ASSET_V = `${window.SMART_DASHBOARD_RELEASE.version}-${window.SMART_DASHBOARD_RELEASE.type.toLowerCase()}`;
   </script>
@@ -276,15 +276,17 @@
         <div class="table-header">
           <div class="table-titlebar">
             <h3>📋 Detalle de Viajes</h3>
-            <!-- Botón de Descarga Estándar -->
-            <button id="btn-open-export-standard" class="btn-small btn-accent btn-export">
-              <span>📥</span> Descargar
-            </button>
-            <!-- Botón de Descarga simplificada para Voucher -->
-            <button id="btn-open-export-voucher" class="btn-small btn-export"
-              style="background: rgba(245, 166, 35, 0.15); border-color: rgba(245, 166, 35, 0.45); color: #975A16; margin-left: 8px; font-weight: 600;">
-              <span>🎟️</span> Voucher
-            </button>
+            <!-- Contenedor flex para agrupar y centrar los botones en móvil -->
+            <div class="table-actions">
+              <!-- Botón de Descarga Estándar con flecha dropdown -->
+              <button id="btn-open-export-standard" class="btn-small btn-export">
+                <span>📥</span> Descargar <span class="btn-arrow">▾</span>
+              </button>
+              <!-- Botón de Descarga de Voucher con flecha dropdown -->
+              <button id="btn-open-export-voucher" class="btn-small btn-export btn-voucher-accent">
+                <span>🎟️</span> Voucher <span class="btn-arrow">▾</span>
+              </button>
+            </div>
           </div>
           <input type="text" id="table-search" placeholder="🔍 Filtrar por palabra o numero" class="search-input">
         </div>
