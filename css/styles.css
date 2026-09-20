@@ -1831,8 +1831,8 @@ table td {
   font-feature-settings: "tnum" 1, "lnum" 1;
 }
 
-/* En tabla, números más “serios” (monospace) sin afectar nombres/rutas */
-#data-table td:nth-child(5),
+/* En tabla, números más “serios” (monospace) sin afectar nombres/rutas.
+   Índices +1 respecto a las columnas de datos porque la 1ra columna es "#" (numeración de fila). */
 #data-table td:nth-child(6),
 #data-table td:nth-child(7),
 #data-table td:nth-child(8),
@@ -1840,7 +1840,8 @@ table td {
 #data-table td:nth-child(10),
 #data-table td:nth-child(11),
 #data-table td:nth-child(12),
-#data-table td:nth-child(13) {
+#data-table td:nth-child(13),
+#data-table td:nth-child(14) {
   font-family: var(--font-mono);
 }
 
@@ -1873,11 +1874,34 @@ thead th::after {
   font-size: 0.7rem;
 }
 
+/* Columna de numeración de fila: no es ordenable, sin ícono ↕ ni hover de orden */
+.th-row-number {
+  cursor: default;
+  text-align: center;
+  width: 1%;
+}
+
+.th-row-number::after {
+  content: none;
+}
+
+.th-row-number:hover {
+  color: var(--text-secondary);
+  background: var(--bg-subtle);
+}
+
 td {
   padding: 12px 14px;
   border-bottom: 1px solid var(--border-soft);
   white-space: nowrap;
   color: var(--text-primary);
+}
+
+.cell-row-number {
+  text-align: center;
+  color: var(--text-muted);
+  font-family: var(--font-mono);
+  font-feature-settings: "tnum" 1, "lnum" 1;
 }
 
 tbody tr {

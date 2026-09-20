@@ -788,9 +788,10 @@ function renderTable() {
   const pageData = data.slice(start, start + APP.pageSize);
 
   const tbody = document.getElementById("data-table-body");
-  tbody.innerHTML = pageData.map((r) => {
+  tbody.innerHTML = pageData.map((r, i) => {
     const netoClass = r.totalNeto >= 0 ? "cell-positive" : "cell-negative";
     return `<tr>
+      <td class="cell-row-number">${start + i + 1}</td>
       <td>${ROUTE_LABELS[r.ruta] || r.ruta}</td>
       <td>${formatDateStr(r.fecha)}</td>
       <td>${r.conductor}</td>
@@ -1139,6 +1140,13 @@ function exportToExcel() {
  */
 function exportVoucherPDF() {
   try {
+    // Solo viajes con voucher real (> 0); los que están en $0 no aportan nada a este reporte
+    const voucherData = APP.filteredData.filter(r => r.voucher && r.voucher > 0);
+    if (voucherData.length === 0) {
+      showAlert("⚠️ No hay registros con voucher para exportar.");
+      return;
+    }
+
     const { jsPDF } = window.jspdf;
     const doc = new jsPDF('p', 'mm', 'a4'); // Orientación vertical (retratos)
 
@@ -1150,15 +1158,16 @@ function exportVoucherPDF() {
     doc.setTextColor(100);
     doc.text(`Fecha de generación: ${new Date().toLocaleString('es-MX')}`, 15, 22);
 
-    const columnHeaders = ["Ruta", "Fecha", "Unidad", "Hora", "Venta de Línea", "Voucher"];
+    const columnHeaders = ["#", "Ruta", "Fecha", "Unidad", "Hora", "Venta de Línea", "Voucher"];
 
-    const body = APP.filteredData.map(r => [
+    const body = voucherData.map((r, i) => [
+      i + 1,
       r.ruta ?? "-",
       r.fecha ? formatDateStr(r.fecha) : "-",
       r.unidad ?? "-",
       r.hora ?? "-",
       formatMoney(r.ventaEnLinea || 0),
-      (r.voucher && r.voucher > 0) ? formatMoney(r.voucher) : "-"
+      formatMoney(r.voucher)
     ]);
 
     doc.autoTable({
@@ -1174,8 +1183,9 @@ function exportVoucherPDF() {
         valign: 'middle'
       },
       columnStyles: {
-        4: { halign: 'right' },
-        5: { halign: 'right' }
+        0: { halign: 'center' },
+        5: { halign: 'right' },
+        6: { halign: 'right' }
       },
       headStyles: {
         fillColor: [45, 116, 180],
@@ -1195,7 +1205,7 @@ function exportVoucherPDF() {
     });
 
     doc.save(`Reporte_Vouchers_${new Date().getTime()}.pdf`);
-    logAction("Voucher PDF: Descargado", `Registros: ${APP.filteredData.length} | ${buildAuditFiltersDetails()}`);
+    logAction("Voucher PDF: Descargado", `Registros: ${voucherData.length} | ${buildAuditFiltersDetails()}`);
     showAlert("✅ Reporte de Vouchers en PDF descargado exitosamente.");
   } catch (e) {
     logAction("Voucher PDF: Error", `${String(e?.message || e)} | ${buildAuditFiltersDetails()}`);
@@ -1208,13 +1218,16 @@ function exportVoucherPDF() {
  */
 function exportVoucherExcel() {
   try {
-    if (APP.filteredData.length === 0) {
-      showAlert("⚠️ No hay datos para exportar.");
+    // Solo viajes con voucher real (> 0); los que están en $0 no aportan nada a este reporte
+    const voucherData = APP.filteredData.filter(r => r.voucher && r.voucher > 0);
+    if (voucherData.length === 0) {
+      showAlert("⚠️ No hay registros con voucher para exportar.");
       return;
     }
 
-    // Mapear solo los 6 campos del voucher
-    const dataToExport = APP.filteredData.map(r => ({
+    // Mapear los 6 campos del voucher + numeración de línea
+    const dataToExport = voucherData.map((r, i) => ({
+      "#": i + 1,
       "Ruta": r.ruta ?? "-",
       "Fecha": r.fecha ? formatDateStr(r.fecha) : "-",
       "Unidad": r.unidad ?? "-",
@@ -1230,7 +1243,7 @@ function exportVoucherExcel() {
 
     // Descargar archivo Excel
     XLSX.writeFile(workbook, `Reporte_Vouchers_${new Date().getTime()}.xlsx`);
-    logAction("Voucher Excel: Descargado", `Registros: ${APP.filteredData.length} | ${buildAuditFiltersDetails()}`);
+    logAction("Voucher Excel: Descargado", `Registros: ${voucherData.length} | ${buildAuditFiltersDetails()}`);
     showAlert("✅ Reporte de Vouchers en Excel descargado exitosamente.");
   } catch (e) {
     console.error(e);
