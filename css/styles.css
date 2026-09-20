@@ -2586,49 +2586,48 @@ td strong {
   color: var(--brand-blue);
 }
 
-/* =================  TOAST DE CARGA DE AÑO (bajo demanda)  ================= */
-/* Flotante y pequeño a propósito: no debe confundirse con el splash de
-   pantalla completa del login, para que quede claro que la app ya está
-   abierta y solo se está complementando un año anterior en segundo plano. */
+/* =================  VENTANA FLOTANTE DE CARGA DE AÑO (bajo demanda)  ================= */
+/* Overlay centrado igual que .modal, pero sin bloquear la interacción de fondo
+   (no es un modal bloqueante, solo informa que se está completando un año
+   anterior). Se diferencia a propósito del splash de pantalla completa del
+   login, para que quede claro que la app ya está abierta y sigue funcionando. */
 .year-load-toast {
   position: fixed;
-  left: 50%;
-  bottom: 24px;
-  transform: translateX(-50%);
+  inset: 0;
   z-index: 5000;
   display: flex;
   align-items: center;
-  gap: 10px;
-  padding: 12px 20px;
-  background: var(--bg-dark);
-  color: #F8FAFC;
-  border-radius: 999px;
-  border: 1px solid rgba(255, 255, 255, 0.12);
-  box-shadow: 0 12px 32px -8px rgba(10, 25, 41, 0.5);
-  font-size: 0.85rem;
-  font-weight: 600;
-  letter-spacing: 0.01em;
-  animation: fadeUp 250ms var(--ease) both;
+  justify-content: center;
+  padding: 16px;
+  pointer-events: none;
+  animation: fadeUp 200ms var(--ease);
 }
 
 .year-load-toast.hidden {
   display: none;
 }
 
-.year-load-toast .sync-spinner {
-  color: #63B3ED;
-  font-size: 1rem;
+.year-load-toast-card {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 18px 26px;
+  background: var(--bg-dark);
+  color: #F8FAFC;
+  border-radius: var(--radius-lg);
+  border: 1px solid rgba(255, 255, 255, 0.12);
+  box-shadow: 0 30px 70px -28px rgba(13, 33, 55, 0.58), 0 8px 24px -18px rgba(13, 33, 55, 0.35);
+  font-size: 0.9rem;
+  font-weight: 600;
+  letter-spacing: 0.01em;
+  max-width: calc(100vw - 32px);
+  animation: cardRise 300ms var(--ease) both;
 }
 
-/* En móvil, ocupar el ancho disponible con márgenes en vez de encogerse al texto */
-@media (max-width: 480px) {
-  .year-load-toast {
-    left: 16px;
-    right: 16px;
-    transform: none;
-    bottom: 16px;
-    justify-content: center;
-  }
+.year-load-toast .sync-spinner {
+  color: #63B3ED;
+  font-size: 1.1rem;
+  flex-shrink: 0;
 }
 
 /* =================  FOOTER  ================= */
