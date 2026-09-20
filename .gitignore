@@ -1,0 +1,21 @@
+# Documentación interna (no debe subirse a git)
+CLAUDE.md
+AGENTS.md
+AI_INSTRUCTIONS.md
+AGENTS_HISTORY.md
+reglas universales codigo*.txt
+
+# Variables de entorno y credenciales
+.env
+.env.*
+*.key
+*.pem
+
+# Editores / SO
+.vscode/
+.idea/
+.DS_Store
+Thumbs.db
+
+# Dependencias (por si en el futuro se agrega tooling con npm)
+node_modules/

@@ -173,6 +173,7 @@ const SHEETS_CONFIG = {
       ]
     },
     {
+      // Configuración para el mes de Julio 2026
       id: "1_ljwZdSbLoHtTJvRRAMG7E5evcKDnuAn6rm98yGVY_g",
       name: "Smart 07 2026",
       month: "2026-07",
@@ -384,6 +385,78 @@ function parseRowCDMX(row, route) {
 }
 
 /**
+ * Descarga y parsea todas las hojas de UN SOLO documento (un mes) configurado.
+ * Retorna un array de registros normalizados de ese mes.
+ *
+ * @param {object} doc - Entrada de SHEETS_CONFIG.documents (id, name, month, sheets)
+ * @param {Function} onStatus - Callback de progreso, igual que en loadAllData
+ */
+async function loadDocumentData(doc, onStatus) {
+  const records = [];
+  const totalSheets = doc.sheets.length;
+  let loadedSheets = 0;
+
+  for (const sheet of doc.sheets) {
+    if (onStatus) {
+      const percent = Math.round((loadedSheets / totalSheets) * 100);
+      onStatus({
+        message: `Cargando ${sheet.name} (${doc.name})...`,
+        percent,
+        current: loadedSheets,
+        total: totalSheets
+      });
+    }
+
+    try {
+      const csv = await fetchSheetCSV(doc.id, sheet.name);
+      const rows = parseCSV(csv);
+
+      // Saltar encabezado (fila 0) y filas vacías
+      for (let i = 1; i < rows.length; i++) {
+        const row = rows[i];
+        // Verificar que tenga datos (al menos fecha y unidad)
+        if (!row[2] || !row[4]) continue;
+
+        let record;
+        if (sheet.type === "puebla") {
+          record = parseRowPuebla(row, sheet.route);
+        } else {
+          record = parseRowCDMX(row, sheet.route);
+        }
+
+        // Calcular semana si la fecha es válida
+        if (record.fecha) {
+          record.semana = getWeekNumber(record.fecha);
+        }
+
+        // Solo agregar si tiene fecha válida
+        if (record.fecha) {
+          record.docName = doc.name;
+          record.docMonth = doc.month;
+          records.push(record);
+        }
+      }
+    } catch (error) {
+      console.error(`Error cargando ${sheet.name}:`, error);
+    }
+
+    // Contabilizar hoja terminada (con éxito o error) y notificar
+    loadedSheets++;
+    if (onStatus) {
+      const percent = Math.round((loadedSheets / totalSheets) * 100);
+      onStatus({
+        message: `✓ ${sheet.name} (${doc.name})`,
+        percent,
+        current: loadedSheets,
+        total: totalSheets
+      });
+    }
+  }
+
+  return records;
+}
+
+/**
  * Carga TODOS los datos de todos los documentos configurados
  * Retorna un array unificado de registros normalizados
  *
@@ -400,67 +473,44 @@ async function loadAllData(onStatus) {
   let loadedSheets = 0;
 
   for (const doc of SHEETS_CONFIG.documents) {
-    for (const sheet of doc.sheets) {
-
-      // Notificar inicio de carga de esta hoja con porcentaje real
+    const docRecords = await loadDocumentData(doc, (progress) => {
       if (onStatus) {
-        const percent = Math.round((loadedSheets / totalSheets) * 100);
+        const current = loadedSheets + progress.current;
         onStatus({
-          message: `Cargando ${sheet.name} (${doc.name})...`,
-          percent,
-          current: loadedSheets,
+          message: progress.message,
+          percent: Math.round((current / totalSheets) * 100),
+          current,
           total: totalSheets
         });
       }
-
-      try {
-        const csv = await fetchSheetCSV(doc.id, sheet.name);
-        const rows = parseCSV(csv);
-
-        // Saltar encabezado (fila 0) y filas vacías
-        for (let i = 1; i < rows.length; i++) {
-          const row = rows[i];
-          // Verificar que tenga datos (al menos fecha y unidad)
-          if (!row[2] || !row[4]) continue;
-
-          let record;
-          if (sheet.type === "puebla") {
-            record = parseRowPuebla(row, sheet.route);
-          } else {
-            record = parseRowCDMX(row, sheet.route);
-          }
-
-          // Calcular semana si la fecha es válida
-          if (record.fecha) {
-            record.semana = getWeekNumber(record.fecha);
-          }
-
-          // Solo agregar si tiene fecha válida
-          if (record.fecha) {
-            record.docName = doc.name;
-            record.docMonth = doc.month;
-            allRecords.push(record);
-          }
-        }
-      } catch (error) {
-        console.error(`Error cargando ${sheet.name}:`, error);
-      }
-
-      // Contabilizar hoja terminada (con éxito o error) y notificar
-      loadedSheets++;
-      if (onStatus) {
-        const percent = Math.round((loadedSheets / totalSheets) * 100);
-        onStatus({
-          message: `✓ ${sheet.name} (${doc.name})`,
-          percent,
-          current: loadedSheets,
-          total: totalSheets
-        });
-      }
-    }
+    });
+    allRecords.push(...docRecords);
+    loadedSheets += doc.sheets.length;
   }
 
   return allRecords;
+}
+
+/**
+ * Devuelve todas las entradas de SHEETS_CONFIG.documents que pertenecen a un año dado.
+ */
+function getDocumentsByYear(year) {
+  const prefix = `${year}-`;
+  return SHEETS_CONFIG.documents.filter((doc) => doc.month.startsWith(prefix));
+}
+
+/**
+ * Devuelve el año a cargar por defecto al abrir la app:
+ * el año en curso si tiene algún documento configurado, o si no, el año configurado más reciente.
+ */
+function getDefaultYear() {
+  const currentYear = new Date().getFullYear();
+  if (getDocumentsByYear(currentYear).length > 0) return currentYear;
+
+  const sortedYears = SHEETS_CONFIG.documents
+    .map((d) => parseInt(d.month.split("-")[0], 10))
+    .sort((a, b) => a - b);
+  return sortedYears[sortedYears.length - 1];
 }
 
 /**

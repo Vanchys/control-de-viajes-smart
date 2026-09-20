@@ -1,5 +1,5 @@
 /* Smart Dashboard - App Principal (Mobile First) */
-/* global loadAllData, formatMoney, formatDateStr, ROUTE_LABELS */
+/* global loadAllData, loadDocumentData, getDocumentsByYear, getDefaultYear, formatMoney, formatDateStr, ROUTE_LABELS, SHEETS_CONFIG */
 
 const APP = {
   allData: [],
@@ -9,6 +9,7 @@ const APP = {
   sortCol: "fecha",
   sortAsc: false,
   searchTerm: "",
+  loadedYears: new Set(), // Años (number) ya descargados por completo en esta sesión, para no re-pedirlos
   auditCtx: {
     routeAction: "custom",   // custom | all | none
     unitAction: "custom",    // custom | all | none
@@ -16,6 +17,37 @@ const APP = {
     lastMonthPick: null      // { year, monthIndex, monthName }
   }
 };
+
+/**
+ * Descarga TODOS los documentos configurados de un año si aún no está en caché de sesión,
+ * y los agrega a APP.allData. Reporta progreso combinado vía onStatus.
+ */
+async function ensureYearLoaded(year, onStatus) {
+  if (APP.loadedYears.has(year)) return;
+  const docs = getDocumentsByYear(year);
+  if (docs.length === 0) return;
+
+  const totalSheets = docs.reduce((sum, doc) => sum + doc.sheets.length, 0);
+  let loadedSheets = 0;
+
+  for (const doc of docs) {
+    const records = await loadDocumentData(doc, (progress) => {
+      if (onStatus) {
+        const current = loadedSheets + progress.current;
+        onStatus({
+          message: progress.message,
+          percent: Math.round((current / totalSheets) * 100),
+          current,
+          total: totalSheets
+        });
+      }
+    });
+    APP.allData.push(...records);
+    loadedSheets += doc.sheets.length;
+  }
+
+  APP.loadedYears.add(year);
+}
 
 // Duración mínima del splash para evitar parpadeo en redes muy rápidas
 const SPLASH_MIN_MS = 800;
@@ -101,16 +133,18 @@ async function runDataSync(refs) {
   const minDelay = new Promise(resolve => setTimeout(resolve, SPLASH_MIN_MS));
 
   try {
+    // Solo se carga el año en curso (o el más reciente disponible) al abrir la app.
+    // Los demás años se descargan bajo demanda al seleccionar un mes de ese año en el picker.
+    const defaultYear = getDefaultYear();
+
     // Ejecutar la carga de datos en paralelo con el delay mínimo
-    const [data] = await Promise.all([
-      loadAllData((progress) => updateSplashProgress(progress)),
+    await Promise.all([
+      ensureYearLoaded(defaultYear, (progress) => updateSplashProgress(progress)),
       minDelay
     ]);
 
-    APP.allData = data;
-
     // Verificar si se cargaron datos (detectar error de red total)
-    if (data.length === 0) {
+    if (APP.allData.length === 0) {
       showSplashError("No se pudo cargar ningún dato.\nVerifica tu conexión a internet.");
       return; // No entrar al dashboard
     }
@@ -294,6 +328,44 @@ function initFilters() {
     drvHtml += drivers.map((d) => `<label class="checkbox-item"><input type="checkbox" class="driver-cb" value="${d}"> ${d}</label>`).join("");
     driverContainer.innerHTML = drvHtml;
     APP.auditCtx.driverAction = "all";
+
+    const driverAll = document.getElementById("driver-all");
+    const driverCbs = document.querySelectorAll(".driver-cb");
+    driverAll.addEventListener("change", (e) => { if(e.target.checked) driverCbs.forEach(cb => cb.checked = false); });
+    driverCbs.forEach(cb => { cb.addEventListener("change", () => { if(cb.checked) driverAll.checked = false; }); });
+  }
+}
+
+/**
+ * Regenera las listas de unidades y conductores a partir de APP.allData
+ * preservando las selecciones ya marcadas (fechas y rutas no se tocan).
+ * Se usa tras cargar un mes bajo demanda, que puede traer unidades/conductores
+ * que no existían en el mes cargado al inicio.
+ */
+function refreshUnitsAndDrivers() {
+  const checkedUnits = new Set([...document.querySelectorAll(".unit-cb:checked")].map((cb) => cb.value));
+  const checkedDrivers = new Set([...document.querySelectorAll(".driver-cb:checked")].map((cb) => cb.value));
+  const driverAllChecked = document.getElementById("driver-all")?.checked;
+
+  const units = [...new Set(APP.allData.map((r) => r.unidad))]
+    .sort((a, b) => {
+      const numA = parseInt(a);
+      const numB = parseInt(b);
+      if (!isNaN(numA) && !isNaN(numB)) return numA - numB;
+      return a.localeCompare(b);
+    });
+  const drivers = [...new Set(APP.allData.map((r) => r.conductor))].sort();
+
+  const container = document.getElementById("filter-units-container");
+  if (container) {
+    container.innerHTML = units.map((u) => `<label class="checkbox-item"><input type="checkbox" class="unit-cb" value="${u}" ${checkedUnits.has(u) ? "checked" : ""}> ${u}</label>`).join("");
+  }
+
+  const driverContainer = document.getElementById("filter-driver-container");
+  if (driverContainer) {
+    let drvHtml = `<label class="checkbox-item"><input type="checkbox" id="driver-all" value="all" ${driverAllChecked ? "checked" : ""}> Todos</label>`;
+    drvHtml += drivers.map((d) => `<label class="checkbox-item"><input type="checkbox" class="driver-cb" value="${d}" ${checkedDrivers.has(d) ? "checked" : ""}> ${d}</label>`).join("");
+    driverContainer.innerHTML = drvHtml;
 
     const driverAll = document.getElementById("driver-all");
     const driverCbs = document.querySelectorAll(".driver-cb");
@@ -556,13 +628,24 @@ function setupEvents() {
     syncStatus.classList.remove("hidden");
     
     try {
-      APP.allData = await loadAllData((msg) => { syncText.textContent = "Sincronizando..."; });
+      // Solo se refrescan los años ya cargados en esta sesión, no todo SHEETS_CONFIG
+      const yearsToRefresh = [...APP.loadedYears];
+      const refreshedData = [];
+      for (const year of yearsToRefresh) {
+        for (const doc of getDocumentsByYear(year)) {
+          const records = await loadDocumentData(doc, () => { syncText.textContent = "Sincronizando..."; });
+          refreshedData.push(...records);
+        }
+      }
+      APP.allData = refreshedData;
+
       syncText.textContent = "¡Listo!";
       setTimeout(() => syncStatus.classList.add("hidden"), 3000);
-      
+
+      refreshUnitsAndDrivers();
       APP.filteredData = getFilteredData();
       renderAll();
-      
+
       // Reinicializar el month picker para activar/desactivar meses
       setupMonthPicker();
     } catch(e) {
@@ -721,15 +804,13 @@ function setupMonthPicker() {
   ];
 
   // Construir mapa: año (number) → Set de índices de meses disponibles (0-11)
-  // Se agrupan por año para que la disponibilidad sea correcta por año, no mezclada
+  // Se basa en SHEETS_CONFIG (meses configurados), no en APP.allData, porque al
+  // abrir la app solo se ha descargado el mes en curso — el resto se carga bajo demanda.
   const availableByYear = {};
-  APP.allData.forEach(r => {
-    if (r.fecha) {
-      const y = r.fecha.getFullYear();
-      const m = r.fecha.getMonth();
-      if (!availableByYear[y]) availableByYear[y] = new Set();
-      availableByYear[y].add(m);
-    }
+  SHEETS_CONFIG.documents.forEach(doc => {
+    const [y, m] = doc.month.split("-").map(Number);
+    if (!availableByYear[y]) availableByYear[y] = new Set();
+    availableByYear[y].add(m - 1);
   });
 
   // Lista de años disponibles ordenados de mayor a menor
@@ -852,7 +933,7 @@ function setupMonthPicker() {
       }
 
       if (btn.classList.contains("active-month")) {
-        // Segundo toque: confirmar selección de mes y cerrar modal
+        // Segundo toque: confirmar selección de mes
         const m = parseInt(btn.dataset.month);
         const y = parseInt(btn.dataset.year);
 
@@ -862,13 +943,38 @@ function setupMonthPicker() {
           return `${d.getFullYear()}-${mm}-${dd}`;
         };
 
-        document.getElementById("filter-date-from").value = fmt(new Date(y, m, 1));
-        document.getElementById("filter-date-to").value = fmt(new Date(y, m + 1, 0));
+        const applyMonthSelection = () => {
+          document.getElementById("filter-date-from").value = fmt(new Date(y, m, 1));
+          document.getElementById("filter-date-to").value = fmt(new Date(y, m + 1, 0));
 
-        APP.auditCtx.lastMonthPick = { year: y, monthIndex: m, monthName: monthNames[m] };
-        logAction("Mes seleccionado", buildAuditFiltersDetails());
+          APP.auditCtx.lastMonthPick = { year: y, monthIndex: m, monthName: monthNames[m] };
+          logAction("Mes seleccionado", buildAuditFiltersDetails());
 
-        modal.classList.add("hidden");
+          modal.classList.add("hidden");
+        };
+
+        if (APP.loadedYears.has(y)) {
+          // Año ya en caché de sesión: aplicar de inmediato, sin splash
+          applyMonthSelection();
+        } else {
+          // Año no cargado aún: mostrar splash, descargar TODO el año y luego aplicar el mes
+          modal.classList.add("hidden");
+          const loadingScreen = document.getElementById("loading-screen");
+          resetSplashUI();
+          loadingScreen.classList.remove("hidden");
+
+          ensureYearLoaded(y, (progress) => updateSplashProgress(progress))
+            .then(() => {
+              loadingScreen.classList.add("hidden");
+              refreshUnitsAndDrivers(); // El año nuevo puede traer unidades/conductores no vistos aún
+              applyMonthSelection();
+            })
+            .catch((err) => {
+              console.error(`Error cargando el año ${y}:`, err);
+              loadingScreen.classList.add("hidden");
+              showAlert("❌ No se pudo cargar ese año. Verifica tu conexión e intenta de nuevo.");
+            });
+        }
       } else {
         // Primer toque: solo marcar el mes seleccionado
         grid.querySelectorAll(".month-btn").forEach(b => b.classList.remove("active-month"));
