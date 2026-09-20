@@ -122,6 +122,25 @@ function resetSplashUI() {
 }
 
 /**
+ * Muestra el toast flotante de carga de un año bajo demanda (no tapa el dashboard,
+ * a diferencia del splash de pantalla completa que solo se usa en el login).
+ */
+function showYearLoadToast(text) {
+  const toast = document.getElementById("year-load-toast");
+  const textEl = document.getElementById("year-load-toast-text");
+  if (textEl) textEl.textContent = text;
+  if (toast) toast.classList.remove("hidden");
+}
+
+/**
+ * Oculta el toast flotante de carga de año.
+ */
+function hideYearLoadToast() {
+  const toast = document.getElementById("year-load-toast");
+  if (toast) toast.classList.add("hidden");
+}
+
+/**
  * Ejecuta la carga de datos y actualiza el dashboard al terminar.
  * Si hay error total, muestra el panel de reintento en el splash.
  * @param {object} refs - Referencias DOM necesarias
@@ -954,24 +973,27 @@ function setupMonthPicker() {
         };
 
         if (APP.loadedYears.has(y)) {
-          // Año ya en caché de sesión: aplicar de inmediato, sin splash
+          // Año ya en caché de sesión: aplicar de inmediato, sin indicador de carga
           applyMonthSelection();
         } else {
-          // Año no cargado aún: mostrar splash, descargar TODO el año y luego aplicar el mes
+          // Año no cargado aún: cerrar el modal, mostrar un toast flotante pequeño
+          // (NO el splash de pantalla completa, para no dar la impresión de que la
+          // app se recargó desde cero) mientras se descarga TODO el año en segundo
+          // plano, y aplicar el mes elegido al terminar.
           modal.classList.add("hidden");
-          const loadingScreen = document.getElementById("loading-screen");
-          resetSplashUI();
-          loadingScreen.classList.remove("hidden");
+          showYearLoadToast(`Cargando año ${y}...`);
 
-          ensureYearLoaded(y, (progress) => updateSplashProgress(progress))
+          ensureYearLoaded(y, (progress) => {
+            showYearLoadToast(`Cargando año ${y}... ${progress.percent}%`);
+          })
             .then(() => {
-              loadingScreen.classList.add("hidden");
+              hideYearLoadToast();
               refreshUnitsAndDrivers(); // El año nuevo puede traer unidades/conductores no vistos aún
               applyMonthSelection();
             })
             .catch((err) => {
               console.error(`Error cargando el año ${y}:`, err);
-              loadingScreen.classList.add("hidden");
+              hideYearLoadToast();
               showAlert("❌ No se pudo cargar ese año. Verifica tu conexión e intenta de nuevo.");
             });
         }

@@ -2586,6 +2586,51 @@ td strong {
   color: var(--brand-blue);
 }
 
+/* =================  TOAST DE CARGA DE AÑO (bajo demanda)  ================= */
+/* Flotante y pequeño a propósito: no debe confundirse con el splash de
+   pantalla completa del login, para que quede claro que la app ya está
+   abierta y solo se está complementando un año anterior en segundo plano. */
+.year-load-toast {
+  position: fixed;
+  left: 50%;
+  bottom: 24px;
+  transform: translateX(-50%);
+  z-index: 5000;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 12px 20px;
+  background: var(--bg-dark);
+  color: #F8FAFC;
+  border-radius: 999px;
+  border: 1px solid rgba(255, 255, 255, 0.12);
+  box-shadow: 0 12px 32px -8px rgba(10, 25, 41, 0.5);
+  font-size: 0.85rem;
+  font-weight: 600;
+  letter-spacing: 0.01em;
+  animation: fadeUp 250ms var(--ease) both;
+}
+
+.year-load-toast.hidden {
+  display: none;
+}
+
+.year-load-toast .sync-spinner {
+  color: #63B3ED;
+  font-size: 1rem;
+}
+
+/* En móvil, ocupar el ancho disponible con márgenes en vez de encogerse al texto */
+@media (max-width: 480px) {
+  .year-load-toast {
+    left: 16px;
+    right: 16px;
+    transform: none;
+    bottom: 16px;
+    justify-content: center;
+  }
+}
+
 /* =================  FOOTER  ================= */
 .app-footer {
   text-align: center;
