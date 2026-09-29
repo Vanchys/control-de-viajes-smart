@@ -184,6 +184,66 @@ const SHEETS_CONFIG = {
         { name: "Hoja_Mex_Teh", route: "Mex-Teh", type: "cdmx" }
       ]
     },
+    {
+      // Configuración para el mes de Agosto 2026
+      id: "",
+      name: "Smart 08 2026",
+      month: "2026-08",
+      sheets: [
+        { name: "Hoja_Teh_Pue", route: "Teh-Pue", type: "puebla" },
+        { name: "Hoja_Pue_Teh", route: "Pue-Teh", type: "puebla" },
+        { name: "Hoja_Teh_Mex", route: "Teh-Mex", type: "cdmx" },
+        { name: "Hoja_Mex_Teh", route: "Mex-Teh", type: "cdmx" }
+      ]
+    },
+    {
+      // Configuración para el mes de Septiembre 2026
+      id: "",
+      name: "Smart 09 2026",
+      month: "2026-09",
+      sheets: [
+        { name: "Hoja_Teh_Pue", route: "Teh-Pue", type: "puebla" },
+        { name: "Hoja_Pue_Teh", route: "Pue-Teh", type: "puebla" },
+        { name: "Hoja_Teh_Mex", route: "Teh-Mex", type: "cdmx" },
+        { name: "Hoja_Mex_Teh", route: "Mex-Teh", type: "cdmx" }
+      ]
+    },
+    {
+      // Configuración para el mes de Octubre 2026
+      id: "",
+      name: "Smart 10 2026",
+      month: "2026-10",
+      sheets: [
+        { name: "Hoja_Teh_Pue", route: "Teh-Pue", type: "puebla" },
+        { name: "Hoja_Pue_Teh", route: "Pue-Teh", type: "puebla" },
+        { name: "Hoja_Teh_Mex", route: "Teh-Mex", type: "cdmx" },
+        { name: "Hoja_Mex_Teh", route: "Mex-Teh", type: "cdmx" }
+      ]
+    },
+    {
+      // Configuración para el mes de Noviembre 2026
+      id: "",
+      name: "Smart 11 2026",
+      month: "2026-11",
+      sheets: [
+        { name: "Hoja_Teh_Pue", route: "Teh-Pue", type: "puebla" },
+        { name: "Hoja_Pue_Teh", route: "Pue-Teh", type: "puebla" },
+        { name: "Hoja_Teh_Mex", route: "Teh-Mex", type: "cdmx" },
+        { name: "Hoja_Mex_Teh", route: "Mex-Teh", type: "cdmx" }
+      ]
+    },
+    {
+      // Configuración para el mes de Diciembre 2026
+      id: "",
+      name: "Smart 12 2026",
+      month: "2026-12",
+      sheets: [
+        { name: "Hoja_Teh_Pue", route: "Teh-Pue", type: "puebla" },
+        { name: "Hoja_Pue_Teh", route: "Pue-Teh", type: "puebla" },
+        { name: "Hoja_Teh_Mex", route: "Teh-Mex", type: "cdmx" },
+        { name: "Hoja_Mex_Teh", route: "Mex-Teh", type: "cdmx" }
+      ]
+    },
   ]
 };
 
