@@ -198,7 +198,7 @@ const SHEETS_CONFIG = {
     },
     {
       // Configuración para el mes de Septiembre 2026
-      id: "",
+      id: "1XisFJJCq87uVCeK9z34aXYMLu3gj8sRZF6rgDNGFj0o",
       name: "Smart 09 2026",
       month: "2026-09",
       sheets: [
