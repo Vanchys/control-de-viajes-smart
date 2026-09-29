@@ -223,8 +223,8 @@ const SHEETS_CONFIG = {
     {
       // Configuración para el mes de Noviembre 2026
       id: "",
-      name: "Smart 11 ",
-      month: "2026-11",
+      name: "",
+      month: "",
       sheets: [
         { name: "Hoja_Teh_Pue", route: "Teh-Pue", type: "puebla" },
         { name: "Hoja_Pue_Teh", route: "Pue-Teh", type: "puebla" },
@@ -235,8 +235,8 @@ const SHEETS_CONFIG = {
     {
       // Configuración para el mes de Diciembre 2026
       id: "",
-      name: "Smart 12 ",
-      month: "2026-12",
+      name: "",
+      month: "",
       sheets: [
         { name: "Hoja_Teh_Pue", route: "Teh-Pue", type: "puebla" },
         { name: "Hoja_Pue_Teh", route: "Pue-Teh", type: "puebla" },
