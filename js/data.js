@@ -186,7 +186,7 @@ const SHEETS_CONFIG = {
     },
     {
       // Configuración para el mes de Agosto 2026
-      id: "",
+      id: "1WHBZPV2EyjkRY0qdrf2HJXSd_18jXfGhlAqvQo9Fq58",
       name: "Smart 08 2026",
       month: "2026-08",
       sheets: [
