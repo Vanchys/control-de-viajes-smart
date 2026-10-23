@@ -210,8 +210,8 @@ const SHEETS_CONFIG = {
     },
     {
       // Configuración para el mes de Octubre 2026
-      id: "",
-      name: "Smart 10 ",
+      id: "1OeZfXmRH5MwocxrqE1iTkSyuER9SUQ5YhLyZawY_MQg",
+      name: "Smart 10 2026",
       month: "2026-10",
       sheets: [
         { name: "Hoja_Teh_Pue", route: "Teh-Pue", type: "puebla" },
